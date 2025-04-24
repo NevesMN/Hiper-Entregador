@@ -1,0 +1,679 @@
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <title>Super Hubz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      font-family: "Inter", Arial, sans-serif;
+    }
+    /* Hide scrollbar for WebKit browsers */
+    #entregasContent::-webkit-scrollbar {
+      display: none;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    #entregasContent {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+      touch-action: none;
+    }
+    /* Custom salmon color */
+    .text-salmon-vivo {
+      color: #ff6f61 !important;
+    }
+    .hover-text-salmon-vivo:hover {
+      color: #ff6f61 !important;
+    }
+  </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const panel = document.getElementById("entregasContent");
+      const dragHandle = document.getElementById("dragHandle");
+      const footer = document.getElementById("footer");
+      let startY = 0;
+      let currentY = 0;
+      let panelHeight = window.innerHeight;
+      let isDragging = false;
+      let lastTranslateY = 100; // Start fully hidden (100%)
+
+      // Initialize panel hidden
+      panel.style.transform = `translateY(100%)`;
+      panel.setAttribute("aria-hidden", "true");
+
+      // Disable pointer events on panel content when hidden
+      function updatePointerEvents(translateY) {
+        if (translateY >= 100) {
+          panel.style.pointerEvents = "none";
+          footer.style.visibility = "visible";
+        } else {
+          panel.style.pointerEvents = "auto";
+          footer.style.visibility = "hidden";
+        }
+      }
+      updatePointerEvents(lastTranslateY);
+
+      function onDragStart(event) {
+        isDragging = true;
+        startY = event.type.includes("touch")
+          ? event.touches[0].clientY
+          : event.clientY;
+        panel.style.transition = "none";
+        if (animationFrame) cancelAnimationFrame(animationFrame);
+      }
+
+      function onDragMove(event) {
+        if (!isDragging) return;
+        currentY = event.type.includes("touch")
+          ? event.touches[0].clientY
+          : event.clientY;
+        let deltaY = currentY - startY;
+        // Calculate new translateY in px
+        // lastTranslateY is current translateY% before drag
+        // deltaY positive means dragging down, negative dragging up
+        let newTranslateY = lastTranslateY + (deltaY / panelHeight) * 100;
+        // Clamp between 0 (fully open) and 100 (fully closed)
+        newTranslateY = Math.min(Math.max(0, newTranslateY), 100);
+        panel.style.transform = `translateY(${newTranslateY}%)`;
+        updatePointerEvents(newTranslateY);
+      }
+
+      function onDragEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+        // Determine if panel should open or close based on final position
+        // If panel is dragged up more than 50% (translateY < 50%), open it
+        // Else close it
+        let matrix = window.getComputedStyle(panel).transform;
+        let translateYPercent = 100;
+        if (matrix && matrix !== "none") {
+          const values = matrix.match(/matrix.*\((.+)\)/)[1].split(", ");
+          const ty = parseFloat(values[5]);
+          translateYPercent = (ty / panelHeight) * 100;
+          translateYPercent = Math.min(Math.max(0, translateYPercent), 100);
+        }
+        panel.style.transition = "transform 0.3s ease";
+        if (translateYPercent < 50) {
+          // Open panel
+          panel.style.transform = "translateY(0)";
+          panel.setAttribute("aria-hidden", "false");
+          lastTranslateY = 0;
+          updatePointerEvents(0);
+        } else {
+          // Close panel
+          panel.style.transform = "translateY(100%)";
+          panel.setAttribute("aria-hidden", "true");
+          lastTranslateY = 100;
+          updatePointerEvents(100);
+        }
+      }
+
+      // Attach events for mouse and touch
+      dragHandle.addEventListener("mousedown", onDragStart);
+      dragHandle.addEventListener("touchstart", onDragStart, { passive: true });
+
+      window.addEventListener("mousemove", onDragMove);
+      window.addEventListener("touchmove", onDragMove, { passive: false });
+
+      window.addEventListener("mouseup", onDragEnd);
+      window.addEventListener("touchend", onDragEnd);
+      window.addEventListener("touchcancel", onDragEnd);
+
+      // Prevent scrolling the page when dragging the panel on touch devices
+      dragHandle.addEventListener(
+        "touchmove",
+        (e) => {
+          e.preventDefault();
+        },
+        { passive: false }
+      );
+
+      // Also allow dragging panel down by dragging anywhere on the panel's top area (dragHandle)
+      // For better UX, allow dragging from the top 40px of the panel as drag handle
+      panel.addEventListener("touchstart", (e) => {
+        if (e.target === dragHandle || e.target.closest("#dragHandle")) return;
+        const touchY = e.touches[0].clientY;
+        if (touchY - panel.getBoundingClientRect().top <= 40) {
+          onDragStart(e);
+        }
+      }, { passive: true });
+
+      panel.addEventListener("mousedown", (e) => {
+        if (e.target === dragHandle || e.target.closest("#dragHandle")) return;
+        const mouseY = e.clientY;
+        if (mouseY - panel.getBoundingClientRect().top <= 40) {
+          onDragStart(e);
+        }
+      });
+    });
+
+    function toggleStatus() {
+      const status = document.getElementById("status");
+      if (status.classList.contains("bg-red-600")) {
+        status.classList.remove("bg-red-600");
+        status.classList.add("bg-green-600");
+        status.textContent = "Ativo";
+        status.setAttribute("aria-pressed", "true");
+      } else {
+        status.classList.remove("bg-green-600");
+        status.classList.add("bg-red-600");
+        status.textContent = "Pausado";
+        status.setAttribute("aria-pressed", "false");
+      }
+    }
+  </script>
+</head>
+<body class="relative h-screen overflow-hidden bg-gray-50">
+  <!-- Map Container -->
+  <div class="absolute inset-0 z-0">
+    <iframe
+      allowfullscreen=""
+      aria-label="Mapa de Campo Grande, MS, Brasil, vista aérea com ruas e pontos de interesse"
+      class="w-full h-full border-0"
+      loading="lazy"
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.204509964415!2d-54.64545038463154!3d-20.4697109863201!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9486e830b6b5c1c9:0x7c4f0bc021b8b81c!2sCampo%20Grande%2CMS!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr"
+    ></iframe>
+    <i
+      aria-hidden="true"
+      class="fas fa-map-marker-alt absolute text-[#ff6f61] text-2xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+    ></i>
+  </div>
+  <!-- Header -->
+  <header
+    class="relative z-10 flex items-center justify-between bg-white rounded-2xl m-3 p-3 shadow-md"
+  >
+    <img
+      alt="Logo de super-herói estilo desenho animado, círculo vermelho com máscara preta e capa amarela"
+      class="rounded-full object-cover"
+      height="50"
+      loading="lazy"
+      src="https://storage.googleapis.com/a1aa/image/e81a1a03-d2c4-4dd3-0b7d-c61f0f8b6fe6.jpg"
+      width="50"
+    />
+    <button
+      aria-label="Botão para alternar status entre Ativo e Pausado"
+      aria-pressed="true"
+      class="ml-5 px-8 py-1 rounded-full text-sm font-semibold text-white bg-green-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+      id="status"
+      onclick="toggleStatus()"
+      type="button"
+    >
+      Ativo
+    </button>
+    <div
+      aria-label="Saldo atual"
+      class="bg-gray-200 text-black px-4 py-1 rounded-full text-sm font-medium shadow-inner flex items-center"
+    >
+      R$ 171,50
+    </div>
+  </header>
+  <!-- Footer -->
+  <footer
+    id="footer"
+    class="absolute bottom-0 left-0 w-full bg-white border-t border-gray-200 z-10"
+    role="contentinfo"
+  >
+    <div
+      id="dragHandle"
+      aria-label="Área para arrastar e abrir o painel de entregas"
+      class="flex justify-center cursor-grab py-1 select-none"
+      role="button"
+      tabindex="0"
+      aria-describedby="dragHint"
+    >
+      <i class="fas fa-grip-lines text-[#ff6f61] text-3xl"></i>
+    </div>
+    <div
+      class="flex items-center mx-3 mb-6 bg-white rounded-full shadow px-4 py-2"
+    >
+      <input
+        aria-label="Campo para escolher destino no mapa"
+        class="flex-grow outline-none text-sm text-gray-700 placeholder-gray-400"
+        placeholder="Escolha um destino no mapa!"
+        type="text"
+      />
+      <button
+        aria-label="Botão buscar destino"
+        class="ml-3 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold rounded-full px-4 py-1 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        type="button"
+      >
+        BUSCAR
+      </button>
+    </div>
+    <nav
+      aria-label="Navegação principal"
+      class="flex overflow-x-auto space-x-3 px-3 pb-6"
+    >
+      <div
+        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
+      >
+        <a
+          aria-label="Navegar para Entregas"
+          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
+          href="entregas.html"
+        >
+          <i aria-hidden="true" class="fas fa-box text-2xl mb-1"></i>Entregas
+        </a>
+      </div>
+      <div
+        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
+      >
+        <a
+          aria-label="Navegar para Rotas"
+          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
+          href="rotas.html"
+        >
+          <i aria-hidden="true" class="fas fa-route text-2xl mb-1"></i>Rotas
+        </a>
+      </div>
+      <div
+        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
+      >
+        <a
+          aria-label="Navegar para Carteira"
+          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
+          href="carteira.html"
+        >
+          <i aria-hidden="true" class="fas fa-wallet text-2xl mb-1"></i>Carteira
+        </a>
+      </div>
+      <div
+        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
+      >
+        <a
+          aria-label="Navegar para Mensagem"
+          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
+          href="mensagem.html"
+        >
+          <i aria-hidden="true" class="fas fa-comment text-2xl mb-1"></i>Mensagem
+        </a>
+      </div>
+      <div
+        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
+      >
+        <a
+          aria-label="Navegar para Cadastro"
+          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
+          href="cadastro.html"
+        >
+          <i aria-hidden="true" class="fas fa-user-plus text-2xl mb-1"></i>Cadastro
+        </a>
+      </div>
+      <div
+        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
+      >
+        <a
+          aria-label="Navegar para FreeLance"
+          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
+          href="freelance.html"
+        >
+          <i aria-hidden="true" class="fas fa-briefcase text-2xl mb-1"></i>FreeLance
+        </a>
+      </div>
+      <div
+        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
+      >
+        <a
+          aria-label="Navegar para Configuração"
+          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
+          href="configuracao.html"
+        >
+          <i aria-hidden="true" class="fas fa-cog text-2xl mb-1"></i>Configuração
+        </a>
+      </div>
+      <div
+        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
+      >
+        <a
+          aria-label="Navegar para Tokens"
+          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
+          href="tokens.html"
+        >
+          <i aria-hidden="true" class="fas fa-medal text-2xl mb-1"></i>Tokens
+        </a>
+      </div>
+      <div
+        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
+      >
+        <a
+          aria-label="Navegar para Bag"
+          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
+          href="bag.html"
+        >
+          <i aria-hidden="true" class="fas fa-shopping-bag text-2xl mb-1"></i>Bag
+        </a>
+      </div>
+    </nav>
+  </footer>
+  <!-- Sliding Content Panel -->
+  <section
+    aria-hidden="true"
+    aria-label="Painel de entregas"
+    class="fixed bottom-0 left-0 w-full h-full bg-white border-t border-gray-200 p-5 shadow-lg z-20 overflow-y-auto"
+    id="entregasContent"
+  >
+    <h2 class="text-xl font-semibold mb-4 text-gray-800">Entregas Recentes</h2>
+    <ul class="space-y-4">
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 1: Caixa de papelão marrom com etiqueta de envio, sobre uma mesa de madeira clara"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/6daa9ed9-6fe5-483c-a610-686c8a3abad3.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #001</span>
+          <span class="text-sm text-gray-600">Rua das Flores, 123 - Centro</span>
+          <span class="text-xs text-green-600 font-semibold mt-1"
+            >Status: Entregue</span
+          >
+        </div>
+        <i
+          aria-hidden="true"
+          class="fas fa-check-circle text-green-500 text-xl"
+        ></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 2: Caixa branca com fita vermelha, em cima de um carrinho de entrega"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/1018be0a-66b0-4272-a4f2-7f5098e7e810.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #002</span>
+          <span class="text-sm text-gray-600">Av. Brasil, 456 - Jardim América</span>
+          <span class="text-xs text-yellow-500 font-semibold mt-1"
+            >Status: Em trânsito</span
+          >
+        </div>
+        <i aria-hidden="true" class="fas fa-truck text-yellow-500 text-xl"></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 3: Caixa azul com etiqueta amarela, sobre um fundo branco"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/0a0b3ffc-e106-419c-11b1-c8cf3126f939.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #003</span>
+          <span class="text-sm text-gray-600">Rua das Acácias, 789 - Vila Nova</span>
+          <span class="text-xs text-red-600 font-semibold mt-1">Status: Atrasado</span>
+        </div>
+        <i
+          aria-hidden="true"
+          class="fas fa-exclamation-circle text-red-600 text-xl"
+        ></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 4: Caixa verde com fita branca, em cima de uma esteira de transporte"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/8f29f20b-8e00-4d95-0d38-30799ab1a6b7.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #004</span>
+          <span class="text-sm text-gray-600">Praça Central, 101 - Centro</span>
+          <span class="text-xs text-green-600 font-semibold mt-1">Status: Entregue</span>
+        </div>
+        <i
+          aria-hidden="true"
+          class="fas fa-check-circle text-green-500 text-xl"
+        ></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 5: Caixa vermelha com etiqueta branca, sobre um fundo cinza claro"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/a88074f4-6578-4430-8ebc-9e0463292686.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #005</span>
+          <span class="text-sm text-gray-600">Rua das Palmeiras, 202 - Jardim das Flores</span>
+          <span class="text-xs text-yellow-500 font-semibold mt-1"
+            >Status: Em trânsito</span
+          >
+        </div>
+        <i aria-hidden="true" class="fas fa-truck text-yellow-500 text-xl"></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 6: Caixa marrom com fita preta, sobre uma mesa de escritório"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/7eaf304b-71e1-4e5e-3248-d69c436ebc26.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #006</span>
+          <span class="text-sm text-gray-600">Av. das Nações, 303 - Centro Empresarial</span>
+          <span class="text-xs text-green-600 font-semibold mt-1">Status: Entregue</span>
+        </div>
+        <i
+          aria-hidden="true"
+          class="fas fa-check-circle text-green-500 text-xl"
+        ></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 7: Caixa branca com fita azul, em cima de um carrinho de mão"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/970debe3-f4f2-4006-d2b5-d681e2381d69.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #007</span>
+          <span class="text-sm text-gray-600">Rua do Sol, 404 - Bairro Alto</span>
+          <span class="text-xs text-yellow-500 font-semibold mt-1"
+            >Status: Em trânsito</span
+          >
+        </div>
+        <i aria-hidden="true" class="fas fa-truck text-yellow-500 text-xl"></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 8: Caixa azul clara com etiqueta vermelha, sobre uma superfície branca"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/e0b66b88-759a-49d0-ff9d-b0ac9a88fc19.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #008</span>
+          <span class="text-sm text-gray-600">Av. das Estrelas, 505 - Vila Nova</span>
+          <span class="text-xs text-red-600 font-semibold mt-1">Status: Atrasado</span>
+        </div>
+        <i
+          aria-hidden="true"
+          class="fas fa-exclamation-circle text-red-600 text-xl"
+        ></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 9: Caixa verde com fita amarela, em cima de uma esteira transportadora"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/f3a04fdf-e2cd-4b36-5a20-9ae53b80c535.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #009</span>
+          <span class="text-sm text-gray-600">Rua das Laranjeiras, 606 - Centro</span>
+          <span class="text-xs text-green-600 font-semibold mt-1">Status: Entregue</span>
+        </div>
+        <i
+          aria-hidden="true"
+          class="fas fa-check-circle text-green-500 text-xl"
+        ></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 10: Caixa vermelha com etiqueta branca, sobre uma mesa de madeira escura"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/1aa2a13d-1741-47ae-23f5-6a6bce120886.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #010</span>
+          <span class="text-sm text-gray-600">Av. Central, 707 - Jardim América</span>
+          <span class="text-xs text-yellow-500 font-semibold mt-1"
+            >Status: Em trânsito</span
+          >
+        </div>
+        <i aria-hidden="true" class="fas fa-truck text-yellow-500 text-xl"></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 11: Caixa marrom com fita preta, sobre um fundo cinza claro"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/179e216d-5f3d-41cd-c6a8-414bb094e0e7.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #011</span>
+          <span class="text-sm text-gray-600">Rua das Orquídeas, 808 - Vila Nova</span>
+          <span class="text-xs text-green-600 font-semibold mt-1">Status: Entregue</span>
+        </div>
+        <i
+          aria-hidden="true"
+          class="fas fa-check-circle text-green-500 text-xl"
+        ></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 12: Caixa branca com fita azul, em cima de um carrinho de entrega"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/2dc3d08d-0eb3-4f6f-1ffd-39a022aabe2c.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #012</span>
+          <span class="text-sm text-gray-600">Av. das Acácias, 909 - Bairro Alto</span>
+          <span class="text-xs text-yellow-500 font-semibold mt-1"
+            >Status: Em trânsito</span
+          >
+        </div>
+        <i aria-hidden="true" class="fas fa-truck text-yellow-500 text-xl"></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 13: Caixa azul clara com etiqueta vermelha, sobre uma superfície branca"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/f1b42053-cda2-4d88-fac1-58f7b07a02b0.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #013</span>
+          <span class="text-sm text-gray-600">Rua do Sol, 1010 - Jardim das Flores</span>
+          <span class="text-xs text-red-600 font-semibold mt-1">Status: Atrasado</span>
+        </div>
+        <i
+          aria-hidden="true"
+          class="fas fa-exclamation-circle text-red-600 text-xl"
+        ></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 14: Caixa verde com fita amarela, em cima de uma esteira transportadora"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/c78ffebf-dd40-4262-9d06-d298cd01d0ad.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #014</span>
+          <span class="text-sm text-gray-600">Av. das Nações, 1111 - Centro Empresarial</span>
+          <span class="text-xs text-green-600 font-semibold mt-1">Status: Entregue</span>
+        </div>
+        <i
+          aria-hidden="true"
+          class="fas fa-check-circle text-green-500 text-xl"
+        ></i>
+      </li>
+      <li
+        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
+      >
+        <img
+          alt="Pacote 15: Caixa vermelha com etiqueta branca, sobre uma mesa de madeira clara"
+          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          height="60"
+          loading="lazy"
+          src="https://storage.googleapis.com/a1aa/image/1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d.jpg"
+          width="60"
+        />
+        <div class="flex flex-col flex-grow">
+          <span class="font-semibold text-gray-900">Entrega #015</span>
+          <span class="text-sm text-gray-600">Rua das Acácias, 1515 - Jardim Primavera</span>
+          <span class="text-xs text-yellow-500 font-semibold mt-1"
+            >Status: Em trânsito</span
+          >
+        </div>
+        <i aria-hidden="true" class="fas fa-truck text-yellow-500 text-xl"></i>
+      </li>
+    </ul>
+  </section>
+</body>
+</html>

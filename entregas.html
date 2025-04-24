@@ -1,0 +1,474 @@
+<html>
+<head>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .pull-down-icon {
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+        }
+        .pull-down-icon i {
+            font-size: 16px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        .header-container {
+            display: flex;
+            justify-content: center;
+            padding: 0 10px;
+            margin-top: 10px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #d6d8db;
+            padding: 5px 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: white;
+            position: relative;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 100%;
+        }
+        .header i {
+            font-size: 24px;
+            cursor: pointer;
+            color: #000;
+            position: relative;
+        }
+        .header .title-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+        }
+        .header .title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #000;
+        }
+        .header .badge {
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 5px 10px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .header .button {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .header .button:hover {
+            background-color: #138496;
+        }
+        .filter-menu {
+            display: none;
+            position: absolute;
+            top: 40px; /* Adjusted to be below the filter icon */
+            right: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        .filter-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 10px;
+        }
+        .filter-menu ul li {
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            color: #000;
+        }
+        .filter-menu ul li:hover {
+            background-color: #f5f5f5;
+        }
+        .delivery-item {
+            background-color: #ffffff;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .delivery-item .details {
+            flex-grow: 1;
+            min-width: 200px;
+            margin-left: 40px; /* Space for the checkbox */
+        }
+        .delivery-item .details .title {
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .delivery-item .details .title i {
+            margin-right: 10px;
+        }
+        .delivery-item .details .info {
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        .delivery-item .price {
+            background-color: #17a2b8;
+            color: white;
+            border-radius: 15px;
+            padding: 5px 10px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .checkbox {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+        .checkbox .checkmark {
+            position: relative;
+            height: 20px;
+            width: 20px;
+            background-color: #17a2b8;
+            border-radius: 5px;
+            border: 2px solid #138496;
+        }
+        .checkbox:hover input ~ .checkmark {
+            background-color: #138496;
+        }
+        .checkbox input:checked ~ .checkmark {
+            background-color: #17a2b8;
+        }
+        .checkbox .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+        .checkbox input:checked ~ .checkmark:after {
+            display: block;
+        }
+        .checkbox .checkmark:after {
+            left: 7px;
+            top: 3px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+        @media (max-width: 600px) {
+            .header .title {
+                font-size: 12px;
+            }
+            .header .button {
+                padding: 3px 8px;
+                font-size: 10px;
+            }
+            .header i {
+                font-size: 20px;
+            }
+            .header .badge {
+                padding: 3px 7px;
+                font-size: 12px;
+            }
+            .delivery-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .delivery-item .price {
+                margin-top: 0;
+                width: auto;
+                justify-content: flex-start;
+                padding: 3px 8px;
+                font-size: 12px;
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+    </style>
+    <script>
+        function handleCheckboxChange() {
+            const outzCheckbox = document.getElementById('outz-checkbox');
+            const rosiCheckbox = document.getElementById('rosi-checkbox');
+            const drogasilCheckbox = document.getElementById('drogasil-checkbox');
+            const sweetCheckbox = document.getElementById('sweet-checkbox');
+
+            const outzCard = document.getElementById('outz-card');
+            const rosiCard = document.getElementById('rosi-card');
+            const drogasilCard = document.getElementById('drogasil-card');
+            const sweetCard = document.getElementById('sweet-card');
+
+            if (outzCheckbox.checked) {
+                outzCard.style.display = 'flex';
+                drogasilCard.style.display = 'flex';
+                rosiCard.style.display = 'none';
+                sweetCard.style.display = 'none';
+            } else if (rosiCheckbox.checked) {
+                outzCard.style.display = 'none';
+                drogasilCard.style.display = 'none';
+                rosiCard.style.display = 'flex';
+                sweetCard.style.display = 'flex';
+            } else if (drogasilCheckbox.checked) {
+                outzCard.style.display = 'flex';
+                drogasilCard.style.display = 'flex';
+                rosiCard.style.display = 'none';
+                sweetCard.style.display = 'none';
+            } else if (sweetCheckbox.checked) {
+                outzCard.style.display = 'none';
+                drogasilCard.style.display = 'none';
+                rosiCard.style.display = 'flex';
+                sweetCard.style.display = 'flex';
+            } else {
+                outzCard.style.display = 'flex';
+                rosiCard.style.display = 'flex';
+                drogasilCard.style.display = 'flex';
+                sweetCard.style.display = 'flex';
+            }
+        }
+
+        function groupDeliveries() {
+            const outzCheckbox = document.getElementById('outz-checkbox');
+            const rosiCheckbox = document.getElementById('rosi-checkbox');
+            const drogasilCheckbox = document.getElementById('drogasil-checkbox');
+            const sweetCheckbox = document.getElementById('sweet-checkbox');
+
+            const outzCard = document.getElementById('outz-card');
+            const rosiCard = document.getElementById('rosi-card');
+            const drogasilCard = document.getElementById('drogasil-card');
+            const sweetCard = document.getElementById('sweet-card');
+
+            const groupedCard = document.getElementById('grouped-card');
+            const groupedDetails = document.getElementById('grouped-details');
+            const groupedPrice = document.getElementById('grouped-price');
+
+            const groupButton = document.getElementById('group-button');
+
+            let selectedCards = [];
+            let totalPrice = 0;
+
+            if (outzCheckbox.checked) {
+                selectedCards.push(outzCard);
+                totalPrice += 8;
+            }
+            if (rosiCheckbox.checked) {
+                selectedCards.push(rosiCard);
+                totalPrice += 13;
+            }
+            if (drogasilCheckbox.checked) {
+                selectedCards.push(drogasilCard);
+                totalPrice += 7;
+            }
+            if (sweetCheckbox.checked) {
+                selectedCards.push(sweetCard);
+                totalPrice += 15;
+            }
+
+            if (selectedCards.length > 1) {
+                groupedDetails.innerHTML = '';
+                selectedCards.forEach(card => {
+                    groupedDetails.innerHTML += card.querySelector('.details').innerHTML + '<br>';
+                });
+                groupedPrice.innerHTML = 'R$ ' + totalPrice.toFixed(2);
+                groupedCard.style.display = 'flex';
+
+                outzCard.style.display = 'none';
+                rosiCard.style.display = 'none';
+                drogasilCard.style.display = 'none';
+                sweetCard.style.display = 'none';
+
+                groupButton.innerHTML = 'DESAGRUPAR';
+            } else {
+                groupedCard.style.display = 'none';
+                groupButton.innerHTML = 'AGRUPAR';
+            }
+        }
+
+        function ungroupDeliveries() {
+            const outzCard = document.getElementById('outz-card');
+            const rosiCard = document.getElementById('rosi-card');
+            const drogasilCard = document.getElementById('drogasil-card');
+            const sweetCard = document.getElementById('sweet-card');
+
+            const groupedCard = document.getElementById('grouped-card');
+            const groupButton = document.getElementById('group-button');
+
+            groupedCard.style.display = 'none';
+            outzCard.style.display = 'flex';
+            rosiCard.style.display = 'flex';
+            drogasilCard.style.display = 'flex';
+            sweetCard.style.display = 'flex';
+
+            groupButton.innerHTML = 'AGRUPAR';
+        }
+
+        function toggleGroup() {
+            const groupButton = document.getElementById('group-button');
+            if (groupButton.innerHTML === 'AGRUPAR') {
+                groupDeliveries();
+            } else {
+                ungroupDeliveries();
+            }
+        }
+
+        function toggleFilterMenu() {
+            const filterMenu = document.getElementById('filter-menu');
+            filterMenu.style.display = filterMenu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function filterDeliveries(criteria) {
+            const deliveries = document.querySelectorAll('.delivery-item');
+            const deliveryArray = Array.from(deliveries).filter(item => item.id !== 'grouped-card');
+
+            deliveryArray.sort((a, b) => {
+                const aValue = getCriteriaValue(a, criteria);
+                const bValue = getCriteriaValue(b, criteria);
+                return aValue - bValue;
+            });
+
+            const container = document.body;
+            deliveryArray.forEach(item => container.appendChild(item));
+        }
+
+        function getCriteriaValue(item, criteria) {
+            switch (criteria) {
+                case 'valor':
+                    return parseFloat(item.querySelector('.price').textContent.replace('R$', '').replace(',', '.'));
+                case 'km':
+                    return parseFloat(item.querySelector('.title').textContent.match(/(\d+(\.\d+)?)(?=km)/)[0]);
+                case 'tempo':
+                    return new Date('1970-01-01T' + item.querySelector('.info:last-child').textContent.split(' - ')[1] + 'Z').getTime();
+                default:
+                    return 0;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="pull-down-icon">
+        <i class="fas fa-chevron-down"></i>
+    </div>
+    <div class="header-container">
+        <div class="header">
+            <button class="button" id="group-button" onclick="toggleGroup()">AGRUPAR</button>
+            <div class="title-container">
+                <div class="title">
+                    Procurando Entregas
+                    <span class="badge">4</span>
+                </div>
+            </div>
+            <i class="fas fa-sliders-h" onclick="toggleFilterMenu()"></i>
+            <div class="filter-menu" id="filter-menu">
+                <ul>
+                    <li onclick="filterDeliveries('valor')">Valor</li>
+                    <li onclick="filterDeliveries('km')">Km</li>
+                    <li onclick="filterDeliveries('tempo')">Tempo</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="delivery-item" id="outz-card">
+        <label class="checkbox">
+            <input id="outz-checkbox" onclick="handleCheckboxChange()" type="checkbox"/>
+            <span class="checkmark"></span>
+        </label>
+        <div class="details">
+            <div class="title">
+                <i class="fas fa-hamburger"></i> Outz - 1.3km
+            </div>
+            <div class="info"><strong>Coleta:</strong> Rua Pernambuco, 458</div>
+            <div class="info"><strong>Entrega:</strong> Avenida Rachid Neder, 46</div>
+            <div class="info"><strong>Retorno:</strong> Rua Pernambuco, 458</div>
+            <div class="info"><strong>Observação:</strong> Lanche - 13:09</div>
+        </div>
+        <div class="price">R$ 8,00</div>
+    </div>
+    <div class="delivery-item" id="rosi-card">
+        <label class="checkbox">
+            <input id="rosi-checkbox" onclick="handleCheckboxChange()" type="checkbox"/>
+            <span class="checkmark"></span>
+        </label>
+        <div class="details">
+            <div class="title">
+                <i class="fas fa-tshirt"></i> Rosi - 9km
+            </div>
+            <div class="info"><strong>Coleta:</strong> R. Maracaju, 665</div>
+            <div class="info"><strong>Entrega:</strong> R. Catumbi, 26</div>
+            <div class="info"><strong>Observação:</strong> Roupas - 13:06</div>
+        </div>
+        <div class="price">R$ 13,00</div>
+    </div>
+    <div class="delivery-item" id="drogasil-card">
+        <label class="checkbox">
+            <input id="drogasil-checkbox" onclick="handleCheckboxChange()" type="checkbox"/>
+            <span class="checkmark"></span>
+        </label>
+        <div class="details">
+            <div class="title">
+                <i class="fas fa-pills"></i> Drogasil - 1km
+            </div>
+            <div class="info"><strong>Coleta:</strong> R. José Antônio, 3090</div>
+            <div class="info"><strong>Entrega:</strong> R. Pernambuco, 499</div>
+            <div class="info"><strong>Observação:</strong> Remédio - 13:14</div>
+        </div>
+        <div class="price">R$ 7,00</div>
+    </div>
+    <div class="delivery-item" id="sweet-card">
+        <label class="checkbox">
+            <input id="sweet-checkbox" onclick="handleCheckboxChange()" type="checkbox"/>
+            <span class="checkmark"></span>
+        </label>
+        <div class="details">
+            <div class="title">
+                <i class="fas fa-coffee"></i> Sweet - 11km
+            </div>
+            <div class="info"><strong>Coleta:</strong> R. Catumbi, 106</div>
+            <div class="info"><strong>Entrega:</strong> R. Luiz Arruda Neto, 468</div>
+            <div class="info"><strong>Observação:</strong> Almoço - 13:16</div>
+        </div>
+        <div class="price">R$ 15,00</div>
+    </div>
+    <div class="delivery-item" id="grouped-card" style="display: none;">
+        <div class="details" id="grouped-details"></div>
+        <div class="price" id="grouped-price"></div>
+    </div>
+</body>
+</html>

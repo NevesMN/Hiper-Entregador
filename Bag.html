@@ -1,0 +1,524 @@
+<html class="scroll-smooth" lang="pt-BR">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   BagPubli Ativa
+  </title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&amp;family=Montserrat:ital,wght@1,700&amp;display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+   body {
+     font-family: "Montserrat", sans-serif;
+   }
+   /* Custom slider thumb for better visibility */
+   input[type=range]::-webkit-slider-thumb {
+     -webkit-appearance: none;
+     appearance: none;
+     width: 28px;
+     height: 28px;
+     background: #059669; /* Tailwind green-600 */
+     cursor: pointer;
+     border-radius: 50%;
+     border: 2px solid #065f46; /* Tailwind green-800 */
+     transition: background-color 0.3s ease;
+   }
+   input[type=range]::-webkit-slider-thumb:hover {
+     background: #047857; /* Tailwind green-700 */
+   }
+   input[type=range]::-moz-range-thumb {
+     width: 28px;
+     height: 28px;
+     background: #059669;
+     cursor: pointer;
+     border-radius: 50%;
+     border: 2px solid #065f46;
+     transition: background-color 0.3s ease;
+   }
+   input[type=range]::-moz-range-thumb:hover {
+     background: #047857;
+   }
+  </style>
+ </head>
+ <body class="bg-white p-4 sm:p-6">
+  <main class="max-w-md mx-auto space-y-8">
+   <header>
+    <h1 class="cursor-pointer text-black text-center text-2xl sm:text-3xl font-extrabold italic rounded-tl-3xl rounded-tr-3xl py-4 px-4 sm:px-0 select-none" id="headerTitle" style="font-family: 'Montserrat', sans-serif" title="Clique para alternar status">
+     BagPubli
+     <span id="statusText">
+      Ativa
+     </span>
+    </h1>
+   </header>
+   <section aria-label="Status and info container" class="bg-[#E3E3E3] rounded-3xl p-6 flex flex-col space-y-6">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+     <div class="flex items-center justify-center sm:justify-start flex-wrap gap-4 w-full sm:w-auto">
+      <button aria-label="Timer" class="bg-white rounded-lg w-20 h-20 sm:w-24 sm:h-24 flex flex-col items-center justify-center shadow-md hover:shadow-lg transition-shadow select-none" type="button">
+       <i class="fas fa-stopwatch text-red-600 text-2xl sm:text-3xl mb-1"></i>
+       <span class="font-bold text-sm sm:text-base" id="timer">00:00</span>
+      </button>
+      <button aria-label="Conectar" class="bg-white rounded-lg w-20 h-20 sm:w-24 sm:h-24 flex flex-col items-center justify-center shadow-md hover:shadow-lg transition-shadow select-none text-black font-bold" type="button">
+       <i class="fas fa-plug text-green-600 text-2xl sm:text-3xl mb-1"></i>
+       <span class="text-sm sm:text-base">Conectar</span>
+      </button>
+      <button aria-label="Earnings" class="bg-white rounded-lg w-20 h-20 sm:w-24 sm:h-24 flex flex-col items-center justify-center shadow-md hover:shadow-lg transition-shadow select-none" type="button">
+       <div class="flex items-center space-x-1">
+        <span class="font-bold text-base text-[#1B5E20]">R$</span>
+       </div>
+       <span class="font-bold text-sm sm:text-base text-black">23,50</span>
+      </button>
+     </div>
+     <div aria-label="Announcement" class="bg-white rounded-full flex items-center space-x-3 px-5 py-3 max-w-full sm:max-w-[60%] truncate justify-center sm:justify-start shadow-md" id="announcementStatus">
+      <i class="fas fa-store text-red-700 text-xl sm:text-2xl flex-shrink-0"></i>
+      <span class="font-bold text-base sm:text-lg truncate" id="announcementText">Anunciando Norte Sul Moto Peças</span>
+     </div>
+    </div>
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-6 sm:space-y-0 sm:space-x-6">
+     <div class="flex flex-col items-center space-y-2 sm:flex-shrink-0">
+      <div aria-label="Battery icon" class="relative w-[70px] h-[125px] rounded-[12px] border-[8px] border-gray-700 flex justify-center items-center" id="batteryIcon">
+       <div class="absolute top-[-15px] w-[30px] h-[15px] rounded-t-[10px] bg-gray-700"></div>
+       <div class="w-[55px] h-[105px] bg-[#7ED05A] flex justify-center items-center transition-colors duration-300" id="batteryInner">
+        <i class="fas fa-bolt text-white text-[45px] sm:text-[60px]"></i>
+       </div>
+      </div>
+      <span class="font-extrabold text-lg sm:text-xl select-none">100%</span>
+     </div>
+     <div class="flex flex-col space-y-4 max-w-full sm:max-w-[40%] select-none font-bold text-[14px] sm:text-base">
+      <div class="flex justify-between space-x-6">
+       <div class="flex items-center space-x-1 text-[#7ED05A] w-1/2">
+        <i class="fas fa-check-circle flex-shrink-0"></i>
+        <span>Conexão</span>
+       </div>
+       <div class="flex items-center space-x-1 text-[#7ED05A] w-1/2">
+        <i class="fas fa-check-circle flex-shrink-0"></i>
+        <span>Energia</span>
+       </div>
+      </div>
+      <div class="flex justify-between space-x-6">
+       <div class="flex items-center space-x-1 text-[#7ED05A] w-1/2">
+        <i class="fas fa-check-circle flex-shrink-0"></i>
+        <span>Publicidade</span>
+       </div>
+       <div class="flex items-center space-x-1 text-[#7ED05A] w-1/2">
+        <i class="fas fa-check-circle flex-shrink-0"></i>
+        <span>Rastreio Real</span>
+       </div>
+      </div>
+     </div>
+     <div class="flex space-x-4 items-center sm:items-start">
+      <button aria-label="Criar" class="bg-[#007a29] rounded-2xl w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex flex-col items-center justify-center text-white font-bold text-[14px] sm:text-sm shadow-md hover:bg-[#005917] transition-colors select-none" type="button">
+       <i class="fas fa-plus-circle text-white text-3xl sm:text-4xl mb-1"></i>
+       Criar
+      </button>
+      <button aria-label="Ver logs" class="bg-white rounded-2xl w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex flex-col items-center justify-center text-black font-bold text-[14px] sm:text-sm shadow-md hover:bg-gray-200 transition-colors select-none" id="logsButton" title="Ver logs de início e fim do temporizador" type="button">
+       <i class="fab fa-windows text-blue-600 text-3xl sm:text-4xl mb-1"></i>
+       Logs
+      </button>
+      <button aria-label="Bag" class="bg-white rounded-2xl w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex flex-col items-center justify-center text-black font-bold text-[14px] sm:text-sm shadow-md hover:bg-gray-200 transition-colors select-none" id="bagButton" type="button">
+       <i class="fas fa-shopping-bag text-green-600 text-3xl sm:text-4xl mb-1"></i>
+       Bag
+      </button>
+      <button aria-label="Sacar button" class="bg-[#009933] rounded-2xl w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] flex flex-col items-center justify-center text-white font-extrabold text-[12px] sm:text-[14px] shadow-lg transition-transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#007a29]" type="button">
+       <i class="fas fa-money-bill-wave text-black text-4xl sm:text-5xl mb-1"></i>
+       SACAR
+      </button>
+     </div>
+    </div>
+   </section>
+   <section aria-label="Buscar Publicidade container" class="bg-[#E3E3E3] rounded-3xl p-4 sm:p-6 relative min-h-[200px] flex flex-col">
+    <h2 class="font-bold text-[14px] sm:text-sm text-center mb-4 select-none">
+     Buscar Publicidade
+    </h2>
+    <div class="flex flex-wrap justify-center gap-4" id="adsContainer">
+     <div class="flex flex-col rounded-lg shadow-md w-[150px] cursor-pointer ad-item" data-alt="Entregador de delivery com mochila térmica vermelha, entregando comida em caixa para cliente em porta residencial" data-description="Entregador de delivery com mochila térmica vermelha, entregando comida em caixa para cliente em porta residencial" data-img="https://storage.googleapis.com/a1aa/image/4f21007e-8b5d-4f13-2075-5fb966992c9c.jpg" data-title="Publicidade 1">
+      <img alt="Publicidade 1: Entregador de delivery com mochila térmica vermelha, entregando comida em caixa para cliente em porta residencial" class="rounded-t-lg w-full h-[100px] object-cover" height="400" src="https://storage.googleapis.com/a1aa/image/4f21007e-8b5d-4f13-2075-5fb966992c9c.jpg" width="600"/>
+      <div class="bg-white px-2 py-1 rounded-b-lg flex justify-between items-center text-xs font-bold text-gray-800">
+       <span>3h</span>
+       <span>R$5,00</span>
+       <i class="fas fa-volume-up text-red-600 ml-1"></i>
+      </div>
+     </div>
+     <div class="flex flex-col rounded-lg shadow-md w-[150px] cursor-pointer ad-item" data-alt="Prato de comida caseira com arroz, feijão, carne e salada, servido em embalagem para delivery" data-description="Prato de comida caseira com arroz, feijão, carne e salada, servido em embalagem para delivery" data-img="https://storage.googleapis.com/a1aa/image/f1529c74-8636-4dc0-3c63-39bfb2e10214.jpg" data-title="Publicidade 2">
+      <img alt="Publicidade 2: Prato de comida caseira com arroz, feijão, carne e salada, servido em embalagem para delivery" class="rounded-t-lg w-full h-[100px] object-cover" height="400" src="https://storage.googleapis.com/a1aa/image/f1529c74-8636-4dc0-3c63-39bfb2e10214.jpg" width="600"/>
+      <div class="bg-white px-2 py-1 rounded-b-lg flex justify-between items-center text-xs font-bold text-gray-800">
+       <span>8h</span>
+       <span>R$12,00</span>
+      </div>
+     </div>
+     <div class="flex flex-col rounded-lg shadow-md w-[150px] cursor-pointer ad-item" data-alt="Pizza com queijo derretido e borda recheada em caixa de papelão para entrega" data-description="Pizza com queijo derretido e borda recheada em caixa de papelão para entrega" data-img="https://storage.googleapis.com/a1aa/image/6356360c-4d42-46d2-bf3b-28f949a52d32.jpg" data-title="Publicidade 3">
+      <img alt="Publicidade 3: Pizza com queijo derretido e borda recheada em caixa de papelão para entrega" class="rounded-t-lg w-full h-[100px] object-cover" height="400" src="https://storage.googleapis.com/a1aa/image/6356360c-4d42-46d2-bf3b-28f949a52d32.jpg" width="600"/>
+      <div class="bg-white px-2 py-1 rounded-b-lg flex justify-between items-center text-xs font-bold text-gray-800">
+       <span>5h</span>
+       <span>R$8,00</span>
+      </div>
+     </div>
+     <div class="flex flex-col rounded-lg shadow-md w-[150px] cursor-pointer ad-item" data-alt="Hambúrguer artesanal com queijo, alface e tomate, embalado para entrega em restaurante de fast food" data-description="Hambúrguer artesanal com queijo, alface e tomate, embalado para entrega em restaurante de fast food" data-img="https://storage.googleapis.com/a1aa/image/bd626eed-b64c-4232-d79f-3c18abdcf00d.jpg" data-title="Publicidade 4">
+      <img alt="Publicidade 4: Hambúrguer artesanal com queijo, alface e tomate, embalado para entrega em restaurante de fast food" class="rounded-t-lg w-full h-[100px] object-cover" height="400" src="https://storage.googleapis.com/a1aa/image/bd626eed-b64c-4232-d79f-3c18abdcf00d.jpg" width="600"/>
+      <div class="bg-white px-2 py-1 rounded-b-lg flex justify-between items-center text-xs font-bold text-gray-800">
+       <span>4h</span>
+       <span>R$7,50</span>
+      </div>
+     </div>
+     <div class="flex flex-col rounded-lg shadow-md w-[150px] cursor-pointer ad-item" data-alt="Bebidas geladas em copos plásticos com canudo, prontas para entrega em serviço de delivery" data-description="Bebidas geladas em copos plásticos com canudo, prontas para entrega em serviço de delivery" data-img="https://storage.googleapis.com/a1aa/image/ca63082b-12bc-443f-df11-951238e8d859.jpg" data-title="Publicidade 5">
+      <img alt="Publicidade 5: Bebidas geladas em copos plásticos com canudo, prontas para entrega em serviço de delivery" class="rounded-t-lg w-full h-[100px] object-cover" height="400" src="https://storage.googleapis.com/a1aa/image/ca63082b-12bc-443f-df11-951238e8d859.jpg" width="600"/>
+      <div class="bg-white px-2 py-1 rounded-b-lg flex justify-between items-center text-xs font-bold text-gray-800">
+       <span>6h</span>
+       <span>R$9,00</span>
+      </div>
+     </div>
+     <div class="flex flex-col rounded-lg shadow-md w-[150px] cursor-pointer ad-item" data-alt="Entregador em bicicleta com mochila térmica, pedalando em rua urbana para entrega de comida" data-description="Entregador em bicicleta com mochila térmica, pedalando em rua urbana para entrega de comida" data-img="https://storage.googleapis.com/a1aa/image/29714286-831e-44c9-3959-583b5b454947.jpg" data-title="Publicidade 6">
+      <img alt="Publicidade 6: Entregador em bicicleta com mochila térmica, pedalando em rua urbana para entrega de comida" class="rounded-t-lg w-full h-[100px] object-cover" height="400" src="https://storage.googleapis.com/a1aa/image/29714286-831e-44c9-3959-583b5b454947.jpg" width="600"/>
+      <div class="bg-white px-2 py-1 rounded-b-lg flex justify-between items-center text-xs font-bold text-gray-800">
+       <span>7h</span>
+       <span>R$10,00</span>
+      </div>
+     </div>
+    </div>
+  </section>
+  </main>
+  <!-- Logs Modal -->
+  <div aria-labelledby="logsModalTitle" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" id="logsModal" role="dialog">
+   <div class="bg-white rounded-2xl max-w-md w-full p-6 max-h-[80vh] overflow-y-auto shadow-lg">
+    <h3 class="text-xl font-bold mb-4 text-center" id="logsModalTitle">Logs do Temporizador</h3>
+    <ul class="list-disc list-inside space-y-2 text-sm text-gray-800 max-h-[60vh] overflow-y-auto" id="logsList"></ul>
+    <div class="mt-6 flex justify-center space-x-4">
+     <button class="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition" id="clearLogsBtn" type="button">Limpar Logs</button>
+     <button class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-400 transition" id="closeLogsBtn" type="button">Fechar</button>
+    </div>
+   </div>
+  </div>
+  <!-- Preview Modal -->
+  <div aria-labelledby="previewModalTitle" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4" id="previewModal" role="dialog">
+   <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-lg relative flex flex-col">
+    <button aria-label="Fechar preview" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 focus:outline-none" id="closePreviewBtn" type="button">
+     <i class="fas fa-times text-2xl"></i>
+    </button>
+    <h3 class="text-2xl font-bold text-center mt-8 mb-4 px-6" id="previewModalTitle">Preview do Anúncio</h3>
+    <div class="flex flex-col items-center px-6 pb-6 space-y-6">
+     <div class="relative w-full max-w-[320px] aspect-[3/4] bg-gray-100 rounded-2xl shadow-lg overflow-hidden">
+      <img alt="Moto Bag com tela LED para anúncio" class="absolute inset-0 w-full h-full object-cover" height="426" src="https://storage.googleapis.com/a1aa/image/3938a7ea-ed79-4c77-7489-a7828328021e.jpg" width="320"/>
+      <div class="absolute top-[20%] left-[10%] w-[80%] h-[40%] bg-black bg-opacity-80 rounded-lg flex items-center justify-center overflow-hidden p-2" id="adPreviewContent">
+       <img alt="Imagem do anúncio na tela LED da moto Bag" class="max-w-full max-h-full object-contain rounded" id="adPreviewImage" src=""/>
+      </div>
+     </div>
+     <p class="text-center text-gray-700 font-semibold" id="adPreviewDescription"></p>
+     <button id="acceptAdBtn" type="button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-2xl shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Aceitar</button>
+    </div>
+   </div>
+  </div>
+  <!-- Bag Max Capacity Modal -->
+  <div aria-labelledby="bagMaxCapacityTitle" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 p-4" id="bagMaxCapacityModal" role="dialog">
+   <div class="bg-white rounded-2xl max-w-md w-full p-6 max-h-[80vh] overflow-y-auto shadow-lg flex flex-col">
+    <h3 class="text-xl font-bold mb-4 text-center" id="bagMaxCapacityTitle">Configurar Capacidade Máxima da Bag</h3>
+    <p class="text-center mb-6 text-gray-700">Qual é a quantidade máxima de itens em litros que você consegue transportar?</p>
+    <div class="flex flex-col items-center space-y-6">
+     <input type="range" id="maxCapacityRange" min="10" max="200" step="1" value="50" class="w-full" aria-valuemin="10" aria-valuemax="200" aria-valuenow="50" aria-label="Controle deslizante para capacidade máxima da bag"/>
+     <div class="text-4xl font-extrabold text-green-700 select-none" id="maxCapacityValue">50 L</div>
+     <div class="w-full bg-gray-300 rounded-full h-6 overflow-hidden shadow-inner">
+      <div id="maxCapacityProgressBar" class="h-6 bg-green-600 rounded-full transition-all duration-300" style="width: 25%;"></div>
+     </div>
+     <div class="flex justify-center space-x-4 pt-4 w-full">
+      <button id="saveMaxCapacityBtn" type="button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-8 rounded-lg shadow transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Salvar</button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <!-- Bag Space Modal -->
+  <div aria-labelledby="bagModalTitle" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4" id="bagModal" role="dialog">
+   <div class="bg-white rounded-2xl max-w-md w-full p-6 max-h-[80vh] overflow-y-auto shadow-lg flex flex-col">
+    <h3 class="text-xl font-bold mb-4 text-center" id="bagModalTitle">Espaço Disponível na Bag</h3>
+    <div class="flex flex-col items-center space-y-6">
+     <div class="w-full px-4">
+      <label for="bagSpace" class="block font-semibold text-gray-700 mb-2 text-center">Informe o espaço disponível (em litros):</label>
+      <input type="range" id="bagSpace" name="bagSpace" min="0" max="100" step="0.5" value="50" class="w-full" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-label="Controle deslizante para espaço disponível na bag"/>
+     </div>
+     <div class="text-4xl font-extrabold text-green-700 select-none" id="bagSpaceValue">50 L</div>
+     <div class="w-full bg-gray-300 rounded-full h-6 overflow-hidden shadow-inner">
+      <div id="bagProgressBar" class="h-6 bg-green-600 rounded-full transition-all duration-300" style="width: 50%;"></div>
+     </div>
+     <div class="flex justify-center space-x-4 pt-4 w-full">
+      <button id="saveBagSpaceBtn" type="button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-8 rounded-lg shadow transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Salvar</button>
+      <button id="closeBagBtn" type="button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-8 rounded-lg shadow transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">Cancelar</button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+   const headerTitle = document.getElementById("headerTitle");
+   const statusText = document.getElementById("statusText");
+   const batteryInner = document.getElementById("batteryInner");
+   const timerSpan = document.getElementById("timer");
+   const logsButton = document.getElementById("logsButton");
+   const logsModal = document.getElementById("logsModal");
+   const logsList = document.getElementById("logsList");
+   const closeLogsBtn = document.getElementById("closeLogsBtn");
+   const clearLogsBtn = document.getElementById("clearLogsBtn");
+
+   const previewModal = document.getElementById("previewModal");
+   const closePreviewBtn = document.getElementById("closePreviewBtn");
+   const adPreviewImage = document.getElementById("adPreviewImage");
+   const adPreviewDescription = document.getElementById("adPreviewDescription");
+   const previewModalTitle = document.getElementById("previewModalTitle");
+   const acceptAdBtn = document.getElementById("acceptAdBtn");
+
+   const announcementText = document.getElementById("announcementText");
+
+   const bagButton = document.getElementById("bagButton");
+   const bagModal = document.getElementById("bagModal");
+   const closeBagBtn = document.getElementById("closeBagBtn");
+   const bagSpaceInput = document.getElementById("bagSpace");
+   const bagSpaceValue = document.getElementById("bagSpaceValue");
+   const bagProgressBar = document.getElementById("bagProgressBar");
+   const saveBagSpaceBtn = document.getElementById("saveBagSpaceBtn");
+
+   const bagMaxCapacityModal = document.getElementById("bagMaxCapacityModal");
+   const maxCapacityRange = document.getElementById("maxCapacityRange");
+   const maxCapacityValue = document.getElementById("maxCapacityValue");
+   const maxCapacityProgressBar = document.getElementById("maxCapacityProgressBar");
+   const saveMaxCapacityBtn = document.getElementById("saveMaxCapacityBtn");
+
+   headerTitle.classList.add("bg-[#7ED05A]");
+
+   const logs = [];
+
+   let secondsElapsed = 0;
+   let timerInterval;
+   let timerRunning = false;
+
+   function formatTime(seconds) {
+     const m = Math.floor(seconds / 60)
+       .toString()
+       .padStart(2, "0");
+     const s = (seconds % 60).toString().padStart(2, "0");
+     return `${m}:${s}`;
+   }
+
+   function updateTimer() {
+     secondsElapsed++;
+     timerSpan.textContent = formatTime(secondsElapsed);
+   }
+
+   function startTimer() {
+     if (!timerRunning) {
+       timerRunning = true;
+       logs.push({ type: "Iniciado", time: new Date() });
+       timerInterval = setInterval(updateTimer, 1000);
+     }
+   }
+
+   function stopTimer() {
+     if (timerRunning) {
+       timerRunning = false;
+       clearInterval(timerInterval);
+       logs.push({ type: "Finalizado", time: new Date() });
+     }
+   }
+
+   function resetTimer() {
+     stopTimer();
+     secondsElapsed = 0;
+     timerSpan.textContent = formatTime(secondsElapsed);
+     startTimer();
+   }
+
+   headerTitle.addEventListener("click", () => {
+     if (statusText.textContent === "Ativa") {
+       statusText.textContent = "Offline";
+       batteryInner.classList.remove("bg-[#7ED05A]");
+       batteryInner.classList.add("bg-red-600");
+
+       headerTitle.classList.remove("bg-[#7ED05A]");
+       headerTitle.classList.add("bg-red-600");
+
+       stopTimer();
+     } else {
+       statusText.textContent = "Ativa";
+       batteryInner.classList.remove("bg-red-600");
+       batteryInner.classList.add("bg-[#7ED05A]");
+
+       headerTitle.classList.remove("bg-red-600");
+       headerTitle.classList.add("bg-[#7ED05A]");
+
+       resetTimer();
+     }
+   });
+
+   startTimer();
+
+   logsButton.addEventListener("click", () => {
+     renderLogs();
+     logsModal.classList.remove("hidden");
+     logsModal.classList.add("flex");
+   });
+
+   closeLogsBtn.addEventListener("click", () => {
+     logsModal.classList.add("hidden");
+     logsModal.classList.remove("flex");
+   });
+
+   clearLogsBtn.addEventListener("click", () => {
+     logs.length = 0;
+     renderLogs();
+   });
+
+   function renderLogs() {
+     logsList.innerHTML = "";
+     if (logs.length === 0) {
+       const li = document.createElement("li");
+       li.textContent = "Nenhum log disponível.";
+       logsList.appendChild(li);
+       return;
+     }
+     logs.forEach((log) => {
+       const li = document.createElement("li");
+       const timeString = log.time.toLocaleString("pt-BR", {
+         dateStyle: "short",
+         timeStyle: "medium",
+       });
+       li.textContent = `${log.type} em ${timeString}`;
+       logsList.appendChild(li);
+     });
+   }
+
+   // Preview modal open/close logic
+   function openPreviewModal(title, imgSrc, alt, description) {
+     previewModalTitle.textContent = title;
+     adPreviewImage.src = imgSrc;
+     adPreviewImage.alt = alt;
+     adPreviewDescription.textContent = description;
+     previewModal.classList.remove("hidden");
+     previewModal.classList.add("flex");
+     document.body.style.overflow = "hidden"; // prevent background scroll
+   }
+
+   function closePreviewModal() {
+     previewModal.classList.add("hidden");
+     previewModal.classList.remove("flex");
+     adPreviewImage.src = "";
+     adPreviewImage.alt = "";
+     adPreviewDescription.textContent = "";
+     document.body.style.overflow = ""; // restore scroll
+   }
+
+   closePreviewBtn.addEventListener("click", closePreviewModal);
+
+   // Close preview modal on outside click
+   previewModal.addEventListener("click", (e) => {
+     if (e.target === previewModal) {
+       closePreviewModal();
+     }
+   });
+
+   // Attach click event to all ads
+   document.querySelectorAll(".ad-item").forEach((ad) => {
+     ad.addEventListener("click", () => {
+       const title = ad.getAttribute("data-title");
+       const imgSrc = ad.getAttribute("data-img");
+       const alt = ad.getAttribute("data-alt");
+       const description = ad.getAttribute("data-description");
+       openPreviewModal(title, imgSrc, alt, description);
+     });
+   });
+
+   // Accept button click handler
+   acceptAdBtn.addEventListener("click", () => {
+     const adName = previewModalTitle.textContent || "a publicidade";
+     announcementText.textContent = `Anunciando ${adName}`;
+     alert("Você aceitou realizar a divulgação desta publicidade. Obrigado!");
+     closePreviewModal();
+   });
+
+   // Bag modal open/close logic with max capacity check
+   bagButton.addEventListener("click", () => {
+     const maxCapacity = localStorage.getItem("bagMaxCapacity");
+     if (!maxCapacity) {
+       // Show max capacity modal first
+       bagMaxCapacityModal.classList.remove("hidden");
+       bagMaxCapacityModal.classList.add("flex");
+       document.body.style.overflow = "hidden";
+       // Initialize slider and progress bar
+       maxCapacityRange.value = 50;
+       maxCapacityValue.textContent = "50 L";
+       maxCapacityProgressBar.style.width = "25%";
+       maxCapacityRange.setAttribute("aria-valuenow", 50);
+     } else {
+       // Show bag space modal with max capacity loaded
+       bagModal.classList.remove("hidden");
+       bagModal.classList.add("flex");
+       document.body.style.overflow = "hidden";
+       // Load saved space or default to max capacity
+       const savedSpace = localStorage.getItem("bagSpace");
+       const spaceToSet = savedSpace !== null ? savedSpace : maxCapacity;
+       bagSpaceInput.max = maxCapacity;
+       bagSpaceInput.value = spaceToSet;
+       bagSpaceValue.textContent = `${spaceToSet} L`;
+       bagProgressBar.style.width = `${(spaceToSet / maxCapacity) * 100}%`;
+       bagSpaceInput.setAttribute("aria-valuenow", spaceToSet);
+     }
+   });
+
+   // Max capacity slider input update
+   maxCapacityRange.addEventListener("input", () => {
+     const val = maxCapacityRange.value;
+     maxCapacityValue.textContent = `${val} L`;
+     maxCapacityProgressBar.style.width = `${(val / 200) * 100}%`;
+     maxCapacityRange.setAttribute("aria-valuenow", val);
+   });
+
+   // Save max capacity and close modal
+   saveMaxCapacityBtn.addEventListener("click", () => {
+     const val = maxCapacityRange.value;
+     if (val === "" || isNaN(val) || Number(val) < 10) {
+       alert("Por favor, informe um valor válido para a capacidade máxima (mínimo 10 litros).");
+       return;
+     }
+     localStorage.setItem("bagMaxCapacity", val);
+     alert(`Capacidade máxima da bag configurada para ${val} litros.`);
+     bagMaxCapacityModal.classList.add("hidden");
+     bagMaxCapacityModal.classList.remove("flex");
+     document.body.style.overflow = "";
+     // After setting max capacity, open bag space modal
+     bagModal.classList.remove("hidden");
+     bagModal.classList.add("flex");
+     document.body.style.overflow = "hidden";
+     bagSpaceInput.max = val;
+     bagSpaceInput.value = val;
+     bagSpaceValue.textContent = `${val} L`;
+     bagProgressBar.style.width = "100%";
+     bagSpaceInput.setAttribute("aria-valuenow", val);
+   });
+
+   // Bag space slider input update
+   bagSpaceInput.addEventListener("input", () => {
+     const val = bagSpaceInput.value;
+     const maxCapacity = localStorage.getItem("bagMaxCapacity") || 100;
+     bagSpaceValue.textContent = `${val} L`;
+     bagProgressBar.style.width = `${(val / maxCapacity) * 100}%`;
+     bagSpaceInput.setAttribute("aria-valuenow", val);
+   });
+
+   // Save bag space and close modal
+   saveBagSpaceBtn.addEventListener("click", () => {
+     const val = bagSpaceInput.value;
+     const maxCapacity = localStorage.getItem("bagMaxCapacity") || 100;
+     if (val === "" || isNaN(val) || Number(val) < 0 || Number(val) > Number(maxCapacity)) {
+       alert(`Por favor, informe um valor válido para o espaço disponível (0 a ${maxCapacity} litros).`);
+       return;
+     }
+     localStorage.setItem("bagSpace", val);
+     alert(`Espaço disponível na bag atualizado para ${val} litros. Obrigado!`);
+     bagModal.classList.add("hidden");
+     bagModal.classList.remove("flex");
+     document.body.style.overflow = "";
+   });
+
+   // Close bag space modal
+   closeBagBtn.addEventListener("click", () => {
+     bagModal.classList.add("hidden");
+     bagModal.classList.remove("flex");
+     document.body.style.overflow = "";
+   });
+  </script>
+ </body>
+</html>

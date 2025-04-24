@@ -1,0 +1,201 @@
+<html>
+<head>
+    <title>Suporte</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            overflow: hidden; /* Remove scrollbar */
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+        .header .back-button, .header .quick-message-icon {
+            font-size: 20px; /* Reduce icon size */
+            color: #000;
+            cursor: pointer; /* Add cursor pointer */
+        }
+        .header .title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+        }
+        .chat-container {
+            padding: 20px;
+            height: calc(100vh - 160px);
+            overflow-y: auto; /* Allow scrolling */
+        }
+        .message {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .message.support {
+            justify-content: flex-start;
+        }
+        .message.user {
+            justify-content: flex-end;
+        }
+        .message .text {
+            max-width: 70%;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #f1f1f1;
+            color: #000;
+        }
+        .message.support .text {
+            background-color: #f1f1f1;
+        }
+        .message.user .text {
+            background-color: #e0e0e0;
+        }
+        .footer {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background-color: #f1f1f1;
+            margin: 10px; /* Add margin to footer */
+            position: relative;
+            bottom: 0px; /* Move the footer down */
+            border-radius: 20px; /* Round the corners */
+        }
+        .footer input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            margin-right: 10px;
+            outline: none;
+            margin-bottom: 5px; /* Add margin to bottom */
+            margin-left: 5px; /* Add margin to left */
+        }
+        .footer .send-button {
+            padding: 10px 20px;
+            background-color: #00b300;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .footer .attach-button {
+            font-size: 24px;
+            color: #000;
+            margin-right: 10px;
+            cursor: pointer; /* Add cursor pointer */
+        }
+        .quick-messages {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        .quick-messages ul {
+            list-style: none;
+            padding: 10px;
+            margin: 0;
+        }
+        .quick-messages ul li {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .quick-messages ul li:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <i class="fas fa-arrow-left back-button"></i>
+        <div class="title">Suporte</div>
+        <i class="fas fa-bolt quick-message-icon" onclick="toggleQuickMessages()"></i> <!-- Changed icon to a more related one -->
+    </div>
+    <div class="chat-container" id="chat-container">
+        <div class="message support">
+            <div class="text">Suporte: Bom dia, sua rota foi reajustada para R$17,00.</div>
+        </div>
+        <div class="message user">
+            <div class="text">Você: Bom dia, sim estou a caminho!</div>
+        </div>
+    </div>
+    <div class="footer">
+        <i class="fas fa-folder attach-button" onclick="document.getElementById('file-input').click()"></i>
+        <input type="file" id="file-input" style="display: none;" onchange="handleFileSelect(event)">
+        <input type="text" id="message-input" placeholder="Escreva sua mensagem..">
+        <button class="send-button" onclick="sendMessage()">ENVIAR</button>
+    </div>
+
+    <div class="quick-messages" id="quick-messages">
+        <ul>
+            <li onclick="selectQuickMessage('Olá, como posso ajudar?')">Olá, como posso ajudar?</li>
+            <li onclick="selectQuickMessage('Estou a caminho.')">Estou a caminho.</li>
+            <li onclick="selectQuickMessage('Preciso de mais informações.')">Preciso de mais informações.</li>
+        </ul>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var input = document.getElementById('message-input');
+            var message = input.value.trim();
+            if (message !== "") {
+                var chatContainer = document.getElementById('chat-container');
+                var messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', 'user');
+                var textDiv = document.createElement('div');
+                textDiv.classList.add('text');
+                textDiv.textContent = 'Você: ' + message;
+                messageDiv.appendChild(textDiv);
+                chatContainer.appendChild(messageDiv);
+                input.value = "";
+                chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to the bottom
+            }
+        }
+
+        function attachFile() {
+            document.getElementById('file-input').click();
+        }
+
+        function handleFileSelect(event) {
+            var file = event.target.files[0];
+            if (file) {
+                var chatContainer = document.getElementById('chat-container');
+                var messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', 'user');
+                var textDiv = document.createElement('div');
+                textDiv.classList.add('text');
+                textDiv.textContent = 'Você enviou um arquivo: ' + file.name;
+                messageDiv.appendChild(textDiv);
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to the bottom
+            }
+        }
+
+        function toggleQuickMessages() {
+            var quickMessages = document.getElementById('quick-messages');
+            if (quickMessages.style.display === "none" || quickMessages.style.display === "") {
+                quickMessages.style.display = "block";
+            } else {
+                quickMessages.style.display = "none";
+            }
+        }
+
+        function selectQuickMessage(message) {
+            var input = document.getElementById('message-input');
+            input.value = message;
+            toggleQuickMessages();
+        }
+    </script>
+</body>
+</html>
