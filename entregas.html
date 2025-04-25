@@ -1,0 +1,595 @@
+<html lang="pt-BR">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Despacho Sweet e Drogasil
+  </title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <style>
+   /* Custom checkbox styling to match original */
+        .checkbox input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+        .checkbox .checkmark {
+            position: relative;
+            height: 20px;
+            width: 20px;
+            background-color: #17a2b8;
+            border-radius: 5px;
+            border: 2px solid #138496;
+            display: inline-block;
+        }
+        .checkbox:hover input ~ .checkmark {
+            background-color: #138496;
+        }
+        .checkbox input:checked ~ .checkmark {
+            background-color: #17a2b8;
+        }
+        .checkbox .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+        .checkbox input:checked ~ .checkmark:after {
+            display: block;
+        }
+        .checkbox .checkmark:after {
+            left: 7px;
+            top: 3px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+  </style>
+ </head>
+ <body class="bg-gray-100 font-sans m-0 p-0">
+  <div class="flex justify-center py-2">
+   <i class="fas fa-chevron-down text-gray-500 text-lg cursor-pointer">
+   </i>
+  </div>
+  <div class="flex justify-center px-2 mt-2">
+   <div class="flex items-center justify-between bg-gray-300 shadow-md text-black rounded-2xl w-full max-w-full px-4 py-1 relative">
+    <button class="bg-teal-500 hover:bg-teal-600 text-white rounded-full px-3 py-1 text-xs transition" id="group-button" onclick="toggleGroup()">
+     AGRUPAR
+    </button>
+    <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center">
+     <div class="font-bold text-sm">
+      Procurando Entregas
+      <span class="bg-red-600 text-white rounded-full px-2 ml-2 text-sm">
+       4
+      </span>
+     </div>
+    </div>
+    <i class="fas fa-sliders-h text-black text-xl cursor-pointer" onclick="toggleFilterMenu()">
+    </i>
+    <div class="hidden absolute top-10 right-5 bg-white shadow rounded z-50" id="filter-menu">
+     <ul class="list-none m-0 p-2">
+      <li class="px-3 py-2 cursor-pointer text-black hover:bg-gray-100" onclick="filterDeliveries('valor')">
+       Valor
+      </li>
+      <li class="px-3 py-2 cursor-pointer text-black hover:bg-gray-100" onclick="filterDeliveries('km')">
+       Km
+      </li>
+      <li class="px-3 py-2 cursor-pointer text-black hover:bg-gray-100" onclick="filterDeliveries('tempo')">
+       Tempo
+      </li>
+     </ul>
+    </div>
+   </div>
+  </div>
+  <div class="delivery-item bg-white m-2 p-4 rounded-lg flex items-center flex-wrap shadow relative" id="outz-card">
+   <label class="checkbox absolute left-2 top-1/2 transform -translate-y-1/2 flex items-center cursor-pointer">
+    <input id="outz-checkbox" onclick="handleCheckboxChange()" type="checkbox"/>
+    <span class="checkmark">
+    </span>
+   </label>
+   <div class="details flex-grow min-w-[200px] ml-10">
+    <div class="title flex items-center font-bold text-lg mb-1">
+     <i class="fas fa-hamburger mr-3">
+     </i>
+     Outz - 1.3km
+    </div>
+    <div class="info text-sm mb-0.5">
+     <strong>
+      Coleta:
+     </strong>
+     Rua Pernambuco, 458
+    </div>
+    <div class="info text-sm mb-0.5">
+     <strong>
+      Entrega:
+     </strong>
+     Avenida Rachid Neder, 46
+    </div>
+    <div class="info text-sm mb-0.5">
+     <strong>
+      Retorno:
+     </strong>
+     Rua Pernambuco, 458
+    </div>
+    <div class="info text-sm">
+     <strong>
+      Observação:
+     </strong>
+     Lanche - 13:09
+    </div>
+   </div>
+   <div class="price bg-teal-600 text-white rounded-full px-4 py-1 font-bold text-sm absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center justify-center">
+    R$ 8,00
+   </div>
+  </div>
+  <div class="delivery-item bg-white m-2 p-4 rounded-lg flex items-center flex-wrap shadow relative" id="rosi-card">
+   <label class="checkbox absolute left-2 top-1/2 transform -translate-y-1/2 flex items-center cursor-pointer">
+    <input id="rosi-checkbox" onclick="handleCheckboxChange()" type="checkbox"/>
+    <span class="checkmark">
+    </span>
+   </label>
+   <div class="details flex-grow min-w-[200px] ml-10">
+    <div class="title flex items-center font-bold text-lg mb-1">
+     <i class="fas fa-tshirt mr-3">
+     </i>
+     Rosi - 9km
+    </div>
+    <div class="info text-sm mb-0.5">
+     <strong>
+      Coleta:
+     </strong>
+     R. Maracaju, 665
+    </div>
+    <div class="info text-sm mb-0.5">
+     <strong>
+      Entrega:
+     </strong>
+     R. Catumbi, 26
+    </div>
+    <div class="info text-sm">
+     <strong>
+      Observação:
+     </strong>
+     Roupas - 13:06
+    </div>
+   </div>
+   <div class="price bg-teal-600 text-white rounded-full px-4 py-1 font-bold text-sm absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center justify-center">
+    R$ 13,00
+   </div>
+  </div>
+  <div class="delivery-item bg-white m-2 p-4 rounded-lg flex items-center flex-wrap shadow relative" id="drogasil-card">
+   <label class="checkbox absolute left-2 top-1/2 transform -translate-y-1/2 flex items-center cursor-pointer">
+    <input id="drogasil-checkbox" onclick="handleCheckboxChange()" type="checkbox"/>
+    <span class="checkmark">
+    </span>
+   </label>
+   <div class="details flex-grow min-w-[200px] ml-10">
+    <div class="title flex items-center font-bold text-lg mb-1">
+     <i class="fas fa-pills mr-3">
+     </i>
+     Drogasil - 1km
+    </div>
+    <div class="info text-sm mb-0.5">
+     <strong>
+      Coleta:
+     </strong>
+     R. José Antônio, 3090
+    </div>
+    <div class="info text-sm mb-0.5">
+     <strong>
+      Entrega:
+     </strong>
+     R. Pernambuco, 499
+    </div>
+    <div class="info text-sm">
+     <strong>
+      Observação:
+     </strong>
+     Remédio - 13:14
+    </div>
+   </div>
+   <div class="price bg-teal-600 text-white rounded-full px-4 py-1 font-bold text-sm absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center justify-center">
+    R$ 7,00
+   </div>
+  </div>
+  <div class="delivery-item bg-white m-2 p-4 rounded-lg flex items-center flex-wrap shadow relative" id="sweet-card">
+   <label class="checkbox absolute left-2 top-1/2 transform -translate-y-1/2 flex items-center cursor-pointer">
+    <input id="sweet-checkbox" onclick="handleCheckboxChange()" type="checkbox"/>
+    <span class="checkmark">
+    </span>
+   </label>
+   <div class="details flex-grow min-w-[200px] ml-10">
+    <div class="title flex items-center font-bold text-lg mb-1">
+     <i class="fas fa-coffee mr-3">
+     </i>
+     Sweet - 11km
+    </div>
+    <div class="info text-sm mb-0.5">
+     <strong>
+      Coleta:
+     </strong>
+     R. Catumbi, 106
+    </div>
+    <div class="info text-sm mb-0.5">
+     <strong>
+      Entrega:
+     </strong>
+     R. Luiz Arruda Neto, 468
+    </div>
+    <div class="info text-sm">
+     <strong>
+      Observação:
+     </strong>
+     Almoço - 13:16
+    </div>
+   </div>
+   <div class="price bg-teal-600 text-white rounded-full px-4 py-1 font-bold text-sm absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center justify-center">
+    R$ 15,00
+   </div>
+  </div>
+  <div class="delivery-item bg-white m-2 p-4 rounded-lg flex items-center flex-wrap shadow relative hidden" id="grouped-card">
+   <div class="details flex-grow min-w-[200px] ml-10" id="grouped-details">
+   </div>
+   <div class="price bg-teal-600 text-white rounded-full px-4 py-1 font-bold text-sm absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center justify-center" id="grouped-price">
+   </div>
+  </div>
+  <!-- Dispatch modal Sweet -->
+  <div aria-labelledby="dispatch-sweet-title" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" id="dispatch-modal-sweet" role="dialog">
+   <div class="bg-white rounded-lg shadow-lg max-w-md w-full mx-4 p-6 relative">
+    <button aria-label="Fechar modal de despacho Sweet" class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-xl font-bold" id="close-dispatch-sweet">
+     ×
+    </button>
+    <div class="flex items-center mb-4">
+     <img alt="Logo da loja Sweet, um desenho estilizado de uma xícara de café marrom com vapor branco" class="w-16 h-16 rounded-full mr-4" height="64" src="https://storage.googleapis.com/a1aa/image/8b2be860-486d-44ec-dbb2-366546fc1590.jpg" width="64"/>
+     <h2 class="text-xl font-bold text-gray-800" id="dispatch-sweet-title">
+      Nova Entrega da Sweet
+     </h2>
+    </div>
+    <div class="text-gray-700 mb-4">
+     <p>
+      <strong>
+       Coleta:
+      </strong>
+      R. Catumbi, 106
+     </p>
+     <p>
+      <strong>
+       Entrega:
+      </strong>
+      R. Luiz Arruda Neto, 468
+     </p>
+     <p>
+      <strong>
+       Distância:
+      </strong>
+      11 km
+     </p>
+     <p>
+      <strong>
+       Valor:
+      </strong>
+      R$ 15,00
+     </p>
+     <p>
+      <strong>
+       Observação:
+      </strong>
+      Almoço - 13:16
+     </p>
+    </div>
+    <div class="flex justify-end space-x-4">
+     <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition" id="accept-btn-sweet">
+      Aceitar
+     </button>
+     <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition" id="decline-btn-sweet">
+      Recusar
+     </button>
+    </div>
+   </div>
+  </div>
+  <!-- Dispatch modal Drogasil -->
+  <div aria-labelledby="dispatch-drogasil-title" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" id="dispatch-modal-drogasil" role="dialog">
+   <div class="bg-white rounded-lg shadow-lg max-w-md w-full mx-4 p-6 relative">
+    <button aria-label="Fechar modal de despacho Drogasil" class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-xl font-bold" id="close-dispatch-drogasil">
+     ×
+    </button>
+    <div class="flex items-center mb-4">
+     <img alt="Logo da loja Drogasil, um frasco de remédio vermelho com uma cruz branca" class="w-16 h-16 rounded-full mr-4" height="64" src="https://storage.googleapis.com/a1aa/image/dd01bb7e-e8d5-4915-972c-679b89d9704e.jpg" width="64"/>
+     <h2 class="text-xl font-bold text-gray-800" id="dispatch-drogasil-title">
+      Nova Entrega da Drogasil
+     </h2>
+    </div>
+    <div class="text-gray-700 mb-4">
+     <p>
+      <strong>
+       Coleta:
+      </strong>
+      R. José Antônio, 3090
+     </p>
+     <p>
+      <strong>
+       Entrega:
+      </strong>
+      R. Pernambuco, 499
+     </p>
+     <p>
+      <strong>
+       Distância:
+      </strong>
+      1 km
+     </p>
+     <p>
+      <strong>
+       Valor:
+      </strong>
+      R$ 7,00
+     </p>
+     <p>
+      <strong>
+       Observação:
+      </strong>
+      Remédio - 13:14
+     </p>
+    </div>
+    <div class="flex justify-end space-x-4">
+     <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition" id="accept-btn-drogasil">
+      Aceitar
+     </button>
+     <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition" id="decline-btn-drogasil">
+      Recusar
+     </button>
+    </div>
+   </div>
+  </div>
+  <audio id="dispatch-sound-sweet" preload="auto" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg">
+  </audio>
+  <audio id="dispatch-sound-drogasil" preload="auto" src="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg">
+  </audio>
+  <audio id="group-sound" preload="auto" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg">
+  </audio>
+  <script>
+   // Existing functions from original code
+        function handleCheckboxChange() {
+            const outzCheckbox = document.getElementById('outz-checkbox');
+            const rosiCheckbox = document.getElementById('rosi-checkbox');
+            const drogasilCheckbox = document.getElementById('drogasil-checkbox');
+            const sweetCheckbox = document.getElementById('sweet-checkbox');
+
+            const outzCard = document.getElementById('outz-card');
+            const rosiCard = document.getElementById('rosi-card');
+            const drogasilCard = document.getElementById('drogasil-card');
+            const sweetCard = document.getElementById('sweet-card');
+
+            if (outzCheckbox.checked) {
+                outzCard.style.display = 'flex';
+                drogasilCard.style.display = 'flex';
+                rosiCard.style.display = 'none';
+                sweetCard.style.display = 'none';
+            } else if (rosiCheckbox.checked) {
+                outzCard.style.display = 'none';
+                drogasilCard.style.display = 'none';
+                rosiCard.style.display = 'flex';
+                sweetCard.style.display = 'flex';
+            } else if (drogasilCheckbox.checked) {
+                outzCard.style.display = 'flex';
+                drogasilCard.style.display = 'flex';
+                rosiCard.style.display = 'none';
+                sweetCard.style.display = 'none';
+            } else if (sweetCheckbox.checked) {
+                outzCard.style.display = 'none';
+                drogasilCard.style.display = 'none';
+                rosiCard.style.display = 'flex';
+                sweetCard.style.display = 'flex';
+            } else {
+                outzCard.style.display = 'flex';
+                rosiCard.style.display = 'flex';
+                drogasilCard.style.display = 'flex';
+                sweetCard.style.display = 'flex';
+            }
+        }
+
+        function groupDeliveries() {
+            const outzCheckbox = document.getElementById('outz-checkbox');
+            const rosiCheckbox = document.getElementById('rosi-checkbox');
+            const drogasilCheckbox = document.getElementById('drogasil-checkbox');
+            const sweetCheckbox = document.getElementById('sweet-checkbox');
+
+            const outzCard = document.getElementById('outz-card');
+            const rosiCard = document.getElementById('rosi-card');
+            const drogasilCard = document.getElementById('drogasil-card');
+            const sweetCard = document.getElementById('sweet-card');
+
+            const groupedCard = document.getElementById('grouped-card');
+            const groupedDetails = document.getElementById('grouped-details');
+            const groupedPrice = document.getElementById('grouped-price');
+
+            const groupButton = document.getElementById('group-button');
+
+            let selectedCards = [];
+            let totalPrice = 0;
+
+            if (outzCheckbox.checked) {
+                selectedCards.push(outzCard);
+                totalPrice += 8;
+            }
+            if (rosiCheckbox.checked) {
+                selectedCards.push(rosiCard);
+                totalPrice += 13;
+            }
+            if (drogasilCheckbox.checked) {
+                selectedCards.push(drogasilCard);
+                totalPrice += 7;
+            }
+            if (sweetCheckbox.checked) {
+                selectedCards.push(sweetCard);
+                totalPrice += 15;
+            }
+
+            if (selectedCards.length > 1) {
+                groupedDetails.innerHTML = '';
+                selectedCards.forEach(card => {
+                    groupedDetails.innerHTML += card.querySelector('.details').innerHTML + '<br>';
+                });
+                groupedPrice.innerHTML = 'R$ ' + totalPrice.toFixed(2);
+                groupedCard.style.display = 'flex';
+
+                outzCard.style.display = 'none';
+                rosiCard.style.display = 'none';
+                drogasilCard.style.display = 'none';
+                sweetCard.style.display = 'none';
+
+                groupButton.innerHTML = 'DESAGRUPAR';
+
+                // Play grouping sound
+                const groupSound = document.getElementById('group-sound');
+                groupSound.volume = 0.3;
+                groupSound.currentTime = 0;
+                groupSound.play();
+            } else {
+                groupedCard.style.display = 'none';
+                groupButton.innerHTML = 'AGRUPAR';
+            }
+        }
+
+        function ungroupDeliveries() {
+            const outzCard = document.getElementById('outz-card');
+            const rosiCard = document.getElementById('rosi-card');
+            const drogasilCard = document.getElementById('drogasil-card');
+            const sweetCard = document.getElementById('sweet-card');
+
+            const groupedCard = document.getElementById('grouped-card');
+            const groupButton = document.getElementById('group-button');
+
+            groupedCard.style.display = 'none';
+            outzCard.style.display = 'flex';
+            rosiCard.style.display = 'flex';
+            drogasilCard.style.display = 'flex';
+            sweetCard.style.display = 'flex';
+
+            groupButton.innerHTML = 'AGRUPAR';
+        }
+
+        function toggleGroup() {
+            const groupButton = document.getElementById('group-button');
+            if (groupButton.innerHTML === 'AGRUPAR') {
+                groupDeliveries();
+            } else {
+                ungroupDeliveries();
+            }
+        }
+
+        function toggleFilterMenu() {
+            const filterMenu = document.getElementById('filter-menu');
+            filterMenu.classList.toggle('hidden');
+        }
+
+        function filterDeliveries(criteria) {
+            const deliveries = document.querySelectorAll('.delivery-item');
+            const deliveryArray = Array.from(deliveries).filter(item => item.id !== 'grouped-card');
+
+            deliveryArray.sort((a, b) => {
+                const aValue = getCriteriaValue(a, criteria);
+                const bValue = getCriteriaValue(b, criteria);
+                return aValue - bValue;
+            });
+
+            const container = document.body;
+            deliveryArray.forEach(item => container.appendChild(item));
+        }
+
+        function getCriteriaValue(item, criteria) {
+            switch (criteria) {
+                case 'valor':
+                    return parseFloat(item.querySelector('.price').textContent.replace('R$', '').replace(',', '.'));
+                case 'km':
+                    const kmMatch = item.querySelector('.title').textContent.match(/(\d+(\.\d+)?)(?=km)/);
+                    return kmMatch ? parseFloat(kmMatch[0]) : 0;
+                case 'tempo':
+                    const timeText = item.querySelector('.info:last-child').textContent.split(' - ')[1];
+                    return new Date('1970-01-01T' + timeText + 'Z').getTime();
+                default:
+                    return 0;
+            }
+        }
+
+        // Dispatch modal logic for Sweet
+        function showDispatchModalSweet() {
+            const modal = document.getElementById('dispatch-modal-sweet');
+            modal.classList.remove('hidden');
+            // Play sound softly but dynamic
+            const sound = document.getElementById('dispatch-sound-sweet');
+            sound.volume = 0.3;
+            sound.currentTime = 0;
+            sound.play();
+        }
+
+        function hideDispatchModalSweet() {
+            const modal = document.getElementById('dispatch-modal-sweet');
+            modal.classList.add('hidden');
+        }
+
+        // Dispatch modal logic for Drogasil
+        function showDispatchModalDrogasil() {
+            const modal = document.getElementById('dispatch-modal-drogasil');
+            modal.classList.remove('hidden');
+            // Play sound dynamic
+            const sound = document.getElementById('dispatch-sound-drogasil');
+            sound.volume = 0.4;
+            sound.currentTime = 0;
+            sound.play();
+        }
+
+        function hideDispatchModalDrogasil() {
+            const modal = document.getElementById('dispatch-modal-drogasil');
+            modal.classList.add('hidden');
+        }
+
+        window.addEventListener('load', () => {
+            // Show Sweet dispatch after 5 seconds
+            setTimeout(() => {
+                showDispatchModalSweet();
+            }, 5000);
+
+            // Show Drogasil dispatch 10 seconds after Sweet dispatch (15 seconds after page load)
+            setTimeout(() => {
+                showDispatchModalDrogasil();
+            }, 15000);
+        });
+
+        // Sweet modal buttons
+        document.getElementById('close-dispatch-sweet').addEventListener('click', () => {
+            hideDispatchModalSweet();
+        });
+
+        document.getElementById('accept-btn-sweet').addEventListener('click', () => {
+            alert('Entrega da Sweet aceita!');
+            hideDispatchModalSweet();
+        });
+
+        document.getElementById('decline-btn-sweet').addEventListener('click', () => {
+            alert('Entrega da Sweet recusada!');
+            hideDispatchModalSweet();
+        });
+
+        // Drogasil modal buttons
+        document.getElementById('close-dispatch-drogasil').addEventListener('click', () => {
+            hideDispatchModalDrogasil();
+        });
+
+        document.getElementById('accept-btn-drogasil').addEventListener('click', () => {
+            alert('Entrega da Drogasil aceita!');
+            hideDispatchModalDrogasil();
+        });
+
+        document.getElementById('decline-btn-drogasil').addEventListener('click', () => {
+            alert('Entrega da Drogasil recusada!');
+            hideDispatchModalDrogasil();
+        });
+  </script>
+ </body>
+</html>
