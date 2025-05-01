@@ -110,8 +110,9 @@
      max-width: 500px;
      margin-left: auto;
      margin-right: auto;
-     margin-top: 1rem;
+     margin-top: 0.25rem; /* Subido um pouco */
      margin-bottom: 1rem;
+     position: relative;
    }
    #conteudoAbaixo.hidden {
      max-height: 0 !important;
@@ -121,10 +122,22 @@
      margin-top: 0 !important;
      pointer-events: none;
    }
-   #conteudoAbaixo img {
-     height: 50px !important;
+   #conteudoAbaixo img.banner {
+     height: 80px !important;
      width: 500px !important;
      object-fit: cover;
+     border-radius: 0.375rem;
+     box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+     display: block;
+     margin: 0 auto;
+   }
+   #conteudoAbaixo img.entregador {
+     position: absolute;
+     top: 50%;
+     left: 10px;
+     transform: translateY(-50%);
+     height: 70px;
+     width: auto;
      border-radius: 0.375rem;
      box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
    }
@@ -238,8 +251,10 @@
     </h3>
     <textarea aria-multiline="true" class="w-full min-h-[100px] rounded-md border border-gray-300 p-2 text-gray-900 resize-y focus:outline-none focus:ring-2 focus:ring-[#ff6f61]" placeholder="Escreva suas notas rápidas aqui..."></textarea>
    </section>
-   <section class="mx-auto max-w-3xl px-4" id="conteudoAbaixo">
-    <img alt="Banner retangular horizontal com dimensões 500 por 50 pixels, fundo cinza claro com texto centralizado em preto 'Banner Retangular 500x50'" class="mx-auto rounded-md shadow-md" height="50" src="https://storage.googleapis.com/a1aa/image/75ed7425-a08e-4a6f-084e-12a52aded325.jpg" width="500"/>
+   <section class="mx-auto max-w-3xl px-4 relative" id="conteudoAbaixo">
+    <img alt="Banner retangular horizontal com dimensões 500 por 80 pixels, fundo cinza claro com texto centralizado em preto 'Banner Retangular 500x80'" class="mx-auto rounded-md shadow-md banner" height="80" src="https://storage.googleapis.com/a1aa/image/75ed7425-a08e-4a6f-084e-12a52aded325.jpg" style="margin-top: -0.75rem;" width="500"/>
+    <img alt="Imagem de entregador de bicicleta com capacete amarelo e mochila vermelha, em movimento, estilo fotografia realista" class="entregador" height="70" loading="lazy" src="https://storage.googleapis.com/a1aa/image/b7fface9-eff5-4c39-69b8-7fa0986c795a.jpg" width="70">
+    </img>
    </section>
   </footer>
   <script>
