@@ -1,507 +1,290 @@
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1" name="viewport" />
-  <title>Super Hubz</title>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Super Hubz
+  </title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-    rel="stylesheet"
-  />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
   <style>
-    body {
-      font-family: "Inter", Arial, sans-serif;
-    }
-    /* Hide scrollbar for WebKit browsers */
-    #entregasContent::-webkit-scrollbar {
-      display: none;
-    }
-    /* Hide scrollbar for IE, Edge and Firefox */
-    #entregasContent {
-      -ms-overflow-style: none; /* IE and Edge */
-      scrollbar-width: none; /* Firefox */
-      touch-action: none;
-    }
-    /* Custom salmon color */
-    .text-salmon-vivo {
-      color: #ff6f61 !important;
-    }
-    .hover-text-salmon-vivo:hover {
-      color: #ff6f61 !important;
-    }
-    /* Shift footer content 3cm up */
-    #footer > div,
-    #footer nav {
-      transform: translateY(-1cm);
-    }
+   body {
+     font-family: "Inter", Arial, sans-serif;
+   }
+   /* Ocultar barra de rolagem para navegadores WebKit */
+   #conteudoEntregas::-webkit-scrollbar {
+     display: none;
+   }
+   /* Ocultar barra de rolagem para IE, Edge e Firefox */
+   #conteudoEntregas {
+     -ms-overflow-style: none; /* IE e Edge */
+     scrollbar-width: none; /* Firefox */
+     touch-action: none;
+   }
+   /* Cor salmão personalizada */
+   .texto-salmao-vivo {
+     color: #ff6f61 !important;
+   }
+   .hover-texto-salmao-vivo:hover {
+     color: #ff6f61 !important;
+   }
+   /* Deslocar conteúdo do rodapé 3cm para cima */
+   #rodape > div,
+   #rodape nav {
+     transform: translateY(-1cm);
+   }
+   /* Esticar o container do rodapé para cima e para baixo */
+   #rodape {
+     bottom: 0 !important;
+     top: auto;
+     height: auto;
+     min-height: 120px; /* Aumenta a altura para esticar para cima e para baixo */
+     padding-top: 2rem !important;
+     padding-bottom: 2rem !important;
+     box-sizing: border-box;
+     transition: transform 0.3s ease;
+     will-change: transform;
+   }
+   /* Abaixa o container da alça */
+   #alcaArrastar > div {
+     margin-top: 1rem !important;
+     touch-action: none;
+     cursor: grab;
+     transition: transform 0.3s;
+     width: 180px !important;
+     height: 32px !important;
+     padding: 0.25rem 0.75rem !important;
+   }
+   #alcaArrastar > div i {
+     font-size: 1.5rem !important; /* smaller icon */
+     line-height: 1 !important;
+   }
+   #alcaArrastar > div:active {
+     cursor: grabbing;
+   }
+   /* Bloco de notas rápidas */
+   #notasRapidas {
+     background-color: #fff;
+     border: 1px solid #e5e7eb; /* gray-200 */
+     border-radius: 0.75rem; /* rounded-xl */
+     box-shadow: 0 1px 2px rgb(0 0 0 / 0.05); /* shadow */
+     padding: 1rem;
+     margin: 0 1rem 1rem 1rem;
+     max-width: 600px;
+     width: calc(100% - 2rem);
+     color: #374151; /* gray-700 */
+     transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+     overflow: hidden;
+   }
+   #notasRapidas.hidden {
+     max-height: 0 !important;
+     opacity: 0;
+     padding-top: 0 !important;
+     padding-bottom: 0 !important;
+     margin-bottom: 0 !important;
+     pointer-events: none;
+   }
+   #notasRapidas h3 {
+     font-weight: 600;
+     font-size: 1.125rem; /* text-lg */
+     margin-bottom: 0.5rem;
+     color: #111827; /* gray-900 */
+   }
+   #notasRapidas textarea {
+     width: 100%;
+     min-height: 100px;
+     border: 1px solid #d1d5db; /* gray-300 */
+     border-radius: 0.5rem; /* rounded */
+     padding: 0.5rem;
+     font-size: 0.875rem; /* text-sm */
+     font-family: inherit;
+     resize: vertical;
+     color: #111827; /* gray-900 */
+   }
+   /* Conteúdo abaixo do bloco de notas rápidas */
+   #conteudoAbaixo {
+     transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+     overflow: hidden;
+   }
+   #conteudoAbaixo.hidden {
+     max-height: 0 !important;
+     opacity: 0;
+     padding-top: 0 !important;
+     padding-bottom: 0 !important;
+     margin-top: 0 !important;
+     pointer-events: none;
+   }
   </style>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const panel = document.getElementById("entregasContent");
-      const dragHandle = document.getElementById("dragHandle");
-      const footer = document.getElementById("footer");
-      let startY = 0;
-      let currentY = 0;
-      let panelHeight = window.innerHeight;
-      let isDragging = false;
-      let lastTranslateY = 100; // Start fully hidden (100%)
-
-      // Initialize panel hidden
-      panel.style.transform = `translateY(100%)`;
-      panel.setAttribute("aria-hidden", "true");
-
-      // Disable pointer events on panel content when hidden
-      function updatePointerEvents(translateY) {
-        if (translateY >= 100) {
-          panel.style.pointerEvents = "none";
-          footer.style.visibility = "visible";
-        } else {
-          panel.style.pointerEvents = "auto";
-          footer.style.visibility = "hidden";
-        }
-      }
-      updatePointerEvents(lastTranslateY);
-
-      function onDragStart(event) {
-        isDragging = true;
-        startY = event.type.includes("touch")
-          ? event.touches[0].clientY
-          : event.clientY;
-        panel.style.transition = "none";
-        if (animationFrame) cancelAnimationFrame(animationFrame);
-      }
-
-      function onDragMove(event) {
-        if (!isDragging) return;
-        currentY = event.type.includes("touch")
-          ? event.touches[0].clientY
-          : event.clientY;
-        let deltaY = currentY - startY;
-        // Calculate new translateY in px
-        // lastTranslateY is current translateY% before drag
-        // deltaY positive means dragging down, negative dragging up
-        let newTranslateY = lastTranslateY + (deltaY / panelHeight) * 100;
-        // Clamp between 0 (fully open) and 100 (fully closed)
-        newTranslateY = Math.min(Math.max(0, newTranslateY), 100);
-        panel.style.transform = `translateY(${newTranslateY}%)`;
-        updatePointerEvents(newTranslateY);
-      }
-
-      function onDragEnd() {
-        if (!isDragging) return;
-        isDragging = false;
-        // Determine if panel should open or close based on final position
-        // If panel is dragged up more than 50% (translateY < 50%), open it
-        // Else close it
-        let matrix = window.getComputedStyle(panel).transform;
-        let translateYPercent = 100;
-        if (matrix && matrix !== "none") {
-          const values = matrix.match(/matrix.*\((.+)\)/)[1].split(", ");
-          const ty = parseFloat(values[5]);
-          translateYPercent = (ty / panelHeight) * 100;
-          translateYPercent = Math.min(Math.max(0, translateYPercent), 100);
-        }
-        panel.style.transition = "transform 0.3s ease";
-        if (translateYPercent < 30) {
-          // Open panel
-          panel.style.transform = "translateY(0)";
-          panel.setAttribute("aria-hidden", "false");
-          lastTranslateY = 0;
-          updatePointerEvents(0);
-        } else {
-          // Close panel
-          panel.style.transform = "translateY(100%)";
-          panel.setAttribute("aria-hidden", "true");
-          lastTranslateY = 100;
-          updatePointerEvents(100);
-        }
-      }
-
-      // Attach events for mouse and touch
-      dragHandle.addEventListener("mousedown", onDragStart);
-      dragHandle.addEventListener("touchstart", onDragStart, { passive: true });
-
-      window.addEventListener("mousemove", onDragMove);
-      window.addEventListener("touchmove", onDragMove, { passive: false });
-
-      window.addEventListener("mouseup", onDragEnd);
-      window.addEventListener("touchend", onDragEnd);
-      window.addEventListener("touchcancel", onDragEnd);
-
-      // Prevent scrolling the page when dragging the panel on touch devices
-      dragHandle.addEventListener(
-        "touchmove",
-        (e) => {
-          e.preventDefault();
-        },
-        { passive: false }
-      );
-
-      // Also allow dragging panel down by dragging anywhere on the panel's top area (dragHandle)
-      // For better UX, allow dragging from the top 40px of the panel as drag handle
-      panel.addEventListener("touchstart", (e) => {
-        if (e.target === dragHandle || e.target.closest("#dragHandle")) return;
-        const touchY = e.touches[0].clientY;
-        if (touchY - panel.getBoundingClientRect().top <= 30) {
-          onDragStart(e);
-        }
-      }, { passive: true });
-
-      panel.addEventListener("mousedown", (e) => {
-        if (e.target === dragHandle || e.target.closest("#dragHandle")) return;
-        const mouseY = e.clientY;
-        if (mouseY - panel.getBoundingClientRect().top <= 30) {
-          onDragStart(e);
-        }
-      });
-    });
-
-    function toggleStatus() {
-      const status = document.getElementById("status");
-      if (status.classList.contains("bg-red-600")) {
-        status.classList.remove("bg-red-600");
-        status.classList.add("bg-green-600");
-        status.textContent = "Ativo";
-        status.setAttribute("aria-pressed", "true");
-      } else {
-        status.classList.remove("bg-green-600");
-        status.classList.add("bg-red-600");
-        status.textContent = "Pausado";
-        status.setAttribute("aria-pressed", "false");
-      }
-    }
-  </script>
-</head>
-<body class="relative h-screen overflow-hidden bg-gray-50">
-  <!-- Map Container -->
+ </head>
+ <body class="relative h-screen overflow-hidden bg-gray-50">
+  <!-- Contêiner do Mapa -->
   <div class="absolute inset-0 z-0">
-    <iframe
-      allowfullscreen=""
-      aria-label="Mapa de Campo Grande, MS, Brasil, vista aérea com ruas e pontos de interesse"
-      class="w-full h-full border-0"
-      loading="lazy"
-      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.204509964415!2d-54.64545038463154!3d-20.4697109863201!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9486e830b6b5c1c9:0x7c4f0bc021b8b81c!2sCampo%20Grande%2CMS!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr"
-    ></iframe>
-    <i
-      aria-hidden="true"
-      class="fas fa-map-marker-alt absolute text-[#ff6f61] text-2xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-    ></i>
+   <iframe allowfullscreen="" aria-label="Mapa de Campo Grande, MS, Brasil, vista aérea com ruas e pontos de interesse" class="w-full h-full border-0" loading="lazy" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.204509964415!2d-54.64545038463154!3d-20.4697109863201!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9486e830b6b5c1c9:0x7c4f0bc021b8b81c!2sCampo%20Grande%2CMS!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr"></iframe>
+   <i aria-hidden="true" class="fas fa-map-marker-alt absolute text-[#ff6f61] text-2xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
   </div>
-  <!-- Header -->
-  <header
-    class="relative z-10 flex items-center justify-between bg-white rounded-2xl m-3 p-3 shadow-md"
-  >
-    <img
-      alt="Logo de super-herói estilo desenho animado, círculo vermelho com máscara preta e capa amarela"
-      class="rounded-full object-cover"
-      height="50"
-      loading="lazy"
-      src="https://storage.googleapis.com/a1aa/image/e81a1a03-d2c4-4dd3-0b7d-c61f0f8b6fe6.jpg"
-      width="50"
-    />
-    <button
-      aria-label="Botão para alternar status entre Ativo e Pausado"
-      aria-pressed="true"
-      class="ml-5 px-8 py-1 rounded-full text-sm font-semibold text-white bg-green-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400"
-      id="status"
-      onclick="toggleStatus()"
-      type="button"
-    >
-      Ativo
-    </button>
-    <div
-      aria-label="Saldo atual"
-      class="bg-gray-200 text-black px-4 py-1 rounded-full text-sm font-medium shadow-inner flex items-center"
-    >
-      R$ 171,50
-    </div>
+  <!-- Cabeçalho -->
+  <header class="relative z-10 flex items-center justify-between bg-white rounded-2xl m-3 p-3 shadow-md">
+   <img alt="Logo de super-herói estilo desenho animado, círculo vermelho com máscara preta e capa amarela" class="rounded-full object-cover" height="40" loading="lazy" src="https://storage.googleapis.com/a1aa/image/e81a1a03-d2c4-4dd3-0b7d-c61f0f8b6fe6.jpg" width="40"/>
+   <button aria-label="Botão para alternar status entre Ativo e Pausado" aria-pressed="true" class="ml-5 px-8 py-1 rounded-full text-sm font-semibold text-white bg-green-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400" id="status" onclick="alternarStatus()" type="button" style="padding-top:0.25rem; padding-bottom:0.25rem; font-size:0.75rem;">
+    Ativo
+   </button>
+   <div aria-label="Saldo atual" class="bg-gray-200 text-black px-4 py-1 rounded-full text-sm font-medium shadow-inner flex items-center" style="padding-top:0.25rem; padding-bottom:0.25rem; font-size:0.75rem;">
+    R$ 171,50
+   </div>
   </header>
-  <!-- Footer -->
-  <footer
-    id="footer"
-    class="absolute bottom-10 left-0 w-full bg-white border-t border-gray-200 z-10"
-    role="contentinfo"
-  >
-    <div
-      id="dragHandle"
-      aria-label="Área para arrastar e abrir o painel de entregas"
-      class="flex justify-center cursor-grab py-1 select-none"
-      role="button"
-      tabindex="0"
-      aria-describedby="dragHint"
-    >
-      <i class="fas fa-grip-lines text-[#ff6f61] text-3xl"></i>
+  <!-- Rodapé -->
+  <footer class="absolute bottom-0 left-0 w-full bg-white border-t border-gray-200 z-10" id="rodape" role="contentinfo" style="padding-top: 2rem; padding-bottom: 2rem; transition: transform 0.3s ease;">
+   <div aria-describedby="dicaArrastar" aria-label="Área para arrastar e abrir o painel de entregas" class="flex justify-center select-none" id="alcaArrastar" role="button" tabindex="0" style="margin-bottom:-0.25rem; padding:0.25rem 0;">
+    <div id="toggleButton" class="bg-white rounded-full flex items-center justify-center shadow-md mx-3 sm:mx-0 sm:max-w-none" style="margin-top: 1rem; transition: transform 0.3s; width: 180px; height: 32px; padding: 0.25rem 0.75rem; cursor:pointer;">
+     <i class="fas fa-grip-lines text-black leading-none" style="font-size: 1.5rem; line-height: 1;"></i>
     </div>
-    <div
-      class="flex items-center mx-3 mb-6 bg-white rounded-full shadow px-4 py-2"
-    >
-      <input
-        aria-label="Campo para escolher destino no mapa"
-        class="flex-grow outline-none text-sm text-gray-700 placeholder-gray-400"
-        placeholder="Escolha um destino no mapa!"
-        type="text"
-      />
-      <button
-        aria-label="Botão buscar destino"
-        class="ml-3 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold rounded-full px-4 py-1 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        type="button"
-      >
-        BUSCAR
-      </button>
+   </div>
+   <div class="flex items-center mx-3 mb-6 bg-white rounded-full shadow px-4 py-2" style="margin-top: 2rem;">
+    <input aria-label="Campo para escolher destino no mapa" class="flex-grow outline-none text-sm text-gray-700 placeholder-gray-400" placeholder="Escolha um destino no mapa!" type="text"/>
+    <button aria-label="Botão buscar destino" class="ml-3 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold rounded-full px-4 py-1 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400" type="button">BUSCAR</button>
+   </div>
+   <nav aria-label="Navegação principal" class="flex overflow-x-auto space-x-3 px-3 pb-6">
+    <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
+     <a aria-label="Navegar para Entregas" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="entregas.html">
+      <i aria-hidden="true" class="fas fa-box text-2xl mb-1"></i>Entregas
+     </a>
     </div>
-    <nav
-      aria-label="Navegação principal"
-      class="flex overflow-x-auto space-x-3 px-3 pb-6"
-    >
-      <div
-        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
-      >
-        <a
-          aria-label="Navegar para Entregas"
-          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
-          href="entregas.html"
-        >
-          <i aria-hidden="true" class="fas fa-box text-2xl mb-1"></i>Entregas
-        </a>
-      </div>
-      <div
-        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
-      >
-        <a
-          aria-label="Navegar para Rotas"
-          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
-          href="rotas.html"
-        >
-          <i aria-hidden="true" class="fas fa-route text-2xl mb-1"></i>Rotas
-        </a>
-      </div>
-      <div
-        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
-      >
-        <a
-          aria-label="Navegar para Carteira"
-          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
-          href="carteira.html"
-        >
-          <i aria-hidden="true" class="fas fa-wallet text-2xl mb-1"></i>Carteira
-        </a>
-      </div>
-      <div
-        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
-      >
-        <a
-          aria-label="Navegar para Mensagem"
-          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
-          href="mensagem.html"
-        >
-          <i aria-hidden="true" class="fas fa-comment text-2xl mb-1"></i>Mensagem
-        </a>
-      </div>
-      <div
-        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
-      >
-        <a
-          aria-label="Navegar para Cadastro"
-          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
-          href="cadastro.html"
-        >
-          <i aria-hidden="true" class="fas fa-user-plus text-2xl mb-1"></i>Cadastro
-        </a>
-      </div>
-      <div
-        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
-      >
-        <a
-          aria-label="Navegar para FreeLance"
-          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
-          href="freelance.html"
-        >
-          <i aria-hidden="true" class="fas fa-briefcase text-2xl mb-1"></i>FreeLance
-        </a>
-      </div>
-      <div
-        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
-      >
-        <a
-          aria-label="Navegar para Configuração"
-          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
-          href="configuracao.html"
-        >
-          <i aria-hidden="true" class="fas fa-cog text-2xl mb-1"></i>Configuração
-        </a>
-      </div>
-      <div
-        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
-      >
-        <a
-          aria-label="Navegar para Tokens"
-          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
-          href="tokens.html"
-        >
-          <i aria-hidden="true" class="fas fa-medal text-2xl mb-1"></i>Tokens
-        </a>
-      </div>
-      <div
-        class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center text-[#ff6f61] filter grayscale-[20%]"
-      >
-        <a
-          aria-label="Navegar para Bag"
-          class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold text-[#ff6f61] hover:text-[#e65b4f]"
-          href="bag.html"
-        >
-          <i aria-hidden="true" class="fas fa-shopping-bag text-2xl mb-1"></i>Bag
-        </a>
-      </div>
-    </nav>
+    <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
+     <a aria-label="Navegar para Rotas" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="rotas.html">
+      <i aria-hidden="true" class="fas fa-route text-2xl mb-1"></i>Rotas
+     </a>
+    </div>
+    <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
+     <a aria-label="Navegar para Carteira" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="carteira.html">
+      <i aria-hidden="true" class="fas fa-wallet text-2xl mb-1"></i>Carteira
+     </a>
+    </div>
+    <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
+     <a aria-label="Navegar para Mensagem" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="mensagem.html">
+      <i aria-hidden="true" class="fas fa-comment text-2xl mb-1"></i>Mensagem
+     </a>
+    </div>
+    <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
+     <a aria-label="Navegar para Cadastro" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="cadastro.html">
+      <i aria-hidden="true" class="fas fa-user-plus text-2xl mb-1"></i>Cadastro
+     </a>
+    </div>
+    <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
+     <a aria-label="Navegar para FreeLance" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="freelance.html">
+      <i aria-hidden="true" class="fas fa-briefcase text-2xl mb-1"></i>FreeLance
+     </a>
+    </div>
+    <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
+     <a aria-label="Navegar para Configuração" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="configuracao.html">
+      <i aria-hidden="true" class="fas fa-cog text-2xl mb-1"></i>Configuração
+     </a>
+    </div>
+    <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
+     <a aria-label="Navegar para Tokens" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="tokens.html">
+      <i aria-hidden="true" class="fas fa-medal text-2xl mb-1"></i>Tokens
+     </a>
+    </div>
+    <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
+     <a aria-label="Navegar para Bag" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="bag.html">
+      <i aria-hidden="true" class="fas fa-shopping-bag text-2xl mb-1"></i>Bag
+     </a>
+    </div>
+   </nav>
+   <section id="notasRapidas" aria-label="Bloco de notas rápidas" class="mx-auto mt-4 max-w-3xl px-4">
+    <h3 class="text-lg font-semibold mb-2 text-gray-900">Notas Rápidas</h3>
+    <textarea placeholder="Escreva suas notas rápidas aqui..." aria-multiline="true" class="w-full min-h-[100px] rounded-md border border-gray-300 p-2 text-gray-900 resize-y focus:outline-none focus:ring-2 focus:ring-[#ff6f61]"></textarea>
+   </section>
+   <section id="conteudoAbaixo" class="mx-auto max-w-3xl px-4">
+    <div class="mb-6 text-gray-700 text-sm">
+     <p>Este é o conteúdo abaixo do bloco de notas rápidas. Pode conter informações adicionais, links, ou qualquer outro conteúdo relevante para o usuário.</p>
+     <p class="mt-2">Aqui você pode adicionar mais detalhes, instruções ou qualquer outra coisa que precise ser exibida abaixo.</p>
+    </div>
+   </section>
   </footer>
-  <!-- Sliding Content Panel -->
-  <section
-    aria-hidden="true"
-    aria-label="Painel de entregas"
-    class="fixed bottom-0 left-0 w-full h-full bg-white border-t border-gray-200 p-5 shadow-lg z-20 overflow-y-auto"
-    id="entregasContent"
-  >
-    <h2 class="text-xl font-semibold mb-4 text-gray-800">Entregas Recentes</h2>
-    <ul class="space-y-4">
-      <li
-        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
-      >
-        <img
-          alt="Pacote 1: Caixa de papelão marrom com etiqueta de envio, sobre uma mesa de madeira clara"
-          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-          height="60"
-          loading="lazy"
-          src="https://storage.googleapis.com/a1aa/image/6daa9ed9-6fe5-483c-a610-686c8a3abad3.jpg"
-          width="60"
-        />
-        <div class="flex flex-col flex-grow">
-          <span class="font-semibold text-gray-900">Entrega #001</span>
-          <span class="text-sm text-gray-600">Rua das Flores, 123 - Centro</span>
-          <span class="text-xs text-green-600 font-semibold mt-1"
-            >Status: Entregue</span
-          >
-        </div>
-        <i
-          aria-hidden="true"
-          class="fas fa-check-circle text-green-500 text-xl"
-        ></i>
-      </li>
-      <li
-        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
-      >
-        <img
-          alt="Pacote 2: Caixa branca com fita vermelha, em cima de um carrinho de entrega"
-          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-          height="60"
-          loading="lazy"
-          src="https://storage.googleapis.com/a1aa/image/1018be0a-66b0-4272-a4f2-7f5098e7e810.jpg"
-          width="60"
-        />
-        <div class="flex flex-col flex-grow">
-          <span class="font-semibold text-gray-900">Entrega #002</span>
-          <span class="text-sm text-gray-600">Av. Brasil, 456 - Jardim América</span>
-          <span class="text-xs text-yellow-500 font-semibold mt-1"
-            >Status: Em trânsito</span
-          >
-        </div>
-        <i aria-hidden="true" class="fas fa-truck text-yellow-500 text-xl"></i>
-      </li>
-      <li
-        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
-      >
-        <img
-          alt="Pacote 3: Caixa azul com etiqueta amarela, sobre um fundo branco"
-          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-          height="60"
-          loading="lazy"
-          src="https://storage.googleapis.com/a1aa/image/0a0b3ffc-e106-419c-11b1-c8cf3126f939.jpg"
-          width="60"
-        />
-        <div class="flex flex-col flex-grow">
-          <span class="font-semibold text-gray-900">Entrega #003</span>
-          <span class="text-sm text-gray-600">Rua das Acácias, 789 - Vila Nova</span>
-          <span class="text-xs text-red-600 font-semibold mt-1">Status: Atrasado</span>
-        </div>
-        <i
-          aria-hidden="true"
-          class="fas fa-exclamation-circle text-red-600 text-xl"
-        ></i>
-      </li>
-      <li
-        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
-      >
-        <img
-          alt="Pacote 4: Caixa verde com fita branca, em cima de uma esteira de transporte"
-          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-          height="60"
-          loading="lazy"
-          src="https://storage.googleapis.com/a1aa/image/8f29f20b-8e00-4d95-0d38-30799ab1a6b7.jpg"
-          width="60"
-        />
-        <div class="flex flex-col flex-grow">
-          <span class="font-semibold text-gray-900">Entrega #004</span>
-          <span class="text-sm text-gray-600">Praça Central, 101 - Centro</span>
-          <span class="text-xs text-green-600 font-semibold mt-1">Status: Entregue</span>
-        </div>
-        <i
-          aria-hidden="true"
-          class="fas fa-check-circle text-green-500 text-xl"
-        ></i>
-      </li>
-      <li
-        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
-      >
-        <img
-          alt="Pacote 5: Caixa vermelha com etiqueta branca, sobre um fundo cinza claro"
-          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-          height="60"
-          loading="lazy"
-          src="https://storage.googleapis.com/a1aa/image/a88074f4-6578-4430-8ebc-9e0463292686.jpg"
-          width="60"
-        />
-        <div class="flex flex-col flex-grow">
-          <span class="font-semibold text-gray-900">Entrega #005</span>
-          <span class="text-sm text-gray-600">Rua das Palmeiras, 202 - Jardim das Flores</span>
-          <span class="text-xs text-yellow-500 font-semibold mt-1"
-            >Status: Em trânsito</span
-          >
-        </div>
-        <i aria-hidden="true" class="fas fa-truck text-yellow-500 text-xl"></i>
-      </li>
-      <li
-        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
-      >
-        <img
-          alt="Pacote 6: Caixa marrom com fita preta, sobre uma mesa de escritório"
-          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-          height="60"
-          loading="lazy"
-          src="https://storage.googleapis.com/a1aa/image/7eaf304b-71e1-4e5e-3248-d69c436ebc26.jpg"
-          width="60"
-        />
-        <div class="flex flex-col flex-grow">
-          <span class="font-semibold text-gray-900">Entrega #006</span>
-          <span class="text-sm text-gray-600">Av. das Nações, 303 - Centro Empresarial</span>
-          <span class="text-xs text-green-600 font-semibold mt-1">Status: Entregue</span>
-        </div>
-        <i
-          aria-hidden="true"
-          class="fas fa-check-circle text-green-500 text-xl"
-        ></i>
-      </li>
-      <li
-        class="flex items-center space-x-4 border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow duration-200"
-      >
-        <img
-          alt="Pacote 7: Caixa branca com fita azul, em cima de um carrinho de mão"
-          class="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-          height="60"
-          loading="lazy"
-          src="https://storage.googleapis.com/a1aa/image/970debe3-f4f2-4006-d2b5-d681e2381d69.jpg"
-          width="60"
-        />
-        <div class="flex fle
+  <script>
+   (() => {
+     const rodape = document.getElementById("rodape");
+     const alca = document.querySelector("#alcaArrastar > div");
+     let startY = 0;
+     let currentY = 0;
+     let dragging = false;
+
+     function setTranslateY(y) {
+       rodape.style.transform = `translateY(${y}px)`;
+     }
+
+     function onDragStart(e) {
+       dragging = true;
+       startY = e.type.includes("touch") ? e.touches[0].clientY : e.clientY;
+       currentY = 0;
+       rodape.style.transition = "none";
+     }
+
+     function onDragMove(e) {
+       if (!dragging) return;
+       const clientY = e.type.includes("touch") ? e.touches[0].clientY : e.clientY;
+       currentY = clientY - startY;
+       // Limit drag distance to max 100px down and max 0px up (cannot drag above original)
+       if (currentY > 100) currentY = 100;
+       if (currentY < 0) currentY = 0;
+       setTranslateY(currentY);
+       e.preventDefault();
+     }
+
+     function onDragEnd() {
+       if (!dragging) return;
+       dragging = false;
+       rodape.style.transition = "transform 0.3s ease";
+       // Keep the footer where it was dragged
+       if (currentY > 100) currentY = 100;
+       if (currentY < 0) currentY = 0;
+       setTranslateY(currentY);
+     }
+
+     alca.addEventListener("mousedown", onDragStart);
+     alca.addEventListener("touchstart", onDragStart, { passive: false });
+
+     window.addEventListener("mousemove", onDragMove);
+     window.addEventListener("touchmove", onDragMove, { passive: false });
+
+     window.addEventListener("mouseup", onDragEnd);
+     window.addEventListener("touchend", onDragEnd);
+     window.addEventListener("touchcancel", onDragEnd);
+   })();
+
+   function alternarStatus() {
+     const status = document.getElementById("status");
+     if (status.classList.contains("bg-red-600")) {
+       status.classList.remove("bg-red-600");
+       status.classList.add("bg-green-600");
+       status.textContent = "Ativo";
+       status.setAttribute("aria-pressed", "true");
+     } else {
+       status.classList.remove("bg-green-600");
+       status.classList.add("bg-red-600");
+       status.textContent = "Pausado";
+       status.setAttribute("aria-pressed", "false");
+     }
+   }
+
+   // Toggle visibility on the specific div click
+   document.getElementById("toggleButton").addEventListener("click", () => {
+     const notas = document.getElementById("notasRapidas");
+     const conteudoAbaixo = document.getElementById("conteudoAbaixo");
+
+     if (!notas.classList.contains("hidden") && !conteudoAbaixo.classList.contains("hidden")) {
+       // First click: hide notasRapidas
+       notas.classList.add("hidden");
+     } else if (notas.classList.contains("hidden") && !conteudoAbaixo.classList.contains("hidden")) {
+       // Second click: hide conteudoAbaixo
+       conteudoAbaixo.classList.add("hidden");
+     } else {
+       // Third click: show both
+       notas.classList.remove("hidden");
+       conteudoAbaixo.classList.remove("hidden");
+     }
+   });
+  </script>
+ </body>
+</html>
