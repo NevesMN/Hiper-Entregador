@@ -5,7 +5,8 @@
   <title>
    Super Hubz
   </title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
   <style>
@@ -106,6 +107,11 @@
    #conteudoAbaixo {
      transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
      overflow: hidden;
+     max-width: 500px;
+     margin-left: auto;
+     margin-right: auto;
+     margin-top: 1rem;
+     margin-bottom: 1rem;
    }
    #conteudoAbaixo.hidden {
      max-height: 0 !important;
@@ -115,18 +121,32 @@
      margin-top: 0 !important;
      pointer-events: none;
    }
+   #conteudoAbaixo img {
+     height: 50px !important;
+     width: 500px !important;
+     object-fit: cover;
+     border-radius: 0.375rem;
+     box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+   }
+   /* Ajuste para subir o iframe do mapa */
+   .mapa-container iframe {
+     position: relative;
+     top: -40px;
+   }
   </style>
  </head>
  <body class="relative h-screen overflow-hidden bg-gray-50">
   <!-- Contêiner do Mapa -->
-  <div class="absolute inset-0 z-0">
-   <iframe allowfullscreen="" aria-label="Mapa de Campo Grande, MS, Brasil, vista aérea com ruas e pontos de interesse" class="w-full h-full border-0" loading="lazy" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.204509964415!2d-54.64545038463154!3d-20.4697109863201!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9486e830b6b5c1c9:0x7c4f0bc021b8b81c!2sCampo%20Grande%2CMS!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr"></iframe>
-   <i aria-hidden="true" class="fas fa-map-marker-alt absolute text-[#ff6f61] text-2xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+  <div class="absolute inset-0 z-0 mapa-container">
+   <iframe allowfullscreen="" aria-label="Mapa de Campo Grande, MS, Brasil, vista aérea com ruas e pontos de interesse" class="w-full h-full border-0" loading="lazy" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.204509964415!2d-54.64545038463154!3d-20.4697109863201!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9486e830b6b5c1c9:0x7c4f0bc021b8b81c!2sCampo%20Grande%2CMS!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" style="">
+   </iframe>
+   <i aria-hidden="true" class="fas fa-map-marker-alt absolute text-[#ff6f61] text-2xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+   </i>
   </div>
   <!-- Cabeçalho -->
   <header class="relative z-10 flex items-center justify-between bg-white rounded-2xl m-3 p-3 shadow-md">
    <img alt="Logo de super-herói estilo desenho animado, círculo vermelho com máscara preta e capa amarela" class="rounded-full object-cover" height="40" loading="lazy" src="https://storage.googleapis.com/a1aa/image/e81a1a03-d2c4-4dd3-0b7d-c61f0f8b6fe6.jpg" width="40"/>
-   <button aria-label="Botão para alternar status entre Ativo e Pausado" aria-pressed="true" class="ml-5 px-8 py-1 rounded-full text-sm font-semibold text-white bg-green-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400" id="status" onclick="alternarStatus()" type="button" style="padding-top:0.25rem; padding-bottom:0.25rem; font-size:0.75rem;">
+   <button aria-label="Botão para alternar status entre Ativo e Pausado" aria-pressed="true" class="ml-5 px-8 py-1 rounded-full text-sm font-semibold text-white bg-green-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400" id="status" onclick="alternarStatus()" style="padding-top:0.25rem; padding-bottom:0.25rem; font-size:0.75rem;" type="button">
     Ativo
    </button>
    <div aria-label="Saldo atual" class="bg-gray-200 text-black px-4 py-1 rounded-full text-sm font-medium shadow-inner flex items-center" style="padding-top:0.25rem; padding-bottom:0.25rem; font-size:0.75rem;">
@@ -135,71 +155,91 @@
   </header>
   <!-- Rodapé -->
   <footer class="absolute bottom-0 left-0 w-full bg-white border-t border-gray-200 z-10" id="rodape" role="contentinfo" style="padding-top: 2rem; padding-bottom: 2rem; transition: transform 0.3s ease;">
-   <div aria-describedby="dicaArrastar" aria-label="Área para arrastar e abrir o painel de entregas" class="flex justify-center select-none" id="alcaArrastar" role="button" tabindex="0" style="margin-bottom:-0.25rem; padding:0.25rem 0;">
-    <div id="toggleButton" class="bg-white rounded-full flex items-center justify-center shadow-md mx-3 sm:mx-0 sm:max-w-none" style="margin-top: 1rem; transition: transform 0.3s; width: 180px; height: 32px; padding: 0.25rem 0.75rem; cursor:pointer;">
-     <i class="fas fa-grip-lines text-black leading-none" style="font-size: 1.5rem; line-height: 1;"></i>
+   <div aria-describedby="dicaArrastar" aria-label="Área para arrastar e abrir o painel de entregas" class="flex justify-center select-none" id="alcaArrastar" role="button" style="margin-bottom:-0.25rem; padding:0.25rem 0;" tabindex="0">
+    <div class="bg-white rounded-full flex items-center justify-center shadow-md mx-3 sm:mx-0 sm:max-w-none" id="toggleButton" style="margin-top: 1rem; transition: transform 0.3s; width: 180px; height: 32px; padding: 0.25rem 0.75rem; cursor:pointer;">
+     <i class="fas fa-grip-lines text-black leading-none" style="font-size: 1.5rem; line-height: 1;">
+     </i>
     </div>
    </div>
    <div class="flex items-center mx-3 mb-6 bg-white rounded-full shadow px-4 py-2" style="margin-top: 2rem;">
     <input aria-label="Campo para escolher destino no mapa" class="flex-grow outline-none text-sm text-gray-700 placeholder-gray-400" placeholder="Escolha um destino no mapa!" type="text"/>
-    <button aria-label="Botão buscar destino" class="ml-3 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold rounded-full px-4 py-1 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400" type="button">BUSCAR</button>
+    <button aria-label="Botão buscar destino" class="ml-3 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold rounded-full px-4 py-1 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400" type="button">
+     BUSCAR
+    </button>
    </div>
    <nav aria-label="Navegação principal" class="flex overflow-x-auto space-x-3 px-3 pb-6">
     <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
      <a aria-label="Navegar para Entregas" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="entregas.html">
-      <i aria-hidden="true" class="fas fa-box text-2xl mb-1"></i>Entregas
+      <i aria-hidden="true" class="fas fa-box text-2xl mb-1">
+      </i>
+      Entregas
      </a>
     </div>
     <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
      <a aria-label="Navegar para Rotas" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="rotas.html">
-      <i aria-hidden="true" class="fas fa-route text-2xl mb-1"></i>Rotas
+      <i aria-hidden="true" class="fas fa-route text-2xl mb-1">
+      </i>
+      Rotas
      </a>
     </div>
     <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
      <a aria-label="Navegar para Carteira" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="carteira.html">
-      <i aria-hidden="true" class="fas fa-wallet text-2xl mb-1"></i>Carteira
+      <i aria-hidden="true" class="fas fa-wallet text-2xl mb-1">
+      </i>
+      Carteira
      </a>
     </div>
     <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
      <a aria-label="Navegar para Mensagem" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="mensagem.html">
-      <i aria-hidden="true" class="fas fa-comment text-2xl mb-1"></i>Mensagem
+      <i aria-hidden="true" class="fas fa-comment text-2xl mb-1">
+      </i>
+      Mensagem
      </a>
     </div>
     <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
      <a aria-label="Navegar para Cadastro" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="cadastro.html">
-      <i aria-hidden="true" class="fas fa-user-plus text-2xl mb-1"></i>Cadastro
+      <i aria-hidden="true" class="fas fa-user-plus text-2xl mb-1">
+      </i>
+      Cadastro
      </a>
     </div>
     <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
      <a aria-label="Navegar para FreeLance" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="freelance.html">
-      <i aria-hidden="true" class="fas fa-briefcase text-2xl mb-1"></i>FreeLance
+      <i aria-hidden="true" class="fas fa-briefcase text-2xl mb-1">
+      </i>
+      FreeLance
      </a>
     </div>
     <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
      <a aria-label="Navegar para Configuração" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="configuracao.html">
-      <i aria-hidden="true" class="fas fa-cog text-2xl mb-1"></i>Configuração
+      <i aria-hidden="true" class="fas fa-cog text-2xl mb-1">
+      </i>
+      Configuração
      </a>
     </div>
     <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
      <a aria-label="Navegar para Tokens" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="tokens.html">
-      <i aria-hidden="true" class="fas fa-medal text-2xl mb-1"></i>Tokens
+      <i aria-hidden="true" class="fas fa-medal text-2xl mb-1">
+      </i>
+      Tokens
      </a>
     </div>
     <div class="flex-shrink-0 w-20 bg-white rounded-xl shadow text-center texto-salmao-vivo filter grayscale-[20%]">
      <a aria-label="Navegar para Bag" class="flex flex-col items-center justify-center py-3 px-1 text-xs font-semibold texto-salmao-vivo hover:text-[#e65b4f]" href="bag.html">
-      <i aria-hidden="true" class="fas fa-shopping-bag text-2xl mb-1"></i>Bag
+      <i aria-hidden="true" class="fas fa-shopping-bag text-2xl mb-1">
+      </i>
+      Bag
      </a>
     </div>
    </nav>
-   <section id="notasRapidas" aria-label="Bloco de notas rápidas" class="mx-auto mt-4 max-w-3xl px-4">
-    <h3 class="text-lg font-semibold mb-2 text-gray-900">Notas Rápidas</h3>
-    <textarea placeholder="Escreva suas notas rápidas aqui..." aria-multiline="true" class="w-full min-h-[100px] rounded-md border border-gray-300 p-2 text-gray-900 resize-y focus:outline-none focus:ring-2 focus:ring-[#ff6f61]"></textarea>
+   <section aria-label="Bloco de notas rápidas" class="mx-auto mt-4 max-w-3xl px-4" id="notasRapidas">
+    <h3 class="text-lg font-semibold mb-2 text-gray-900">
+     Notas Rápidas
+    </h3>
+    <textarea aria-multiline="true" class="w-full min-h-[100px] rounded-md border border-gray-300 p-2 text-gray-900 resize-y focus:outline-none focus:ring-2 focus:ring-[#ff6f61]" placeholder="Escreva suas notas rápidas aqui..."></textarea>
    </section>
-   <section id="conteudoAbaixo" class="mx-auto max-w-3xl px-4">
-    <div class="mb-6 text-gray-700 text-sm">
-     <p>Este é o conteúdo abaixo do bloco de notas rápidas. Pode conter informações adicionais, links, ou qualquer outro conteúdo relevante para o usuário.</p>
-     <p class="mt-2">Aqui você pode adicionar mais detalhes, instruções ou qualquer outra coisa que precise ser exibida abaixo.</p>
-    </div>
+   <section class="mx-auto max-w-3xl px-4" id="conteudoAbaixo">
+    <img alt="Banner retangular horizontal com dimensões 500 por 50 pixels, fundo cinza claro com texto centralizado em preto 'Banner Retangular 500x50'" class="mx-auto rounded-md shadow-md" height="50" src="https://storage.googleapis.com/a1aa/image/75ed7425-a08e-4a6f-084e-12a52aded325.jpg" width="500"/>
    </section>
   </footer>
   <script>
