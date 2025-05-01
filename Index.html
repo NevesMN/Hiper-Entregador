@@ -110,7 +110,7 @@
      max-width: 500px;
      margin-left: auto;
      margin-right: auto;
-     margin-top: 0.25rem; /* Subido um pouco */
+     margin-top: -2.5rem; /* Subido mais */
      margin-bottom: 1rem;
      position: relative;
    }
@@ -144,7 +144,32 @@
    /* Ajuste para subir o iframe do mapa */
    .mapa-container iframe {
      position: relative;
-     top: -40px;
+     top: -120px; /* Subido ainda mais */
+   }
+   /* Cabeçalho menor */
+   header.smaller-header {
+     padding: 0.5rem 1rem;
+     margin: 0.5rem 1rem;
+     border-radius: 1rem;
+   }
+   header.smaller-header img {
+     height: 32px !important;
+     width: 32px !important;
+   }
+   header.smaller-header button#status {
+     padding-top: 0.125rem !important;
+     padding-bottom: 0.125rem !important;
+     font-size: 0.625rem !important;
+     margin-left: 0.75rem !important;
+     padding-left: 1.5rem !important;
+     padding-right: 1.5rem !important;
+   }
+   header.smaller-header div[aria-label="Saldo atual"] {
+     padding-top: 0.125rem !important;
+     padding-bottom: 0.125rem !important;
+     font-size: 0.625rem !important;
+     padding-left: 1rem !important;
+     padding-right: 1rem !important;
    }
   </style>
  </head>
@@ -156,13 +181,13 @@
    <i aria-hidden="true" class="fas fa-map-marker-alt absolute text-[#ff6f61] text-2xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
    </i>
   </div>
-  <!-- Cabeçalho -->
-  <header class="relative z-10 flex items-center justify-between bg-white rounded-2xl m-3 p-3 shadow-md">
-   <img alt="Logo de super-herói estilo desenho animado, círculo vermelho com máscara preta e capa amarela" class="rounded-full object-cover" height="40" loading="lazy" src="https://storage.googleapis.com/a1aa/image/e81a1a03-d2c4-4dd3-0b7d-c61f0f8b6fe6.jpg" width="40"/>
-   <button aria-label="Botão para alternar status entre Ativo e Pausado" aria-pressed="true" class="ml-5 px-8 py-1 rounded-full text-sm font-semibold text-white bg-green-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400" id="status" onclick="alternarStatus()" style="padding-top:0.25rem; padding-bottom:0.25rem; font-size:0.75rem;" type="button">
+  <!-- Cabeçalho menor -->
+  <header class="relative z-10 flex items-center justify-between bg-white rounded-2xl shadow-md smaller-header">
+   <img alt="Logo de super-herói estilo desenho animado, círculo vermelho com máscara preta e capa amarela" class="rounded-full object-cover" height="32" loading="lazy" src="https://storage.googleapis.com/a1aa/image/e81a1a03-d2c4-4dd3-0b7d-c61f0f8b6fe6.jpg" width="32"/>
+   <button aria-label="Botão para alternar status entre Ativo e Pausado" aria-pressed="true" class="ml-3 px-6 py-0.5 rounded-full text-xs font-semibold text-white bg-green-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-400" id="status" onclick="alternarStatus()" type="button">
     Ativo
    </button>
-   <div aria-label="Saldo atual" class="bg-gray-200 text-black px-4 py-1 rounded-full text-sm font-medium shadow-inner flex items-center" style="padding-top:0.25rem; padding-bottom:0.25rem; font-size:0.75rem;">
+   <div aria-label="Saldo atual" class="bg-gray-200 text-black px-3 py-0.5 rounded-full text-xs font-medium shadow-inner flex items-center">
     R$ 171,50
    </div>
   </header>
@@ -252,9 +277,8 @@
     <textarea aria-multiline="true" class="w-full min-h-[100px] rounded-md border border-gray-300 p-2 text-gray-900 resize-y focus:outline-none focus:ring-2 focus:ring-[#ff6f61]" placeholder="Escreva suas notas rápidas aqui..."></textarea>
    </section>
    <section class="mx-auto max-w-3xl px-4 relative" id="conteudoAbaixo">
-    <img alt="Banner retangular horizontal com dimensões 500 por 80 pixels, fundo cinza claro com texto centralizado em preto 'Banner Retangular 500x80'" class="mx-auto rounded-md shadow-md banner" height="80" src="https://storage.googleapis.com/a1aa/image/75ed7425-a08e-4a6f-084e-12a52aded325.jpg" style="margin-top: -0.75rem;" width="500"/>
-    <img alt="Imagem de entregador de bicicleta com capacete amarelo e mochila vermelha, em movimento, estilo fotografia realista" class="entregador" height="70" loading="lazy" src="https://storage.googleapis.com/a1aa/image/b7fface9-eff5-4c39-69b8-7fa0986c795a.jpg" width="70">
-    </img>
+    <img alt="Banner retangular horizontal com dimensões 500 por 80 pixels, fundo cinza claro com texto centralizado em preto 'Banner Retangular 500x80'" class="mx-auto rounded-md shadow-md banner" height="80" src="https://storage.googleapis.com/a1aa/image/75ed7425-a08e-4a6f-084e-12a52aded325.jpg" style="margin-top: -2.5rem;" width="500"/>
+    <img alt="Imagem de entregador de bicicleta com capacete amarelo e mochila vermelha, em movimento, estilo fotografia realista" class="entregador" height="70" loading="lazy" src="https://storage.googleapis.com/a1aa/image/b7fface9-eff5-4c39-69b8-7fa0986c795a.jpg" width="70"/>
    </section>
   </footer>
   <script>
