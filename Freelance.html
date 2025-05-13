@@ -1,0 +1,1092 @@
+<html class="scroll-smooth" lang="pt-BR">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Pacotes de Entregas
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+   @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap");
+    .font-montserrat {
+      font-family: "Montserrat", sans-serif;
+    }
+    .price-drag {
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      position: relative;
+      left: 0;
+      transition: left 0.2s ease, background-color 0.3s ease, color 0.3s ease,
+        box-shadow 0.3s ease;
+      min-width: 130px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      font-weight: 700;
+      border-radius: 9999px;
+      padding: 0.625rem 1.25rem;
+      font-size: 1.125rem;
+      background-color: #16a34a; /* Tailwind green-600 */
+      color: white;
+      user-select: none;
+    }
+    .price-drag.dragging {
+      cursor: grabbing;
+      transition: none;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      filter: brightness(1.1);
+    }
+    .price-drag.accepted {
+      cursor: grab;
+      box-shadow: 0 6px 12px rgba(37, 99, 235, 0.6);
+      animation: pulseRed 1.5s ease-in-out infinite;
+    }
+    .price-drag.accepted.blue {
+      background-color: #2563eb; /* Tailwind blue-600 */
+      color: white;
+      animation: pulseBlue 1.5s ease-in-out infinite;
+    }
+    .price-drag.accepted.red {
+      background-color: #dc2626; /* Tailwind red-600 */
+      color: white;
+      box-shadow: 0 6px 12px rgba(220, 38, 38, 0.6);
+      animation: pulseRed 1.5s ease-in-out infinite;
+    }
+    .fade-text {
+      font-size: 0.85rem;
+      color: #1e40af;
+      user-select: none;
+      margin-bottom: 1.5rem;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      background: linear-gradient(90deg, #2563eb, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: pulseText 2.5s ease-in-out infinite;
+      user-select: none;
+      position: relative;
+      padding-right: 1.75rem;
+    }
+    .fade-text button.close-observation {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: #2563eb;
+      font-weight: 900;
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+    .fade-text button.close-observation:hover,
+    .fade-text button.close-observation:focus {
+      color: #1e40af;
+      outline: none;
+    }
+    .show-example-btn {
+      display: block;
+      margin: 0 auto 1.5rem auto;
+      background-color: #2563eb;
+      color: white;
+      font-weight: 700;
+      padding: 0.5rem 1.25rem;
+      border-radius: 9999px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(37, 99, 235, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+      max-width: 280px;
+      text-align: center;
+    }
+    .show-example-btn:hover,
+    .show-example-btn:focus {
+      background-color: #1e40af;
+      box-shadow: 0 6px 12px rgba(30, 64, 175, 0.6);
+      outline: none;
+    }
+    @keyframes pulseText {
+      0%,
+      100% {
+        opacity: 1;
+        text-shadow: 0 0 8px rgba(59, 130, 246, 0.7);
+      }
+      50% {
+        opacity: 0.7;
+        text-shadow: 0 0 20px rgba(37, 99, 235, 1);
+      }
+    }
+    /* Modal backdrop */
+    .modal-backdrop {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    /* Pre-animation for drag hint */
+    @keyframes dragHint {
+      0% {
+        left: 0;
+        opacity: 1;
+      }
+      50% {
+        left: 160px;
+        opacity: 0.6;
+      }
+      100% {
+        left: 0;
+        opacity: 1;
+      }
+    }
+    .price-drag.pre-animate {
+      animation: dragHint 2.5s ease-in-out 1 forwards;
+    }
+    /* Tooltip style */
+    .tooltip {
+      position: absolute;
+      top: -2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(31, 41, 55, 0.9);
+      color: #f9fafb;
+      font-size: 0.75rem;
+      padding: 0.375rem 0.75rem;
+      border-radius: 0.5rem;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 30;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .price-drag.show-tooltip + .tooltip {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    @keyframes slideRightBounce {
+      0% {
+        left: 0;
+      }
+      70% {
+        left: 160px;
+      }
+      85% {
+        left: 140px;
+      }
+      100% {
+        left: 160px;
+      }
+    }
+    @keyframes pulseRed {
+      0%,
+      100% {
+        box-shadow: 0 6px 12px rgba(220, 38, 38, 0.6);
+        transform: scale(1);
+      }
+      50% {
+        box-shadow: 0 10px 20px rgba(220, 38, 38, 0.9);
+        transform: scale(1.05);
+      }
+    }
+    @keyframes pulseBlue {
+      0%,
+      100% {
+        box-shadow: 0 6px 12px rgba(37, 99, 235, 0.6);
+        transform: scale(1);
+      }
+      50% {
+        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.9);
+        transform: scale(1.05);
+      }
+    }
+    /* Container card improvements */
+    .pacote-card {
+      background: linear-gradient(135deg, #f9fafb, #e0e7ff);
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 20px rgba(99, 102, 241, 0.15);
+      padding: 1.5rem 1.75rem;
+      max-width: 360px;
+      margin: 0 auto;
+      transition: background-color 0.3s ease;
+      position: relative;
+      user-select: none;
+    }
+    .pacote-card.accepted {
+      background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+      box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+    }
+    .pacote-image {
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 6px 12px rgba(99, 102, 241, 0.2);
+      margin-bottom: 1rem;
+      height: 144px;
+      width: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+      background-color: #cbd5e1;
+      border: 2px dashed #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      font-weight: 600;
+      color: #64748b;
+      font-size: 0.875rem;
+      user-select: none;
+    }
+    .pacote-image::after {
+      content: "Imagem não adicionada";
+      position: absolute;
+      user-select: none;
+    }
+    .pacote-card:hover .pacote-image {
+      transform: scale(1.03);
+      opacity: 0.1;
+    }
+    .pacote-title {
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: #1e293b;
+      margin-bottom: 0.25rem;
+      letter-spacing: 0.02em;
+    }
+    .pacote-datetime {
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+    .pacote-minvalue {
+      font-weight: 600;
+      color: #2563eb;
+      margin-bottom: 1.25rem;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+    /* Turno badge */
+    .turno-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background-color: #2563eb;
+      color: white;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.5);
+      user-select: none;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .turno-manhã {
+      background-color: #facc15; /* yellow-400 */
+      color: #78350f; /* yellow-900 */
+      box-shadow: 0 2px 6px rgba(202, 138, 4, 0.7);
+    }
+    .turno-tarde {
+      background-color: #f97316; /* orange-500 */
+      color: white;
+      box-shadow: 0 2px 6px rgba(194, 65, 12, 0.7);
+    }
+    .turno-noite {
+      background-color: #2563eb; /* blue-600 */
+      color: white;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.7);
+    }
+    .turno-madruga {
+      background-color: #9333ea; /* purple-600 */
+      color: white;
+      box-shadow: 0 2px 6px rgba(124, 58, 237, 0.7);
+    }
+    /* Buttons container */
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      max-width: 300px;
+      margin: 0 auto;
+      position: relative;
+    }
+    /* View button */
+    .btn-view {
+      background-color: white;
+      color: #1e293b;
+      padding: 0.625rem 1.5rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 0.875rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 130px;
+      user-select: none;
+      cursor: pointer;
+    }
+    .btn-view:hover,
+    .btn-view:focus {
+      background-color: #e0e7ff;
+      box-shadow: 0 6px 12px rgba(99, 102, 241, 0.3);
+      outline: none;
+    }
+    /* Navigation buttons */
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: #475569;
+      cursor: pointer;
+      user-select: none;
+      background-color: transparent !important;
+      border-radius: 9999px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none !important;
+      transition: color 0.3s ease;
+      border: none;
+    }
+    .nav-btn:hover,
+    .nav-btn:focus {
+      color: #2563eb;
+      outline: none;
+      text-shadow: 0 0 6px rgba(37, 99, 235, 0.7);
+    }
+    .nav-btn.left {
+      left: -48px;
+    }
+    .nav-btn.right {
+      right: -36px;
+    }
+    /* Modal improvements */
+    #modal {
+      background-color: rgba(31, 41, 55, 0.75);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    #modal > div.bg-white {
+      border-radius: 1rem;
+      padding: 2rem;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(31, 41, 55, 0.3);
+    }
+    #modal-close {
+      background-color: transparent;
+      transition: color 0.3s ease;
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+    #modal-close:hover,
+    #modal-close:focus {
+      color: #2563eb;
+      outline: none;
+    }
+    #modal-title {
+      font-size: 1.75rem;
+      color: #1e293b;
+      letter-spacing: 0.03em;
+    }
+    #modal-content p {
+      font-size: 1rem;
+      color: #334155;
+      line-height: 1.5;
+    }
+    #modal-content strong {
+      color: #1e293b;
+    }
+    /* Transport icon styling */
+    #modal-content i {
+      color: #2563eb;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      .nav-btn.left {
+        left: -40px;
+      }
+      .nav-btn.right {
+        right: -28px;
+      }
+      .price-drag {
+        min-width: 110px;
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+      }
+      .btn-view {
+        min-width: 110px;
+        font-size: 0.8rem;
+        padding: 0.5rem 1rem;
+      }
+      .pacote-card {
+        max-width: 100%;
+        padding: 1rem 1rem;
+      }
+      #modal > div.bg-white {
+        max-width: 90vw;
+        padding: 1.5rem;
+      }
+      #modal-close {
+        font-size: 1rem;
+      }
+    }
+    /* Header background and back button adjustments */
+    header {
+      background-color: #fa8072; /* salmon */
+      padding: 1rem 1.5rem;
+      border-radius: 0;
+      box-shadow: 0 8px 20px rgba(250, 128, 114, 0.4);
+      position: relative;
+      width: 100vw;
+      left: 50%;
+      right: 50%;
+      margin-left: -50vw;
+      margin-right: -50vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      user-select: none;
+      z-index: 20;
+    }
+    header h1 {
+      color: white;
+      font-weight: 900;
+      font-family: "Montserrat", sans-serif;
+      font-size: 1.5rem;
+      margin: 0;
+      padding: 0 3rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      user-select: none;
+      flex: 1;
+      text-align: center;
+    }
+    button[aria-label="Voltar"] {
+      position: absolute;
+      left: 1rem !important;
+      background-color: rgba(0,0,0,0.5);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      z-index: 30;
+    }
+    button[aria-label="Voltar"]:hover,
+    button[aria-label="Voltar"]:focus {
+      background-color: rgba(0,0,0,0.7);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+      outline: none;
+    }
+    button[aria-label="Voltar"] i {
+      font-size: 1rem;
+      color: white;
+    }
+    button[aria-label="Ajuda"] {
+      position: absolute;
+      right: 1rem !important;
+      background-color: rgba(0,0,0,0.5);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      z-index: 30;
+      color: white;
+      font-size: 1.25rem;
+    }
+    button[aria-label="Ajuda"]:hover,
+    button[aria-label="Ajuda"]:focus {
+      background-color: rgba(0,0,0,0.7);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+      outline: none;
+    }
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 1.25rem;
+        padding: 0 2.5rem;
+      }
+      button[aria-label="Voltar"],
+      button[aria-label="Ajuda"] {
+        width: 2rem;
+        height: 2rem;
+      }
+      button[aria-label="Voltar"] {
+        left: 0.75rem !important;
+      }
+      button[aria-label="Ajuda"] {
+        right: 0.75rem !important;
+        font-size: 1rem;
+      }
+      button[aria-label="Voltar"] i {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+ </head>
+ <body class="bg-gray-50 font-sans min-h-screen flex flex-col">
+  <div class="max-w-md mx-auto p-6 flex-grow">
+   <header>
+    <button aria-label="Voltar" onclick="location.href='index.html'">
+     <i class="fas fa-arrow-left"></i>
+    </button>
+    <h1 class="font-montserrat">
+     Pacotes de Entregas
+    </h1>
+    <button aria-label="Ajuda" onclick="alert('Para suporte, entre em contato pelo email suporte@exemplo.com')">
+     <i class="fas fa-question-circle"></i>
+    </button>
+   </header>
+   <main class="space-y-14 mt-6">
+    <section class="pacote-section" data-day="Hoje - Dia 13 de Maio" data-day-index="0">
+     <p class="text-center text-xl font-semibold mb-2 text-gray-700 tracking-wide select-none">
+      Hoje - Dia 13 de Maio
+     </p>
+     <div aria-live="polite" class="fade-text" id="observation-0" role="alert">
+      🎮
+      <strong>
+       Arraste o preço para a direita
+      </strong>
+      para aceitar o pacote!
+      <br/>
+      Exemplo: deslize o botão verde até o botão "VER PACOTE" para confirmar.
+      <button aria-label="Fechar observação" class="close-observation" onclick="closeObservation(0)">
+       ×
+      </button>
+     </div>
+     <button aria-label="Mostrar observação de exemplo" class="show-example-btn" id="show-example-0" onclick="showObservation(0)" style="display: none">
+      Mostrar instruções para aceitar o pacote
+     </button>
+     <div class="pacote-card select-none" id="container-0">
+      <img alt="Imagem ilustrativa de um pacote de entrega para o dia 13 de maio, mostrando caixas empilhadas em um ambiente de armazém moderno com luz natural" class="pacote-image opacity-100" height="144" loading="lazy" src="https://storage.googleapis.com/a1aa/image/194e4d4a-3bf4-4448-dc66-ab9f3d9f6e4c.jpg" width="360"/>
+      <div class="turno-badge turno-manhã" id="badge-0">
+       Manhã
+      </div>
+      <strong class="pacote-title" id="title-0">
+       Sesamo Gelato
+      </strong>
+      <p class="pacote-datetime" id="datetime-0">
+       Data e Hora: 01/07 - 11h às 17h
+      </p>
+      <p class="pacote-minvalue" id="minvalue-0">
+       Valor Mínimo Garantido
+      </p>
+      <div class="btn-group relative">
+       <button aria-label="Preço do pacote, arraste para aceitar" class="price-drag bg-green-600" id="price-btn-0" style="width: 130px" tabindex="0">
+        R$ 90,00
+       </button>
+       <div aria-hidden="true" class="tooltip" id="tooltip-0" role="tooltip">
+        Arraste o preço até aqui para aceitar
+       </div>
+       <button aria-label="Ver pacote" class="btn-view" id="view-btn-0" type="button">
+        VER PACOTE
+       </button>
+      </div>
+      <button aria-label="Anterior" class="nav-btn left focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900" id="prev-0">
+       ◀
+      </button>
+      <button aria-label="Próximo" class="nav-btn right focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900" id="next-0">
+       ▶
+      </button>
+     </div>
+    </section>
+    <section class="pacote-section" data-day="Amanhã - Dia 14 de maio" data-day-index="1">
+     <p class="text-center text-xl font-semibold mb-6 text-gray-700 tracking-wide select-none">
+      Amanhã - Dia 14 de maio
+     </p>
+     <div class="pacote-card select-none" id="container-1">
+      <img alt="Imagem ilustrativa de um pacote de entrega para o dia 14 de maio, mostrando um caminhão de entrega em uma rua urbana ao entardecer" class="pacote-image opacity-100" height="144" loading="lazy" src="https://storage.googleapis.com/a1aa/image/cd71f163-e0a9-4315-e6dc-d7fda99ef350.jpg" width="360"/>
+      <div class="turno-badge turno-tarde" id="badge-1">
+       Tarde
+      </div>
+      <strong class="pacote-title" id="title-1">
+       Sesamo Gelato
+      </strong>
+      <p class="pacote-datetime" id="datetime-1">
+       Data e Hora: 01/07 - 11h às 17h
+      </p>
+      <p class="pacote-minvalue" id="minvalue-1">
+       Valor Mínimo Garantido
+      </p>
+      <div class="btn-group relative">
+       <button aria-label="Preço do pacote, arraste para aceitar" class="price-drag bg-green-600" id="price-btn-1" style="width: 130px" tabindex="0">
+        R$ 90,00
+       </button>
+       <div aria-hidden="true" class="tooltip" id="tooltip-1" role="tooltip">
+        Arraste o preço até aqui para aceitar
+       </div>
+       <button aria-label="Ver pacote" class="btn-view" id="view-btn-1" type="button">
+        VER PACOTE
+       </button>
+      </div>
+      <button aria-label="Anterior" class="nav-btn left focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900" id="prev-1">
+       ◀
+      </button>
+      <button aria-label="Próximo" class="nav-btn right focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900" id="next-1">
+       ▶
+      </button>
+     </div>
+    </section>
+    <section class="pacote-section" data-day="Quarta - Dia 15 de maio" data-day-index="2">
+     <p class="text-center text-xl font-semibold mb-6 text-gray-700 tracking-wide select-none">
+      Quarta - Dia 15 de maio
+     </p>
+     <div class="pacote-card select-none" id="container-2">
+      <img alt="Imagem ilustrativa de um pacote de entrega para o dia 15 de maio, mostrando caixas sendo carregadas em um caminhão à noite com iluminação artificial" class="pacote-image opacity-100" height="144" loading="lazy" src="https://storage.googleapis.com/a1aa/image/2c9ad922-01a9-4a9f-4f0f-e1b86faa7e0b.jpg" width="360"/>
+      <div class="turno-badge turno-noite" id="badge-2">
+       Noite
+      </div>
+      <strong class="pacote-title" id="title-2">
+       Sesamo Gelato
+      </strong>
+      <p class="pacote-datetime" id="datetime-2">
+       Data e Hora: 01/07 - 11h às 17h
+      </p>
+      <p class="pacote-minvalue" id="minvalue-2">
+       Valor Mínimo Garantido
+      </p>
+      <div class="btn-group relative">
+       <button aria-label="Preço do pacote, arraste para aceitar" class="price-drag bg-green-600" id="price-btn-2" style="width: 130px" tabindex="0">
+        R$ 90,00
+       </button>
+       <div aria-hidden="true" class="tooltip" id="tooltip-2" role="tooltip">
+        Arraste o preço até aqui para aceitar
+       </div>
+       <button aria-label="Ver pacote" class="btn-view" id="view-btn-2" type="button">
+        VER PACOTE
+       </button>
+      </div>
+      <button aria-label="Anterior" class="nav-btn left focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900" id="prev-2">
+       ◀
+      </button>
+      <button aria-label="Próximo" class="nav-btn right focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900" id="next-2">
+       ▶
+      </button>
+     </div>
+    </section>
+   </main>
+  </div>
+  <!-- Modal -->
+  <div aria-modal="true" class="fixed inset-0 hidden items-center justify-center z-50" id="modal" role="dialog">
+   <div aria-hidden="true" class="modal-backdrop fixed inset-0">
+   </div>
+   <div class="bg-white rounded-xl max-w-md w-full p-8 relative z-10 shadow-lg mx-4 sm:mx-auto">
+    <button aria-label="Fechar modal" class="absolute top-4 right-4 text-gray-600 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 rounded text-lg" id="modal-close">
+     <i class="fas fa-times">
+     </i>
+    </button>
+    <h2 class="font-montserrat font-extrabold text-2xl mb-6 text-gray-900 select-none" id="modal-title">
+     Detalhes do Pacote
+    </h2>
+    <div class="space-y-4 text-gray-700 text-base leading-relaxed" id="modal-content">
+    </div>
+   </div>
+  </div>
+  <script>
+   function closeObservation(dayIndex) {
+      const obs = document.getElementById(`observation-${dayIndex}`);
+      const showBtn = document.getElementById(`show-example-${dayIndex}`);
+      if (obs && showBtn) {
+        obs.style.display = "none";
+        showBtn.style.display = "block";
+      }
+    }
+    function showObservation(dayIndex) {
+      const obs = document.getElementById(`observation-${dayIndex}`);
+      const showBtn = document.getElementById(`show-example-${dayIndex}`);
+      if (obs && showBtn) {
+        obs.style.display = "block";
+        showBtn.style.display = "none";
+      }
+    }
+
+    const pacotesData = [
+      [
+        {
+          title: "Sesamo Gelato",
+          datetime: "Data e Hora: 01/07 - 11h às 17h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 90,00",
+          demanda: "Alta",
+          transporte: "bag",
+          local: "Rua das Flores, 123, Centro",
+          turno: "manhã",
+        },
+        {
+          title: "Gelato Supremo",
+          datetime: "Data e Hora: 01/07 - 18h às 22h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 120,00",
+          demanda: "Média",
+          transporte: "bau",
+          local: "Av. Paulista, 456, Bela Vista",
+          turno: "tarde",
+        },
+        {
+          title: "Gelato Clássico",
+          datetime: "Data e Hora: 01/07 - 08h às 11h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 75,00",
+          demanda: "Baixa",
+          transporte: "automovel",
+          local: "Rua das Acácias, 789, Jardim",
+          turno: "madruga",
+        },
+      ],
+      [
+        {
+          title: "Sesamo Gelato",
+          datetime: "Data e Hora: 01/07 - 11h às 17h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 90,00",
+          demanda: "Alta",
+          transporte: "bag",
+          local: "Rua das Flores, 123, Centro",
+          turno: "manhã",
+        },
+        {
+          title: "Gelato Supremo",
+          datetime: "Data e Hora: 01/07 - 18h às 22h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 120,00",
+          demanda: "Média",
+          transporte: "bau",
+          local: "Av. Paulista, 456, Bela Vista",
+          turno: "tarde",
+        },
+        {
+          title: "Gelato Clássico",
+          datetime: "Data e Hora: 01/07 - 08h às 11h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 75,00",
+          demanda: "Baixa",
+          transporte: "automovel",
+          local: "Rua das Acácias, 789, Jardim",
+          turno: "madruga",
+        },
+      ],
+      [
+        {
+          title: "Sesamo Gelato",
+          datetime: "Data e Hora: 01/07 - 11h às 17h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 90,00",
+          demanda: "Alta",
+          transporte: "bag",
+          local: "Rua das Flores, 123, Centro",
+          turno: "manhã",
+        },
+        {
+          title: "Gelato Supremo",
+          datetime: "Data e Hora: 01/07 - 18h às 22h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 120,00",
+          demanda: "Média",
+          transporte: "bau",
+          local: "Av. Paulista, 456, Bela Vista",
+          turno: "tarde",
+        },
+        {
+          title: "Gelato Clássico",
+          datetime: "Data e Hora: 01/07 - 08h às 11h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 75,00",
+          demanda: "Baixa",
+          transporte: "automovel",
+          local: "Rua das Acácias, 789, Jardim",
+          turno: "madruga",
+        },
+      ],
+    ];
+
+    const currentIndexes = [0, 0, 0];
+    const acceptedState = [false, false, false];
+
+    function getTurnoBadgeClass(turno) {
+      switch (turno) {
+        case "manhã":
+          return "turno-manhã";
+        case "tarde":
+          return "turno-tarde";
+        case "noite":
+          return "turno-noite";
+        case "madruga":
+          return "turno-madruga";
+        default:
+          return "turno-manhã";
+      }
+    }
+
+    function updatePacote(dayIndex) {
+      const pacote = pacotesData[dayIndex][currentIndexes[dayIndex]];
+      document.getElementById(`title-${dayIndex}`).textContent = pacote.title;
+      document.getElementById(`datetime-${dayIndex}`).textContent = pacote.datetime;
+      document.getElementById(`minvalue-${dayIndex}`).textContent = pacote.minvalue;
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+      const viewBtn = document.getElementById(`view-btn-${dayIndex}`);
+      const container = document.getElementById(`container-${dayIndex}`);
+      const badge = container.querySelector(".turno-badge");
+
+      acceptedState[dayIndex] = false;
+      priceBtn.classList.remove("accepted", "blue", "red");
+      priceBtn.style.left = "0px";
+      priceBtn.textContent = pacote.price;
+      priceBtn.classList.remove("pre-animate", "show-tooltip");
+      priceBtn.classList.remove("bg-red-600");
+      priceBtn.classList.add("bg-green-600");
+      priceBtn.style.color = "white";
+      viewBtn.textContent = "VER PACOTE";
+      container.classList.remove("bg-blue-100", "accepted");
+
+      // Update badge class and text
+      if (badge) {
+        badge.className = "turno-badge " + getTurnoBadgeClass(pacote.turno);
+        badge.textContent = pacote.turno.charAt(0).toUpperCase() + pacote.turno.slice(1);
+      }
+    }
+
+    pacotesData.forEach((_, dayIndex) => {
+      const prevBtn = document.getElementById(`prev-${dayIndex}`);
+      const nextBtn = document.getElementById(`next-${dayIndex}`);
+
+      prevBtn.addEventListener("click", () => {
+        currentIndexes[dayIndex] =
+          (currentIndexes[dayIndex] - 1 + pacotesData[dayIndex].length) %
+          pacotesData[dayIndex].length;
+        updatePacote(dayIndex);
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentIndexes[dayIndex] =
+          (currentIndexes[dayIndex] + 1) % pacotesData[dayIndex].length;
+        updatePacote(dayIndex);
+      });
+    });
+
+    const modal = document.getElementById("modal");
+    const modalContent = document.getElementById("modal-content");
+    const modalTitle = document.getElementById("modal-title");
+    const modalClose = document.getElementById("modal-close");
+
+    modalClose.addEventListener("click", () => {
+      closeModal();
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+        closeModal();
+      }
+    });
+
+    function openModal(dayIndex) {
+      const pacote = pacotesData[dayIndex][currentIndexes[dayIndex]];
+      modalTitle.textContent = `Detalhes do Pacote: ${pacote.title}`;
+      modalContent.innerHTML = `
+        <p><strong>Data e Hora:</strong> ${pacote.datetime.replace(
+          "Data e Hora: ",
+          ""
+        )}</p>
+        <p><strong>Demanda:</strong> ${pacote.demanda}</p>
+        <p class="flex items-center space-x-2">
+          <strong>Transporte:</strong>
+          <span class="ml-2 text-lg" aria-label="Tipo de transporte">
+            ${getTransportIcon(pacote.transporte)}
+          </span>
+        </p>
+        <p><strong>Local do Estabelecimento:</strong> ${pacote.local}</p>
+      `;
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.body.style.overflow = "";
+    }
+
+    function getTransportIcon(type) {
+      switch (type) {
+        case "bag":
+          return `<i class="fas fa-shopping-bag" title="Bag"></i>`;
+        case "bau":
+          return `<i class="fas fa-truck" title="Baú"></i>`;
+        case "automovel":
+          return `<i class="fas fa-car" title="Automóvel"></i>`;
+        default:
+          return "";
+      }
+    }
+
+    document.querySelectorAll("[id^=view-btn-]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const dayIndex = parseInt(btn.id.split("-")[2], 10);
+        if (acceptedState[dayIndex]) {
+          cancelAcceptance(dayIndex);
+        } else {
+          openModal(dayIndex);
+        }
+      });
+    });
+
+    function cancelAcceptance(dayIndex) {
+      updatePacote(dayIndex);
+    }
+
+    const dragState = [false, false, false];
+    const dragData = [
+      { startX: 0, currentX: 0, maxDrag: 0, accepted: false },
+      { startX: 0, currentX: 0, maxDrag: 0, accepted: false },
+      { startX: 0, currentX: 0, maxDrag: 0, accepted: false },
+    ];
+
+    function resetDrag(dayIndex) {
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+      const viewBtn = document.getElementById(`view-btn-${dayIndex}`);
+      const container = document.getElementById(`container-${dayIndex}`);
+      priceBtn.style.left = "0px";
+      priceBtn.classList.remove("accepted", "blue", "red", "show-tooltip");
+      dragData[dayIndex].accepted = false;
+      acceptedState[dayIndex] = false;
+      priceBtn.textContent = pacotesData[dayIndex][currentIndexes[dayIndex]].price;
+      priceBtn.classList.remove("bg-red-600");
+      priceBtn.classList.add("bg-green-600");
+      priceBtn.style.color = "white";
+      viewBtn.textContent = "VER PACOTE";
+      container.classList.remove("bg-blue-100", "accepted");
+    }
+
+    function showTooltip(dayIndex) {
+      const tooltip = document.getElementById(`tooltip-${dayIndex}`);
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+      tooltip.setAttribute("aria-hidden", "false");
+      priceBtn.classList.add("show-tooltip");
+      setTimeout(() => {
+        priceBtn.classList.remove("pre-animate", "show-tooltip");
+        tooltip.setAttribute("aria-hidden", "true");
+        localStorage.setItem(`dragHintShown-${dayIndex}`, "true");
+      }, 2500);
+    }
+
+    function onDragStart(e, dayIndex) {
+      e.preventDefault();
+      if (acceptedState[dayIndex]) return;
+      dragState[dayIndex] = true;
+      dragData[dayIndex].startX = e.type.includes("touch")
+        ? e.touches[0].clientX
+        : e.clientX;
+      dragData[dayIndex].maxDrag =
+        document.getElementById(`view-btn-${dayIndex}`).offsetWidth;
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+      priceBtn.classList.add("dragging");
+      priceBtn.classList.remove("pre-animate", "show-tooltip");
+      const tooltip = document.getElementById(`tooltip-${dayIndex}`);
+      tooltip.setAttribute("aria-hidden", "true");
+    }
+
+    function onDragMove(e, dayIndex) {
+      if (!dragState[dayIndex]) return;
+      const clientX = e.type.includes("touch")
+        ? e.touches[0].clientX
+        : e.clientX;
+      const deltaX = clientX - dragData[dayIndex].startX;
+      if (deltaX < 0) return;
+      const maxDrag = dragData[dayIndex].maxDrag;
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+      const left = Math.min(deltaX, maxDrag);
+      priceBtn.style.left = left + "px";
+      dragData[dayIndex].currentX = left;
+    }
+
+    function onDragEnd(e, dayIndex) {
+      if (!dragState[dayIndex]) return;
+      dragState[dayIndex] = false;
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+      const viewBtn = document.getElementById(`view-btn-${dayIndex}`);
+      const container = document.getElementById(`container-${dayIndex}`);
+      priceBtn.classList.remove("dragging");
+      const maxDrag = dragData[dayIndex].maxDrag;
+      if (dragData[dayIndex].currentX >= maxDrag * 0.9) {
+        acceptedState[dayIndex] = true;
+        priceBtn.classList.add("accepted", "red");
+        priceBtn.style.left = "0px";
+        priceBtn.textContent = pacotesData[dayIndex][currentIndexes[dayIndex]].price;
+        priceBtn.classList.remove("bg-green-600");
+        priceBtn.classList.add("bg-red-600");
+        priceBtn.style.color = "white";
+        viewBtn.textContent = "CANCELAR";
+        container.classList.add("bg-blue-100", "accepted");
+        setTimeout(() => {
+          alert(
+            `Você aceitou o pacote: ${pacotesData[dayIndex][currentIndexes[dayIndex]].title}`
+          );
+        }, 300);
+      } else {
+        priceBtn.style.left = "0px";
+        dragData[dayIndex].accepted = false;
+        if (!localStorage.getItem(`dragHintShown-${dayIndex}`)) {
+          priceBtn.classList.add("pre-animate");
+          showTooltip(dayIndex);
+        }
+      }
+    }
+
+    [0, 1, 2].forEach((dayIndex) => {
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+
+      priceBtn.addEventListener("mousedown", (e) => onDragStart(e, dayIndex));
+      priceBtn.addEventListener("touchstart", (e) => onDragStart(e, dayIndex), {
+        passive: false,
+      });
+
+      window.addEventListener("mousemove", (e) => onDragMove(e, dayIndex));
+      window.addEventListener("touchmove", (e) => onDragMove(e, dayIndex), {
+        passive: false,
+      });
+
+      window.addEventListener("mouseup", (e) => onDragEnd(e, dayIndex));
+      window.addEventListener("touchend", (e) => onDragEnd(e, dayIndex));
+      window.addEventListener("touchcancel", (e) => onDragEnd(e, dayIndex));
+    });
+
+    window.addEventListener("load", () => {
+      [0, 1, 2].forEach((dayIndex) => {
+        if (!localStorage.getItem(`dragHintShown-${dayIndex}`)) {
+          const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+          priceBtn.classList.add("pre-animate");
+          showTooltip(dayIndex);
+        }
+      });
+    });
+  </script>
+ </body>
+</html>
