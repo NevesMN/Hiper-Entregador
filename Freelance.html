@@ -1,0 +1,677 @@
+<html class="scroll-smooth" lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pacotes de Entregas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap");
+    .font-montserrat {
+      font-family: "Montserrat", sans-serif;
+    }
+    .price-drag {
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      position: relative;
+      left: 0;
+      transition: left 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+      min-width: 120px;
+      text-align: center;
+    }
+    .price-drag.dragging {
+      cursor: grabbing;
+      transition: none;
+    }
+    .price-drag.accepted {
+      animation: slideRightBounce 0.4s forwards;
+      cursor: grab;
+    }
+    .price-drag.accepted.blue {
+      background-color: #2563eb; /* Tailwind blue-600 */
+      color: white;
+    }
+    .price-drag.accepted.red {
+      background-color: #dc2626; /* Tailwind red-600 */
+      color: white;
+    }
+    .fade-text {
+      font-size: 0.65rem;
+      color: rgba(0, 0, 0, 0.15);
+      user-select: none;
+      margin-bottom: 0.5rem;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    }
+    /* Modal backdrop */
+    .modal-backdrop {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    /* Pre-animation for drag hint */
+    @keyframes dragHint {
+      0% {
+        left: 0;
+        opacity: 1;
+      }
+      50% {
+        left: 160px;
+        opacity: 0.6;
+      }
+      100% {
+        left: 0;
+        opacity: 1;
+      }
+    }
+    .price-drag.pre-animate {
+      animation: dragHint 2.5s ease-in-out 1 forwards;
+    }
+    /* Tooltip style */
+    .tooltip {
+      position: absolute;
+      top: -1.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.75);
+      color: white;
+      font-size: 0.65rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 30;
+    }
+    .price-drag.show-tooltip + .tooltip {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body class="bg-white font-sans min-h-screen flex flex-col">
+  <div class="max-w-md mx-auto p-4 flex-grow">
+    <header class="flex items-center justify-center relative mb-8">
+      <button
+        aria-label="Voltar"
+        onclick="location.href='index.html'"
+        class="absolute left-[-8px] top-1/2 -translate-y-1/2 bg-black rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition"
+      >
+        <i class="fas fa-arrow-left text-white text-base"></i>
+      </button>
+      <h1
+        class="font-montserrat font-extrabold text-2xl text-black text-center px-10 sm:px-0"
+      >
+        Pacotes de Entregas
+      </h1>
+    </header>
+    <main class="space-y-10">
+      <section
+        class="pacote-section"
+        data-day="Hoje - Dia 13 de Maio"
+        data-day-index="0"
+      >
+        <p class="text-center text-lg font-semibold mb-4 text-gray-700">
+          Hoje - Dia 13 de Maio
+        </p>
+        <div
+          id="container-0"
+          class="relative bg-gray-300 rounded-3xl px-6 py-6 text-center text-black text-lg leading-tight select-none max-w-[320px] mx-auto shadow-lg transition-colors duration-300"
+        >
+          <div
+            class="rounded-2xl mb-5 mx-auto bg-gray-400 w-full h-28 sm:h-36"
+          ></div>
+          <strong
+            class="block font-semibold mb-1 text-xl"
+            id="title-0"
+          >
+            Sesamo Gelato
+          </strong>
+          <p class="mb-1" id="datetime-0">Data e Hora: 01/07 - 11h às 17h</p>
+          <p class="mb-6 font-medium" id="minvalue-0">Valor Mínimo Garantido</p>
+          <div class="relative w-full max-w-[280px] mx-auto select-none flex justify-center gap-4">
+            <button
+              id="price-btn-0"
+              class="price-drag bg-green-600 px-5 py-2 text-white text-lg font-semibold rounded-full z-20"
+              style="width: 120px;"
+              aria-label="Preço do pacote, arraste para aceitar"
+              tabindex="0"
+            >
+              R$ 90,00
+            </button>
+            <div class="tooltip" id="tooltip-0" role="tooltip" aria-hidden="true">
+              Arraste o preço até aqui para aceitar
+            </div>
+            <button
+              id="view-btn-0"
+              class="bg-white text-black px-6 py-2 rounded-full text-sm font-semibold shadow hover:shadow-md transition flex items-center justify-center min-w-[120px]"
+              aria-label="Ver pacote"
+              type="button"
+            >
+              VER PACOTE
+            </button>
+          </div>
+          <button
+            aria-label="Anterior"
+            id="prev-0"
+            class="absolute top-1/2 -left-8 -translate-y-1/2 text-black text-3xl font-bold cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black hover:text-gray-700 transition"
+          >
+            ◀
+          </button>
+          <button
+            aria-label="Próximo"
+            id="next-0"
+            class="absolute top-1/2 -right-8 -translate-y-1/2 text-black text-3xl font-bold cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black hover:text-gray-700 transition"
+          >
+            ▶
+          </button>
+        </div>
+      </section>
+
+      <section
+        class="pacote-section"
+        data-day="Amanhã - Dia 14 de maio"
+        data-day-index="1"
+      >
+        <p class="text-center text-lg font-semibold mb-4 text-gray-700">
+          Amanhã - Dia 14 de maio
+        </p>
+        <div
+          id="container-1"
+          class="relative bg-gray-300 rounded-3xl px-6 py-6 text-center text-black text-lg leading-tight select-none max-w-[320px] mx-auto shadow-lg transition-colors duration-300"
+        >
+          <div
+            class="rounded-2xl mb-5 mx-auto bg-gray-400 w-full h-28 sm:h-36"
+          ></div>
+          <strong
+            class="block font-semibold mb-1 text-xl"
+            id="title-1"
+          >
+            Sesamo Gelato
+          </strong>
+          <p class="mb-1" id="datetime-1">Data e Hora: 01/07 - 11h às 17h</p>
+          <p class="mb-6 font-medium" id="minvalue-1">Valor Mínimo Garantido</p>
+          <div class="relative w-full max-w-[280px] mx-auto select-none flex justify-center gap-4">
+            <button
+              id="price-btn-1"
+              class="price-drag bg-green-600 px-5 py-2 text-white text-lg font-semibold rounded-full z-20"
+              style="width: 120px;"
+              aria-label="Preço do pacote, arraste para aceitar"
+              tabindex="0"
+            >
+              R$ 90,00
+            </button>
+            <div class="tooltip" id="tooltip-1" role="tooltip" aria-hidden="true">
+              Arraste o preço até aqui para aceitar
+            </div>
+            <button
+              id="view-btn-1"
+              class="bg-white text-black px-6 py-2 rounded-full text-sm font-semibold shadow hover:shadow-md transition flex items-center justify-center min-w-[120px]"
+              aria-label="Ver pacote"
+              type="button"
+            >
+              VER PACOTE
+            </button>
+          </div>
+          <button
+            aria-label="Anterior"
+            id="prev-1"
+            class="absolute top-1/2 -left-8 -translate-y-1/2 text-black text-3xl font-bold cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black hover:text-gray-700 transition"
+          >
+            ◀
+          </button>
+          <button
+            aria-label="Próximo"
+            id="next-1"
+            class="absolute top-1/2 -right-8 -translate-y-1/2 text-black text-3xl font-bold cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black hover:text-gray-700 transition"
+          >
+            ▶
+          </button>
+        </div>
+      </section>
+
+      <section
+        class="pacote-section"
+        data-day="Quarta - Dia 15 de maio"
+        data-day-index="2"
+      >
+        <p class="text-center text-lg font-semibold mb-4 text-gray-700">
+          Quarta - Dia 15 de maio
+        </p>
+        <div
+          id="container-2"
+          class="relative bg-gray-300 rounded-3xl px-6 py-6 text-center text-black text-lg leading-tight select-none max-w-[320px] mx-auto shadow-lg transition-colors duration-300"
+        >
+          <div
+            class="rounded-2xl mb-5 mx-auto bg-gray-400 w-full h-28 sm:h-36"
+          ></div>
+          <strong
+            class="block font-semibold mb-1 text-xl"
+            id="title-2"
+          >
+            Sesamo Gelato
+          </strong>
+          <p class="mb-1" id="datetime-2">Data e Hora: 01/07 - 11h às 17h</p>
+          <p class="mb-6 font-medium" id="minvalue-2">Valor Mínimo Garantido</p>
+          <div class="relative w-full max-w-[280px] mx-auto select-none flex justify-center gap-4">
+            <button
+              id="price-btn-2"
+              class="price-drag bg-green-600 px-5 py-2 text-white text-lg font-semibold rounded-full z-20"
+              style="width: 120px;"
+              aria-label="Preço do pacote, arraste para aceitar"
+              tabindex="0"
+            >
+              R$ 90,00
+            </button>
+            <div class="tooltip" id="tooltip-2" role="tooltip" aria-hidden="true">
+              Arraste o preço até aqui para aceitar
+            </div>
+            <button
+              id="view-btn-2"
+              class="bg-white text-black px-6 py-2 rounded-full text-sm font-semibold shadow hover:shadow-md transition flex items-center justify-center min-w-[120px]"
+              aria-label="Ver pacote"
+              type="button"
+            >
+              VER PACOTE
+            </button>
+          </div>
+          <button
+            aria-label="Anterior"
+            id="prev-2"
+            class="absolute top-1/2 -left-8 -translate-y-1/2 text-black text-3xl font-bold cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black hover:text-gray-700 transition"
+          >
+            ◀
+          </button>
+          <button
+            aria-label="Próximo"
+            id="next-2"
+            class="absolute top-1/2 -right-8 -translate-y-1/2 text-black text-3xl font-bold cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black hover:text-gray-700 transition"
+          >
+            ▶
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div
+    id="modal"
+    class="fixed inset-0 hidden items-center justify-center z-50"
+    aria-modal="true"
+    role="dialog"
+  >
+    <div
+      class="modal-backdrop fixed inset-0"
+      aria-hidden="true"
+    ></div>
+    <div
+      class="bg-white rounded-xl max-w-md w-full p-6 relative z-10 shadow-lg mx-4 sm:mx-auto"
+    >
+      <button
+        id="modal-close"
+        aria-label="Fechar modal"
+        class="absolute top-3 right-3 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black rounded"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+      <h2 class="font-montserrat font-extrabold text-2xl mb-4" id="modal-title">
+        Detalhes do Pacote
+      </h2>
+      <div id="modal-content" class="space-y-3 text-gray-800 text-sm">
+        <!-- Conteúdo dinâmico -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pacotesData = [
+      [
+        {
+          title: "Sesamo Gelato",
+          datetime: "Data e Hora: 01/07 - 11h às 17h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 90,00",
+          demanda: "Alta",
+          transporte: "bag",
+          local: "Rua das Flores, 123, Centro",
+        },
+        {
+          title: "Gelato Supremo",
+          datetime: "Data e Hora: 01/07 - 18h às 22h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 120,00",
+          demanda: "Média",
+          transporte: "bau",
+          local: "Av. Paulista, 456, Bela Vista",
+        },
+        {
+          title: "Gelato Clássico",
+          datetime: "Data e Hora: 01/07 - 08h às 11h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 75,00",
+          demanda: "Baixa",
+          transporte: "automovel",
+          local: "Rua das Acácias, 789, Jardim",
+        },
+      ],
+      [
+        {
+          title: "Sesamo Gelato",
+          datetime: "Data e Hora: 01/07 - 11h às 17h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 90,00",
+          demanda: "Alta",
+          transporte: "bag",
+          local: "Rua das Flores, 123, Centro",
+        },
+        {
+          title: "Gelato Supremo",
+          datetime: "Data e Hora: 01/07 - 18h às 22h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 120,00",
+          demanda: "Média",
+          transporte: "bau",
+          local: "Av. Paulista, 456, Bela Vista",
+        },
+        {
+          title: "Gelato Clássico",
+          datetime: "Data e Hora: 01/07 - 08h às 11h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 75,00",
+          demanda: "Baixa",
+          transporte: "automovel",
+          local: "Rua das Acácias, 789, Jardim",
+        },
+      ],
+      [
+        {
+          title: "Sesamo Gelato",
+          datetime: "Data e Hora: 01/07 - 11h às 17h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 90,00",
+          demanda: "Alta",
+          transporte: "bag",
+          local: "Rua das Flores, 123, Centro",
+        },
+        {
+          title: "Gelato Supremo",
+          datetime: "Data e Hora: 01/07 - 18h às 22h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 120,00",
+          demanda: "Média",
+          transporte: "bau",
+          local: "Av. Paulista, 456, Bela Vista",
+        },
+        {
+          title: "Gelato Clássico",
+          datetime: "Data e Hora: 01/07 - 08h às 11h",
+          minvalue: "Valor Mínimo Garantido",
+          price: "R$ 75,00",
+          demanda: "Baixa",
+          transporte: "automovel",
+          local: "Rua das Acácias, 789, Jardim",
+        },
+      ],
+    ];
+
+    const currentIndexes = [0, 0, 0];
+    const acceptedState = [false, false, false];
+
+    function updatePacote(dayIndex) {
+      const pacote = pacotesData[dayIndex][currentIndexes[dayIndex]];
+      document.getElementById(`title-${dayIndex}`).textContent = pacote.title;
+      document.getElementById(`datetime-${dayIndex}`).textContent = pacote.datetime;
+      document.getElementById(`minvalue-${dayIndex}`).textContent = pacote.minvalue;
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+      const viewBtn = document.getElementById(`view-btn-${dayIndex}`);
+      const container = document.getElementById(`container-${dayIndex}`);
+
+      // Reset accepted state and styles
+      acceptedState[dayIndex] = false;
+      priceBtn.classList.remove("accepted", "blue", "red");
+      priceBtn.style.left = "0px";
+      priceBtn.textContent = pacote.price;
+      priceBtn.classList.remove("pre-animate", "show-tooltip");
+      priceBtn.classList.remove("bg-red-600");
+      priceBtn.classList.add("bg-green-600");
+      priceBtn.style.color = "white";
+      viewBtn.textContent = "VER PACOTE";
+      container.classList.remove("bg-blue-100");
+    }
+
+    pacotesData.forEach((_, dayIndex) => {
+      const prevBtn = document.getElementById(`prev-${dayIndex}`);
+      const nextBtn = document.getElementById(`next-${dayIndex}`);
+
+      prevBtn.addEventListener("click", () => {
+        currentIndexes[dayIndex] =
+          (currentIndexes[dayIndex] - 1 + pacotesData[dayIndex].length) %
+          pacotesData[dayIndex].length;
+        updatePacote(dayIndex);
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentIndexes[dayIndex] =
+          (currentIndexes[dayIndex] + 1) % pacotesData[dayIndex].length;
+        updatePacote(dayIndex);
+      });
+    });
+
+    // Modal elements
+    const modal = document.getElementById("modal");
+    const modalContent = document.getElementById("modal-content");
+    const modalTitle = document.getElementById("modal-title");
+    const modalClose = document.getElementById("modal-close");
+
+    modalClose.addEventListener("click", () => {
+      closeModal();
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+        closeModal();
+      }
+    });
+
+    function openModal(dayIndex) {
+      const pacote = pacotesData[dayIndex][currentIndexes[dayIndex]];
+      modalTitle.textContent = `Detalhes do Pacote: ${pacote.title}`;
+      modalContent.innerHTML = `
+        <p><strong>Data e Hora:</strong> ${pacote.datetime.replace(
+          "Data e Hora: ",
+          ""
+        )}</p>
+        <p><strong>Demanda:</strong> ${pacote.demanda}</p>
+        <p class="flex items-center space-x-2">
+          <strong>Transporte:</strong>
+          <span class="ml-2 text-lg" aria-label="Tipo de transporte">
+            ${getTransportIcon(pacote.transporte)}
+          </span>
+        </p>
+        <p><strong>Local do Estabelecimento:</strong> ${pacote.local}</p>
+      `;
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.body.style.overflow = "";
+    }
+
+    function getTransportIcon(type) {
+      switch (type) {
+        case "bag":
+          return `<i class="fas fa-shopping-bag" title="Bag"></i>`;
+        case "bau":
+          return `<i class="fas fa-truck" title="Baú"></i>`;
+        case "automovel":
+          return `<i class="fas fa-car" title="Automóvel"></i>`;
+        default:
+          return "";
+      }
+    }
+
+    // Attach event listeners to "Ver Pacote" buttons
+    document.querySelectorAll("[id^=view-btn-]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const dayIndex = parseInt(btn.id.split("-")[2], 10);
+        if (acceptedState[dayIndex]) {
+          // If accepted, "Check in" clicked: cancel acceptance
+          cancelAcceptance(dayIndex);
+        } else {
+          openModal(dayIndex);
+        }
+      });
+    });
+
+    function cancelAcceptance(dayIndex) {
+      updatePacote(dayIndex);
+    }
+
+    // Drag to accept logic
+    const dragState = [false, false, false];
+    const dragData = [
+      { startX: 0, currentX: 0, maxDrag: 0, accepted: false },
+      { startX: 0, currentX: 0, maxDrag: 0, accepted: false },
+      { startX: 0, currentX: 0, maxDrag: 0, accepted: false },
+    ];
+
+    function resetDrag(dayIndex) {
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+      const viewBtn = document.getElementById(`view-btn-${dayIndex}`);
+      const container = document.getElementById(`container-${dayIndex}`);
+      priceBtn.style.left = "0px";
+      priceBtn.classList.remove("accepted", "blue", "red", "show-tooltip");
+      dragData[dayIndex].accepted = false;
+      acceptedState[dayIndex] = false;
+      priceBtn.textContent = pacotesData[dayIndex][currentIndexes[dayIndex]].price;
+      priceBtn.classList.remove("bg-red-600");
+      priceBtn.classList.add("bg-green-600");
+      priceBtn.style.color = "white";
+      viewBtn.textContent = "VER PACOTE";
+      container.classList.remove("bg-blue-100");
+      if (!localStorage.getItem(`dragHintShown-${dayIndex}`)) {
+        priceBtn.classList.add("pre-animate");
+        showTooltip(dayIndex);
+      }
+    }
+
+    function showTooltip(dayIndex) {
+      const tooltip = document.getElementById(`tooltip-${dayIndex}`);
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+      tooltip.setAttribute("aria-hidden", "false");
+      priceBtn.classList.add("show-tooltip");
+      // Remove animation and tooltip after one cycle (2.5s)
+      setTimeout(() => {
+        priceBtn.classList.remove("pre-animate", "show-tooltip");
+        tooltip.setAttribute("aria-hidden", "true");
+        localStorage.setItem(`dragHintShown-${dayIndex}`, "true");
+      }, 2500);
+    }
+
+    function onDragStart(e, dayIndex) {
+      e.preventDefault();
+      if (acceptedState[dayIndex]) return; // Prevent drag if accepted
+      dragState[dayIndex] = true;
+      dragData[dayIndex].startX = e.type.includes("touch")
+        ? e.touches[0].clientX
+        : e.clientX;
+      dragData[dayIndex].maxDrag =
+        document.getElementById(`view-btn-${dayIndex}`).offsetWidth;
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+      priceBtn.classList.add("dragging");
+      priceBtn.classList.remove("pre-animate", "show-tooltip");
+      const tooltip = document.getElementById(`tooltip-${dayIndex}`);
+      tooltip.setAttribute("aria-hidden", "true");
+    }
+
+    function onDragMove(e, dayIndex) {
+      if (!dragState[dayIndex]) return;
+      const clientX = e.type.includes("touch")
+        ? e.touches[0].clientX
+        : e.clientX;
+      const deltaX = clientX - dragData[dayIndex].startX;
+      if (deltaX < 0) return; // no dragging left
+      const maxDrag = dragData[dayIndex].maxDrag;
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+      const left = Math.min(deltaX, maxDrag);
+      priceBtn.style.left = left + "px";
+      dragData[dayIndex].currentX = left;
+    }
+
+    function onDragEnd(e, dayIndex) {
+      if (!dragState[dayIndex]) return;
+      dragState[dayIndex] = false;
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+      const viewBtn = document.getElementById(`view-btn-${dayIndex}`);
+      const container = document.getElementById(`container-${dayIndex}`);
+      priceBtn.classList.remove("dragging");
+      const maxDrag = dragData[dayIndex].maxDrag;
+      if (dragData[dayIndex].currentX >= maxDrag * 0.9) {
+        // Accepted
+        acceptedState[dayIndex] = true;
+        priceBtn.classList.add("accepted", "red");
+        priceBtn.style.left = "0px"; // Return to initial position
+        priceBtn.textContent = pacotesData[dayIndex][currentIndexes[dayIndex]].price;
+        priceBtn.classList.remove("bg-green-600");
+        priceBtn.classList.add("bg-red-600");
+        priceBtn.style.color = "white";
+        viewBtn.textContent = "CHECK IN";
+        container.classList.add("bg-blue-100");
+        setTimeout(() => {
+          alert(
+            `Você aceitou o pacote: ${pacotesData[dayIndex][currentIndexes[dayIndex]].title}`
+          );
+        }, 300);
+      } else {
+        // Reset
+        priceBtn.style.left = "0px";
+        dragData[dayIndex].accepted = false;
+        if (!localStorage.getItem(`dragHintShown-${dayIndex}`)) {
+          priceBtn.classList.add("pre-animate");
+          showTooltip(dayIndex);
+        }
+      }
+    }
+
+    // Attach drag listeners
+    [0, 1, 2].forEach((dayIndex) => {
+      const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+
+      priceBtn.addEventListener("mousedown", (e) => onDragStart(e, dayIndex));
+      priceBtn.addEventListener("touchstart", (e) => onDragStart(e, dayIndex), {
+        passive: false,
+      });
+
+      window.addEventListener("mousemove", (e) => onDragMove(e, dayIndex));
+      window.addEventListener("touchmove", (e) => onDragMove(e, dayIndex), {
+        passive: false,
+      });
+
+      window.addEventListener("mouseup", (e) => onDragEnd(e, dayIndex));
+      window.addEventListener("touchend", (e) => onDragEnd(e, dayIndex));
+      window.addEventListener("touchcancel", (e) => onDragEnd(e, dayIndex));
+    });
+
+    // Initialize pre-animation on load for each price button if not shown before
+    window.addEventListener("load", () => {
+      [0, 1, 2].forEach((dayIndex) => {
+        if (!localStorage.getItem(`dragHintShown-${dayIndex}`)) {
+          const priceBtn = document.getElementById(`price-btn-${dayIndex}`);
+          priceBtn.classList.add("pre-animate");
+          showTooltip(dayIndex);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
