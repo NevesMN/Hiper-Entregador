@@ -1,0 +1,829 @@
+<html class="scroll-smooth" lang="pt-BR">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   SuperHubz
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+      font-family: "Inter", sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .category-text {
+      font-family: "Roboto", sans-serif;
+      font-weight: 600;
+      font-size: 0.875rem; /* text-sm */
+      line-height: 1.25rem; /* leading-5 */
+      color: #0a1f44;
+      text-align: center;
+      margin-top: 0.5rem;
+      user-select: none;
+      white-space: normal;
+    }
+    .category-card {
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      cursor: pointer;
+      border-radius: 1rem;
+      background-color: white;
+      box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.25rem 1rem;
+      height: 140px;
+      justify-content: center;
+      text-decoration: none;
+      min-width: 120px;
+      flex-shrink: 0;
+      margin-right: 1rem;
+    }
+    .category-card:last-child {
+      margin-right: 0;
+    }
+    .category-card:hover,
+    .category-card:focus-visible {
+      box-shadow: 0 8px 20px rgb(0 0 0 / 0.15);
+      transform: translateY(-4px);
+      outline: none;
+    }
+    .category-icon-wrapper {
+      width: 56px;
+      height: 56px;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+      flex-shrink: 0;
+    }
+    /* Hide scrollbar but allow scrolling */
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    /* Restaurant cards */
+    .restaurant-list {
+      display: flex;
+      overflow-x: auto;
+      gap: 1rem;
+      padding-bottom: 0.5rem;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+    .restaurant-card {
+      flex: 0 0 220px;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 1px 6px rgb(0 0 0 / 0.1);
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+    .restaurant-card:hover,
+    .restaurant-card:focus-visible {
+      box-shadow: 0 12px 24px rgb(0 0 0 / 0.2);
+      transform: translateY(-6px);
+      outline: none;
+    }
+    .restaurant-image {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+      border-top-left-radius: 1rem;
+      border-top-right-radius: 1rem;
+      transition: transform 0.3s ease;
+    }
+    .restaurant-card:hover .restaurant-image,
+    .restaurant-card:focus-visible .restaurant-image {
+      transform: scale(1.05);
+    }
+    .restaurant-content {
+      padding: 0.75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+    }
+    .restaurant-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #0a1f44;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .restaurant-desc {
+      font-size: 0.8rem;
+      color: #4b5563; /* gray-600 */
+      flex-grow: 1;
+      margin-bottom: 0.5rem;
+      height: 2.4rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .restaurant-price {
+      font-weight: 600;
+      color: #2563eb; /* blue-600 */
+      font-size: 0.95rem;
+    }
+    .restaurant-info {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      color: #6b7280; /* gray-500 */
+      user-select: none;
+    }
+    .restaurant-info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .restaurant-info-item i {
+      color: #2563eb;
+      min-width: 14px;
+      text-align: center;
+    }
+    /* Splash screen styles */
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+      user-select: none;
+    }
+    #splash-logo {
+      width: 72px;
+      height: 72px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 4px;
+      margin-bottom: 1rem;
+      animation: splash-pulse 3s ease-in-out forwards;
+    }
+    #splash-logo div {
+      border-radius: 4px;
+    }
+    #splash-logo .blue {
+      background-color: #2563eb;
+    }
+    #splash-logo .yellow {
+      background-color: #facc15;
+    }
+    #splash-logo .green {
+      background-color: #22c55e;
+    }
+    #splash-logo .red {
+      background-color: #ef4444;
+    }
+    #splash-text {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #0a1f44;
+      animation: splash-fade 3s ease-in-out forwards;
+    }
+    @keyframes splash-pulse {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.6;
+        transform: scale(1.1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.1);
+        visibility: hidden;
+      }
+    }
+    @keyframes splash-fade {
+      0% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+    /* Form styles */
+    #user-form-container {
+      position: fixed;
+      inset: 0;
+      background: white;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem;
+      z-index: 60;
+    }
+    #user-form {
+      width: 100%;
+      max-width: 360px;
+      background: #f7f7f8;
+      border-radius: 1rem;
+      padding: 2rem 1.5rem;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    #user-form h2 {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: #0a1f44;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    #user-form label {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #0a1f44;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+    #user-form input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid #d1d5db;
+      font-size: 1rem;
+      outline-offset: 2px;
+      transition: border-color 0.2s ease;
+    }
+    #user-form input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgb(37 99 235 / 0.3);
+      outline: none;
+    }
+    #user-form button {
+      background-color: #2563eb;
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #user-form button:hover,
+    #user-form button:focus {
+      background-color: #1e40af;
+      outline: none;
+    }
+    /* Horizontal scroll for Olá and Descubra bars */
+    .scrollable-bar {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      margin-left: -1.5rem;
+      margin-right: -1.5rem;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      display: flex;
+      gap: 0.5rem; /* Reduced gap for closer spacing */
+    }
+    .scrollable-bar::-webkit-scrollbar {
+      display: none;
+    }
+    /* Olá bar items */
+    .hello-item {
+      flex: 0 0 auto;
+    }
+    /* Descubra buttons */
+    .descubra-button {
+      flex: 0 0 auto;
+      min-width: 160px;
+    }
+  </style>
+ </head>
+ <body>
+  <!-- Splash Screen -->
+  <div aria-label="Animação de carregamento do SuperHubz" aria-live="assertive" id="splash-screen" role="alert">
+   <div aria-hidden="true" id="splash-logo">
+    <div class="blue">
+    </div>
+    <div class="yellow">
+    </div>
+    <div class="green">
+    </div>
+    <div class="red">
+    </div>
+   </div>
+   <div id="splash-text">
+    SuperHubz
+   </div>
+  </div>
+  <!-- User Info Form -->
+  <div aria-labelledby="form-title" aria-modal="true" id="user-form-container" role="dialog">
+   <form id="user-form" novalidate="">
+    <h2 id="form-title">
+     Bem-vindo ao SuperHubz
+    </h2>
+    <label for="name">
+     Nome
+    </label>
+    <input autocomplete="name" id="name" name="name" placeholder="Digite seu nome" required="" type="text"/>
+    <label for="phone">
+     Número de Telefone
+    </label>
+    <input autocomplete="tel" id="phone" name="phone" pattern="^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$" placeholder="(00) 00000-0000" required="" type="tel"/>
+    <button type="submit">
+     Continuar
+    </button>
+   </form>
+  </div>
+  <!-- Main Content -->
+  <div class="hidden bg-[#F7F7F8] min-h-screen flex flex-col justify-between px-6 pt-10 pb-6" id="main-content">
+   <header class="flex justify-center mb-8">
+    <div class="flex items-center space-x-2">
+     <div class="w-6 h-6 grid grid-cols-2 grid-rows-2 gap-0.5">
+      <div class="bg-blue-600 rounded-sm">
+      </div>
+      <div class="bg-yellow-400 rounded-sm">
+      </div>
+      <div class="bg-green-500 rounded-sm">
+      </div>
+      <div class="bg-red-500 rounded-sm">
+      </div>
+     </div>
+     <h1 class="font-extrabold text-[#0A1F44] text-2xl leading-[1.1]">
+      SuperHubz
+     </h1>
+    </div>
+   </header>
+   <form class="mb-10">
+    <label class="sr-only" for="search">
+     Buscar
+    </label>
+    <div class="relative">
+     <input autocomplete="off" class="w-full rounded-xl bg-white text-gray-400 placeholder-gray-400 pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600" id="search" name="search" placeholder="Buscar" spellcheck="false" type="search"/>
+     <i aria-hidden="true" class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg pointer-events-none">
+     </i>
+    </div>
+   </form>
+   <section class="mb-10">
+    <h2 class="font-extrabold text-[#0A1F44] text-xl mb-6" id="greeting">
+     Olá
+    </h2>
+    <div class="scrollable-bar" id="hello-bar">
+     <a aria-label="Pedir Refeição" class="hello-item flex flex-col items-center w-20 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg" href="pedirrefeicao.html">
+      <div class="bg-blue-600 rounded-2xl p-4 mb-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer flex items-center justify-center">
+       <i class="fas fa-utensils text-white text-3xl">
+       </i>
+      </div>
+      <span class="text-center font-semibold text-[#0A1F44] text-sm leading-tight select-none">
+       Pedir
+       <br/>
+       Refeição
+      </span>
+     </a>
+     <a aria-label="Chamar Carro" class="hello-item flex flex-col items-center w-20 focus:outline-none focus:ring-2 focus:ring-yellow-400 rounded-lg" href="chamarcarro.html">
+      <div class="bg-yellow-400 rounded-2xl p-4 mb-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer flex items-center justify-center">
+       <i class="fas fa-car text-white text-3xl">
+       </i>
+      </div>
+      <span class="text-center font-semibold text-[#0A1F44] text-sm leading-tight select-none">
+       Chamar
+       <br/>
+       Carro
+      </span>
+     </a>
+     <a aria-label="Fazer Compras" class="hello-item flex flex-col items-center w-20 focus:outline-none focus:ring-2 focus:ring-green-600 rounded-lg" href="compras.html">
+      <div class="bg-green-600 rounded-2xl p-4 mb-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer flex items-center justify-center">
+       <i class="fas fa-shopping-bag text-white text-3xl">
+       </i>
+      </div>
+      <span class="text-center font-semibold text-[#0A1F44] text-sm leading-tight select-none">
+       Fazer
+       <br/>
+       Compras
+      </span>
+     </a>
+     <a aria-label="Enviar Itens" class="hello-item flex flex-col items-center w-20 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-lg" href="enviaritens.html">
+      <div class="bg-red-500 rounded-2xl p-4 mb-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer flex items-center justify-center">
+       <i class="fas fa-box text-white text-3xl">
+       </i>
+      </div>
+      <span class="text-center font-semibold text-[#0A1F44] text-sm leading-tight select-none">
+       Enviar
+       <br/>
+       Itens
+      </span>
+     </a>
+     <a aria-label="Ver Eventos" class="hello-item flex flex-col items-center w-20 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg" href="eventos.html">
+      <div class="bg-[#2563eb] rounded-2xl p-4 mb-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer flex items-center justify-center">
+       <i class="fas fa-calendar-alt text-white text-3xl">
+       </i>
+      </div>
+      <span class="text-center font-semibold text-[#0A1F44] text-sm leading-tight select-none">
+       Ver
+       <br/>
+       Eventos
+      </span>
+     </a>
+     <a aria-label="Lazer" class="hello-item flex flex-col items-center w-20 focus:outline-none focus:ring-2 focus:ring-yellow-400 rounded-lg" href="lazer.html">
+      <div class="bg-yellow-400 rounded-2xl p-4 mb-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer flex items-center justify-center">
+       <i class="fas fa-theater-masks text-white text-3xl">
+       </i>
+      </div>
+      <span class="text-center font-semibold text-[#0A1F44] text-sm leading-tight select-none">
+       Lazer
+      </span>
+     </a>
+     <a aria-label="Mercados" class="hello-item flex flex-col items-center w-20 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg" href="mercados.html">
+      <div class="bg-blue-600 rounded-2xl p-4 mb-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer flex items-center justify-center">
+       <i class="fas fa-shopping-cart text-white text-3xl">
+       </i>
+      </div>
+      <span class="text-center font-semibold text-[#0A1F44] text-sm leading-tight select-none">
+       Mercados
+      </span>
+     </a>
+     <a aria-label="Lazer Alternativo" class="hello-item flex flex-col items-center w-20 focus:outline-none focus:ring-2 focus:ring-yellow-400 rounded-lg" href="lazeroutro.html">
+      <div class="bg-yellow-400 rounded-2xl p-4 mb-3 shadow-md hover:shadow-lg transition-shadow cursor-pointer flex items-center justify-center">
+       <i class="fas fa-music text-white text-3xl">
+       </i>
+      </div>
+      <span class="text-center font-semibold text-[#0A1F44] text-sm leading-tight select-none">
+       Lazer Alt.
+      </span>
+     </a>
+    </div>
+   </section>
+   <section class="mb-10 max-w-[480px] mx-auto">
+    <h2 class="font-extrabold text-[#0A1F44] text-xl mb-6">
+     Descubra
+    </h2>
+    <div class="scrollable-bar" id="descubra-bar">
+     <a class="descubra-button flex-0 bg-[#d97706] rounded-2xl p-6 text-white font-semibold text-lg leading-tight relative overflow-hidden shadow-lg hover:bg-yellow-700 transition-colors flex items-center justify-center" href="Entregador.html" role="link">
+      Sou Entregador
+      <i aria-hidden="true" class="fas fa-motorcycle absolute right-5 bottom-3 text-white opacity-20 text-5xl pointer-events-none select-none">
+      </i>
+     </a>
+     <button class="descubra-button flex-0 bg-[#2D6CE0] rounded-2xl p-6 text-white font-semibold text-lg leading-tight relative overflow-hidden shadow-lg hover:bg-blue-700 transition-colors" type="button">
+      Oferta em
+      <br/>
+      restaurantes
+      <i aria-hidden="true" class="fas fa-utensils absolute right-5 bottom-3 text-white opacity-20 text-5xl pointer-events-none select-none">
+      </i>
+     </button>
+     <button class="descubra-button flex-0 bg-[#0A1F44] rounded-2xl p-6 text-white font-semibold text-lg leading-tight relative overflow-hidden shadow-lg hover:bg-[#07203a] transition-colors" type="button">
+      Ofertas de
+      <br/>
+      viagem
+      <i aria-hidden="true" class="fas fa-plane absolute right-5 bottom-3 text-white opacity-20 text-5xl pointer-events-none select-none">
+      </i>
+     </button>
+     <button class="descubra-button flex-0 bg-[#22c55e] rounded-2xl p-6 text-white font-semibold text-lg leading-tight relative overflow-hidden shadow-lg hover:bg-green-600 transition-colors" type="button">
+      Serviços de
+      <br/>
+      limpeza
+      <i aria-hidden="true" class="fas fa-broom absolute right-5 bottom-3 text-white opacity-20 text-5xl pointer-events-none select-none">
+      </i>
+     </button>
+     <button class="descubra-button flex-0 bg-[#f97316] rounded-2xl p-6 text-white font-semibold text-lg leading-tight relative overflow-hidden shadow-lg hover:bg-orange-600 transition-colors" type="button">
+      Cuidados com
+      <br/>
+      animais
+      <i aria-hidden="true" class="fas fa-dog absolute right-5 bottom-3 text-white opacity-20 text-5xl pointer-events-none select-none">
+      </i>
+     </button>
+     <button class="descubra-button flex-0 bg-[#8b5cf6] rounded-2xl p-6 text-white font-semibold text-lg leading-tight relative overflow-hidden shadow-lg hover:bg-purple-700 transition-colors" type="button">
+      Cursos e
+      <br/>
+      workshops
+      <i aria-hidden="true" class="fas fa-chalkboard-teacher absolute right-5 bottom-3 text-white opacity-20 text-5xl pointer-events-none select-none">
+      </i>
+     </button>
+     <button class="descubra-button flex-0 bg-[#db2777] rounded-2xl p-6 text-white font-semibold text-lg leading-tight relative overflow-hidden shadow-lg hover:bg-pink-700 transition-colors" type="button">
+      Saúde e
+      <br/>
+      bem-estar
+      <i aria-hidden="true" class="fas fa-heartbeat absolute right-5 bottom-3 text-white opacity-20 text-5xl pointer-events-none select-none">
+      </i>
+     </button>
+     <button class="descubra-button flex-0 bg-[#14b8a6] rounded-2xl p-6 text-white font-semibold text-lg leading-tight relative overflow-hidden shadow-lg hover:bg-teal-700 transition-colors" type="button">
+      Tecnologia e
+      <br/>
+      eletrônicos
+      <i aria-hidden="true" class="fas fa-laptop absolute right-5 bottom-3 text-white opacity-20 text-5xl pointer-events-none select-none">
+      </i>
+     </button>
+    </div>
+   </section>
+   <section class="max-w-[480px] mx-auto mb-20">
+    <h2 class="font-extrabold text-[#0A1F44] text-xl mb-6">
+     Categorias
+    </h2>
+    <div aria-label="Categorias de serviços" class="flex overflow-x-auto scrollbar-hide -mx-4 px-4" role="list">
+     <a aria-label="Mobilidade e Transporte" class="category-card" href="mobilidadeetransporte.html" role="listitem" tabindex="0">
+      <div class="category-icon-wrapper bg-[#C9D9F6]">
+       <i class="fas fa-car text-blue-600 text-4xl">
+       </i>
+      </div>
+      <span class="category-text whitespace-normal">
+       Mobilidade e Transporte
+      </span>
+     </a>
+     <a aria-label="Entrega e Logística" class="category-card" href="entregalogistica.html" role="listitem" tabindex="0">
+      <div class="category-icon-wrapper bg-[#F9C6C3]">
+       <i class="fas fa-truck text-red-500 text-4xl">
+       </i>
+      </div>
+      <span class="category-text whitespace-normal">
+       Entrega e Logística
+      </span>
+     </a>
+     <a aria-label="Alimentação" class="category-card" href="alimentacao.html" role="listitem" tabindex="0">
+      <div class="category-icon-wrapper bg-[#FFE3C7]">
+       <i class="fas fa-utensils text-orange-500 text-4xl">
+       </i>
+      </div>
+      <span class="category-text whitespace-normal">
+       Alimentação
+      </span>
+     </a>
+     <a aria-label="Enviar Itens" class="category-card" href="enviaritens.html" role="listitem" tabindex="0">
+      <div class="category-icon-wrapper bg-[#F9C6C3]">
+       <i class="fas fa-box text-red-500 text-4xl">
+       </i>
+      </div>
+      <span class="category-text whitespace-normal">
+       Enviar Itens
+      </span>
+     </a>
+     <a aria-label="Eventos" class="category-card" href="eventos.html" role="listitem" tabindex="0">
+      <div class="category-icon-wrapper bg-[#FFE3C7]">
+       <i class="fas fa-calendar-alt text-orange-500 text-4xl">
+       </i>
+      </div>
+      <span class="category-text whitespace-normal">
+       Eventos
+      </span>
+     </a>
+     <a aria-label="Serviços Profissionais" class="category-card" href="servicosprofissionais.html" role="listitem" tabindex="0">
+      <div class="category-icon-wrapper bg-[#C9D9F6]">
+       <i class="fas fa-briefcase text-blue-600 text-4xl">
+       </i>
+      </div>
+      <span class="category-text whitespace-normal">
+       Serviços Profissionais
+      </span>
+     </a>
+     <a aria-label="Financeiro" class="category-card" href="financeiro.html" role="listitem" tabindex="0">
+      <div class="category-icon-wrapper bg-[#F9C6C3]">
+       <i class="fas fa-wallet text-red-500 text-4xl">
+       </i>
+      </div>
+      <span class="category-text whitespace-normal">
+       Financeiro
+      </span>
+     </a>
+     <a aria-label="Educação" class="category-card" href="educacao.html" role="listitem" tabindex="0">
+      <div class="category-icon-wrapper bg-[#C9D9F6]">
+       <i class="fas fa-graduation-cap text-blue-600 text-4xl">
+       </i>
+      </div>
+      <span class="category-text whitespace-normal">
+       Educação
+      </span>
+     </a>
+     <a aria-label="Imóveis" class="category-card" href="imoveis.html" role="listitem" tabindex="0">
+      <div class="category-icon-wrapper bg-[#FFE3C7]">
+       <i class="fas fa-home text-orange-500 text-4xl">
+       </i>
+      </div>
+      <span class="category-text whitespace-normal">
+       Imóveis
+      </span>
+     </a>
+     <a aria-label="Empregos e Renda Extra" class="category-card" href="empregoserendaextra.html" role="listitem" tabindex="0">
+      <div class="category-icon-wrapper bg-[#FDE6B9]">
+       <i class="fas fa-briefcase-medical text-yellow-400 text-4xl">
+       </i>
+      </div>
+      <span class="category-text whitespace-normal">
+       Empregos e Renda Extra
+      </span>
+     </a>
+    </div>
+   </section>
+   <!-- Restaurantes Section -->
+   <section class="max-w-[480px] mx-auto mb-20">
+    <h2 class="font-extrabold text-[#0A1F44] text-xl mb-6">
+     Restaurantes
+    </h2>
+    <div aria-label="Melhores itens dos restaurantes cadastrados" class="restaurant-list" role="list">
+     <article aria-label="Prato Especial, arroz, legumes e carne suculenta, preço R$ 29,90" class="restaurant-card focus:outline-none focus:ring-2 focus:ring-blue-600" role="listitem" tabindex="0">
+      <img alt="Prato 1: prato de comida com arroz, legumes e carne suculenta em um prato branco sobre uma mesa de madeira clara" class="restaurant-image" height="130" loading="lazy" src="https://storage.googleapis.com/a1aa/image/193ca91c-1345-4948-4335-f7812501521e.jpg" width="280"/>
+      <div class="restaurant-content">
+       <h3 class="restaurant-title" title="Prato Especial">
+        Prato Especial
+       </h3>
+       <p class="restaurant-desc" title="Arroz, legumes e carne suculenta">
+        Arroz, legumes e carne suculenta
+       </p>
+       <div aria-label="Informações do prato" class="restaurant-info">
+        <div class="restaurant-info-item" title="Tempo de preparo: 30 minutos">
+         <i aria-hidden="true" class="fas fa-clock">
+         </i>
+         <span>
+          30 min
+         </span>
+        </div>
+        <div class="restaurant-info-item" title="Avaliação: 4.5 estrelas">
+         <i aria-hidden="true" class="fas fa-star">
+         </i>
+         <span>
+          4.5
+         </span>
+        </div>
+        <div class="restaurant-info-item" title="Entrega em até 45 minutos">
+         <i aria-hidden="true" class="fas fa-motorcycle">
+         </i>
+         <span>
+          45 min
+         </span>
+        </div>
+       </div>
+       <span class="restaurant-price">
+        R$ 29,90
+       </span>
+      </div>
+     </article>
+     <article aria-label="Pizza Margherita, queijo, tomate e manjericão fresco, preço R$ 39,90" class="restaurant-card focus:outline-none focus:ring-2 focus:ring-blue-600" role="listitem" tabindex="0">
+      <img alt="Prato 2: pizza Margherita com queijo derretido, fatias de tomate e folhas frescas de manjericão sobre uma mesa rústica" class="restaurant-image" height="130" loading="lazy" src="https://storage.googleapis.com/a1aa/image/1e5822a2-18a1-4fe7-802c-6254b3f60f03.jpg" width="280"/>
+      <div class="restaurant-content">
+       <h3 class="restaurant-title" title="Pizza Margherita">
+        Pizza Margherita
+       </h3>
+       <p class="restaurant-desc" title="Queijo, tomate e manjericão fresco">
+        Queijo, tomate e manjericão fresco
+       </p>
+       <div aria-label="Informações do prato" class="restaurant-info">
+        <div class="restaurant-info-item" title="Tempo de preparo: 25 minutos">
+         <i aria-hidden="true" class="fas fa-clock">
+         </i>
+         <span>
+          25 min
+         </span>
+        </div>
+        <div class="restaurant-info-item" title="Avaliação: 4.7 estrelas">
+         <i aria-hidden="true" class="fas fa-star">
+         </i>
+         <span>
+          4.7
+         </span>
+        </div>
+        <div class="restaurant-info-item" title="Entrega em até 40 minutos">
+         <i aria-hidden="true" class="fas fa-motorcycle">
+         </i>
+         <span>
+          40 min
+         </span>
+        </div>
+       </div>
+       <span class="restaurant-price">
+        R$ 39,90
+       </span>
+      </div>
+     </article>
+     <article aria-label="Sobremesa Tropical, frutas frescas com chantilly, preço R$ 19,90" class="restaurant-card focus:outline-none focus:ring-2 focus:ring-blue-600" role="listitem" tabindex="0">
+      <img alt="Prato 3: sobremesa tropical com frutas frescas coloridas e chantilly em uma taça transparente" class="restaurant-image" height="130" loading="lazy" src="https://storage.googleapis.com/a1aa/image/b2f67ecc-09be-4804-ab1b-d47e2fe93b59.jpg" width="280"/>
+      <div class="restaurant-content">
+       <h3 class="restaurant-title" title="Sobremesa Tropical">
+        Sobremesa Tropical
+       </h3>
+       <p class="restaurant-desc" title="Frutas frescas com chantilly">
+        Frutas frescas com chantilly
+       </p>
+       <div aria-label="Informações do prato" class="restaurant-info">
+        <div class="restaurant-info-item" title="Tempo de preparo: 15 minutos">
+         <i aria-hidden="true" class="fas fa-clock">
+         </i>
+         <span>
+          15 min
+         </span>
+        </div>
+        <div class="restaurant-info-item" title="Avaliação: 4.8 estrelas">
+         <i aria-hidden="true" class="fas fa-star">
+         </i>
+         <span>
+          4.8
+         </span>
+        </div>
+        <div class="restaurant-info-item" title="Entrega em até 30 minutos">
+         <i aria-hidden="true" class="fas fa-motorcycle">
+         </i>
+         <span>
+          30 min
+         </span>
+        </div>
+       </div>
+       <span class="restaurant-price">
+        R$ 19,90
+       </span>
+      </div>
+     </article>
+    </div>
+   </section>
+  </div>
+  <nav class="bg-white w-full border-t border-gray-200 flex justify-around py-3 fixed bottom-0 left-0" style="max-width: 420px; margin: 0 auto">
+   <a aria-current="page" class="flex flex-col items-center text-[#0052CC] text-xs font-semibold" href="#">
+    <i class="fas fa-home fa-lg">
+    </i>
+    <span class="mt-1">
+     Início
+    </span>
+   </a>
+   <a class="flex flex-col items-center text-black text-xs font-normal" href="#">
+    <i class="fas fa-credit-card fa-lg">
+    </i>
+    <span class="mt-1">
+     Carteira
+    </span>
+   </a>
+   <a class="flex flex-col items-center text-black text-xs font-normal" href="#">
+    <i class="fas fa-bell fa-lg">
+    </i>
+    <span class="mt-1">
+     Notificações
+    </span>
+   </a>
+   <a class="flex flex-col items-center text-black text-xs font-normal" href="#">
+    <i class="fas fa-user fa-lg">
+    </i>
+    <span class="mt-1">
+     Perfil
+    </span>
+   </a>
+  </nav>
+  <script>
+   const splashScreen = document.getElementById('splash-screen');
+    const userFormContainer = document.getElementById('user-form-container');
+    const mainContent = document.getElementById('main-content');
+    const userForm = document.getElementById('user-form');
+    const greeting = document.getElementById('greeting');
+
+    // After 3 seconds, hide splash and show form
+    setTimeout(() => {
+      splashScreen.style.display = 'none';
+      userFormContainer.style.display = 'flex';
+      document.getElementById('name').focus();
+    }, 3000);
+
+    // Handle form submission
+    userForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = userForm.name.value.trim();
+      const phone = userForm.phone.value.trim();
+      const phonePattern = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/;
+
+      if (!name) {
+        alert('Por favor, digite seu nome.');
+        userForm.name.focus();
+        return;
+      }
+      if (!phone || !phonePattern.test(phone)) {
+        alert('Por favor, digite um número de telefone válido.');
+        userForm.phone.focus();
+        return;
+      }
+
+      // Extract first name
+      const firstName = name.split(' ')[0];
+      greeting.textContent = `Olá, ${firstName}.`;
+
+      // Hide form and show main content
+      userFormContainer.style.display = 'none';
+      mainContent.classList.remove('hidden');
+    });
+  </script>
+ </body>
+</html>
