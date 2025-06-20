@@ -1,0 +1,1517 @@
+<html class="scroll-smooth" lang="pt-BR">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   SuperHubz
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+      font-family: "Inter", sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background-color: #F7F7F8;
+    }
+    /* Hide scrollbar but allow scrolling */
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    /* Restaurant and commerce cards */
+    .card-list {
+      display: flex;
+      overflow-x: auto;
+      gap: 1rem;
+      padding-bottom: 0.5rem;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scroll-padding-left: 1.5rem;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      scroll-snap-type: x mandatory;
+    }
+    .card {
+      flex: 0 0 280px;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 1px 6px rgb(0 0 0 / 0.1);
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      scroll-snap-align: start;
+    }
+    .card:hover,
+    .card:focus-visible {
+      box-shadow: 0 12px 24px rgb(0 0 0 / 0.2);
+      transform: translateY(-6px);
+      outline: none;
+    }
+    .card-image {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-top-left-radius: 1rem;
+      border-top-right-radius: 1rem;
+      transition: transform 0.3s ease;
+      display: block;
+    }
+    .card:hover .card-image,
+    .card:focus-visible .card-image {
+      transform: scale(1.05);
+    }
+    .card-content {
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+    }
+    .card-title {
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: #0a1f44;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-desc {
+      font-size: 0.875rem;
+      color: #4b5563; /* gray-600 */
+      flex-grow: 1;
+      margin-bottom: 0.5rem;
+      height: 2.8rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-info {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      color: #6b7280; /* gray-500 */
+      user-select: none;
+    }
+    .card-info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .card-info-item i {
+      color: #2563eb;
+      min-width: 14px;
+      text-align: center;
+    }
+    .card-price {
+      font-weight: 600;
+      color: #2563eb; /* blue-600 */
+      font-size: 1rem;
+    }
+    /* Splash screen styles */
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+      user-select: none;
+    }
+    #splash-logo {
+      width: 72px;
+      height: 72px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 4px;
+      margin-bottom: 1rem;
+      animation: splash-pulse 3s ease-in-out forwards;
+    }
+    #splash-logo div {
+      border-radius: 4px;
+    }
+    #splash-logo .blue {
+      background-color: #2563eb;
+    }
+    #splash-logo .yellow {
+      background-color: #facc15;
+    }
+    #splash-logo .green {
+      background-color: #22c55e;
+    }
+    #splash-logo .red {
+      background-color: #ef4444;
+    }
+    #splash-text {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #0a1f44;
+      animation: splash-fade 3s ease-in-out forwards;
+    }
+    @keyframes splash-pulse {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.6;
+        transform: scale(1.1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.1);
+        visibility: hidden;
+      }
+    }
+    @keyframes splash-fade {
+      0% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+    /* Form styles */
+    #user-form-container {
+      position: fixed;
+      inset: 0;
+      background: white;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem;
+      z-index: 60;
+    }
+    #user-form {
+      width: 100%;
+      max-width: 400px;
+      background: #f7f7f8;
+      border-radius: 1rem;
+      padding: 2rem 2rem;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    #user-form h2 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #0a1f44;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    #user-form label {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #0a1f44;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+    #user-form input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #d1d5db;
+      font-size: 1.125rem;
+      outline-offset: 2px;
+      transition: border-color 0.2s ease;
+    }
+    #user-form input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgb(37 99 235 / 0.3);
+      outline: none;
+    }
+    #user-form button {
+      background-color: #2563eb;
+      color: white;
+      font-weight: 700;
+      font-size: 1.125rem;
+      padding: 1rem;
+      border-radius: 0.75rem;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #user-form button:hover,
+    #user-form button:focus {
+      background-color: #1e40af;
+      outline: none;
+    }
+    /* Horizontal scroll for Olá and Descubra bars */
+    .scrollable-bar {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      margin-left: -1.5rem;
+      margin-right: -1.5rem;
+      padding-left: 1.5rem;
+      padding-right: 3.5rem; /* Increased right padding for better end visibility */
+      display: flex;
+      gap: 0.75rem; /* Slightly increased gap for better spacing */
+      user-select: none;
+      scroll-padding-right: 3.5rem; /* For smooth scroll snapping */
+      scroll-snap-type: x mandatory;
+    }
+    .scrollable-bar::-webkit-scrollbar {
+      display: none;
+    }
+    /* Olá bar items */
+    .hello-item {
+      flex: 0 0 auto;
+      user-select: none;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      border-radius: 0.75rem;
+      padding: 0.5rem;
+      cursor: grab;
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 5.5rem;
+      outline-offset: 2px;
+      scroll-snap-align: start;
+      box-shadow: 0 1px 4px rgb(0 0 0 / 0.05);
+      user-select: none;
+    }
+    .hello-item:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+    .hello-item.dragging {
+      opacity: 0.6;
+      cursor: grabbing;
+      box-shadow: 0 8px 20px rgb(0 0 0 / 0.15);
+      transform: scale(1.05);
+      z-index: 10;
+      position: relative;
+    }
+    .hello-item .icon-wrapper {
+      border-radius: 1rem;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 3.25rem;
+      height: 3.25rem;
+      flex-shrink: 0;
+    }
+    /* Adjusted icon colors */
+    .hello-item[data-key="pedirrefeicao"] .icon-wrapper {
+      background-color: #2563eb; /* blue-600 */
+    }
+    .hello-item[data-key="chamarcarro"] .icon-wrapper {
+      background-color: #fbbf24; /* yellow-400 */
+    }
+    .hello-item[data-key="compras"] .icon-wrapper {
+      background-color: #16a34a; /* green-600 */
+    }
+    .hello-item[data-key="enviaritens"] .icon-wrapper {
+      background-color: #dc2626; /* red-600 */
+    }
+    .hello-item[data-key="eventos"] .icon-wrapper {
+      background-color: #2563eb; /* blue-600 */
+    }
+    .hello-item[data-key="lazer"] .icon-wrapper {
+      background-color: #fbbf24; /* yellow-400 */
+    }
+    .hello-item[data-key="mercados"] .icon-wrapper {
+      background-color: #2563eb; /* blue-600 */
+    }
+    .hello-item[data-key="anunciar"] .icon-wrapper {
+      background-color: #f97316; /* orange-500 */
+    }
+    .hello-item[data-key="empregoserendaextra"] .icon-wrapper {
+      background-color: #fbbf24; /* yellow-400 */
+    }
+    .hello-item .icon-wrapper i {
+      color: white;
+      font-size: 1.85rem;
+      user-select: none;
+    }
+    .hello-item .label {
+      font-weight: 600;
+      color: #0a1f44;
+      font-size: 0.8rem;
+      text-align: center;
+      line-height: 1.1rem;
+      user-select: none;
+      white-space: normal;
+      word-break: break-word;
+    }
+    /* Edit button next to greeting */
+    .greeting-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      user-select: none;
+    }
+    .greeting-text {
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: #0a1f44;
+      user-select: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 85%;
+    }
+    .edit-button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #2563eb;
+      font-size: 1.5rem;
+      padding: 0.25rem;
+      border-radius: 0.5rem;
+      transition: background-color 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .edit-button:hover,
+    .edit-button:focus {
+      background-color: rgba(37, 99, 235, 0.1);
+      outline: none;
+    }
+    /* Descubra buttons */
+    .descubra-button {
+      flex: 0 0 160px;
+      border-radius: 1.5rem;
+      padding: 1.5rem 1.25rem;
+      font-weight: 600;
+      font-size: 1.125rem;
+      line-height: 1.2;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      user-select: none;
+      transition: background-color 0.3s ease;
+      scroll-snap-align: start;
+      color: white;
+      min-width: 140px;
+      max-width: 160px;
+      white-space: normal;
+    }
+    .descubra-button i {
+      position: absolute;
+      right: 1.25rem;
+      bottom: 0.75rem;
+      font-size: 3.5rem;
+      opacity: 0.2;
+      pointer-events: none;
+      user-select: none;
+      line-height: 1;
+    }
+    /* Bottom nav updated style */
+    nav {
+      background-color: white;
+      width: 100%;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-around;
+      padding: 0.5rem 0;
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 480px;
+      box-shadow: 0 -1px 5px rgb(0 0 0 / 0.05);
+      z-index: 70;
+      border-radius: 1.5rem 1.5rem 0 0;
+      user-select: none;
+    }
+    nav a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6b7280;
+      text-decoration: none;
+      padding: 0.25rem 0.5rem;
+      transition: color 0.3s ease, transform 0.15s ease;
+      position: relative;
+      min-width: 56px;
+      user-select: none;
+    }
+    nav a.active,
+    nav a[aria-current="page"] {
+      color: #2563eb;
+    }
+    nav a i {
+      font-size: 1.5rem;
+      margin-bottom: 0.125rem;
+      color: #6b7280;
+      filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.1));
+      transition: color 0.3s ease, transform 0.15s ease;
+    }
+    nav a:hover i,
+    nav a:focus i,
+    nav a:active i {
+      color: #2563eb;
+      transform: scale(1.1);
+      outline: none;
+    }
+    nav a:hover,
+    nav a:focus {
+      color: #2563eb;
+      outline: none;
+    }
+    /* Header with sandwich menu and notification */
+    header {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding: 0 1.5rem;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+      user-select: none;
+    }
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .header-left, .header-right {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .header-left {
+      left: 1.5rem;
+    }
+    .header-right {
+      right: 1.5rem;
+    }
+    .header-icon-button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: 0.5rem;
+      color: #0a1f44;
+      font-size: 1.5rem;
+      transition: background-color 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+    .header-icon-button:hover,
+    .header-icon-button:focus {
+      background-color: rgba(37, 99, 235, 0.1);
+      outline: none;
+    }
+    /* Notification badge */
+    .notification-badge {
+      position: absolute;
+      top: 0.25rem;
+      right: 0.25rem;
+      background-color: #ef4444;
+      color: white;
+      font-size: 0.625rem;
+      font-weight: 700;
+      padding: 0 0.4rem;
+      border-radius: 9999px;
+      line-height: 1rem;
+      min-width: 1rem;
+      text-align: center;
+      user-select: none;
+    }
+    /* Search input adjustments */
+    form.mb-10 {
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      user-select: none;
+    }
+    form.mb-10 input#search {
+      font-size: 1.125rem;
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+    form.mb-10 i.fas.fa-search {
+      font-size: 1.25rem;
+      left: 1.25rem;
+    }
+    /* New sections styles */
+    .info-section {
+      max-width: 720px;
+      margin: 0 auto 3rem auto;
+      padding: 0 1.5rem;
+      color: #0a1f44;
+      user-select: none;
+    }
+    .info-section h3 {
+      font-weight: 800;
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid #2563eb;
+      padding-left: 0.75rem;
+    }
+    .info-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .info-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+    .info-list li i {
+      flex-shrink: 0;
+      font-size: 1.5rem;
+      color: #2563eb;
+      margin-top: 0.15rem;
+      user-select: none;
+      min-width: 24px;
+      text-align: center;
+    }
+    @media (max-width: 768px) {
+      .card-list {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      .card {
+        flex: 0 0 220px;
+      }
+      .card-image {
+        height: 140px;
+      }
+      .card-content {
+        padding: 0.75rem 1rem;
+      }
+      .card-title {
+        font-size: 1rem;
+      }
+      .card-desc {
+        font-size: 0.8rem;
+        height: 2.4rem;
+      }
+      .card-price {
+        font-size: 0.95rem;
+      }
+      .greeting-container {
+        max-width: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      .greeting-text {
+        font-size: 1.25rem;
+        max-width: 70%;
+      }
+      .edit-button {
+        font-size: 1.25rem;
+      }
+      .descubra-button {
+        flex: 0 0 140px;
+        font-size: 1rem;
+        padding: 1.25rem 1rem;
+      }
+      .descubra-button i {
+        font-size: 3rem;
+        right: 1rem;
+        bottom: 0.5rem;
+      }
+      nav {
+        max-width: 100vw !important;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        border-radius: 0;
+        justify-content: space-evenly;
+      }
+      header {
+        padding: 0 1rem;
+        max-width: 100%;
+      }
+      .header-left {
+        left: 1rem;
+      }
+      .header-right {
+        right: 1rem;
+      }
+      form.mb-10 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        max-width: 100%;
+      }
+      form.mb-10 input#search {
+        font-size: 1rem;
+        padding-top: 0.6rem;
+        padding-bottom: 0.6rem;
+      }
+      form.mb-10 i.fas.fa-search {
+        font-size: 1.125rem;
+        left: 0.75rem;
+      }
+      .info-section {
+        padding: 0 1rem;
+        margin-bottom: 2.5rem;
+      }
+      .info-section h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+      }
+      .info-list li {
+        font-size: 0.95rem;
+        gap: 0.5rem;
+      }
+      .info-list li i {
+        font-size: 1.25rem;
+        min-width: 20px;
+      }
+    }
+    @media (max-width: 480px) {
+      .card {
+        flex: 0 0 180px;
+      }
+      .card-image {
+        height: 120px;
+      }
+      .card-content {
+        padding: 0.5rem 0.75rem;
+      }
+      .card-title {
+        font-size: 0.95rem;
+      }
+      .card-desc {
+        font-size: 0.75rem;
+        height: 2rem;
+      }
+      .card-price {
+        font-size: 0.9rem;
+      }
+      .greeting-container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+      .greeting-text {
+        font-size: 1.125rem;
+        max-width: 65%;
+      }
+      .edit-button {
+        font-size: 1.125rem;
+      }
+      .descubra-button {
+        flex: 0 0 130px;
+        font-size: 0.95rem;
+        padding: 1rem 0.75rem;
+      }
+      .descubra-button i {
+        font-size: 2.75rem;
+        right: 0.75rem;
+        bottom: 0.4rem;
+      }
+      nav {
+        max-width: 100vw !important;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        border-radius: 0;
+        justify-content: space-evenly;
+      }
+      header {
+        padding: 0 0.75rem;
+      }
+      .header-left {
+        left: 0.75rem;
+      }
+      .header-right {
+        right: 0.75rem;
+      }
+      form.mb-10 {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+      form.mb-10 input#search {
+        font-size: 0.95rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
+      form.mb-10 i.fas.fa-search {
+        font-size: 1rem;
+        left: 0.5rem;
+      }
+      .info-section {
+        padding: 0 0.75rem;
+        margin-bottom: 2rem;
+      }
+      .info-section h3 {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+      }
+      .info-list li {
+        font-size: 0.9rem;
+        gap: 0.4rem;
+      }
+      .info-list li i {
+        font-size: 1.1rem;
+        min-width: 18px;
+      }
+    }
+  </style>
+ </head>
+ <body>
+  <!-- Splash Screen -->
+  <div aria-label="Animação de carregamento do SuperHubz" aria-live="assertive" id="splash-screen" role="alert">
+   <div aria-hidden="true" id="splash-logo">
+    <div class="blue">
+    </div>
+    <div class="yellow">
+    </div>
+    <div class="green">
+    </div>
+    <div class="red">
+    </div>
+   </div>
+   <div id="splash-text">
+    SuperHubz
+   </div>
+  </div>
+  <!-- User Info Form -->
+  <div aria-labelledby="form-title" aria-modal="true" id="user-form-container" role="dialog">
+   <form id="user-form" novalidate="">
+    <h2 id="form-title">
+     Bem-vindo ao SuperHubz
+    </h2>
+    <label for="name">
+     Nome
+    </label>
+    <input autocomplete="name" id="name" name="name" placeholder="Digite seu nome" required="" type="text"/>
+    <label for="phone">
+     Número de Telefone
+    </label>
+    <input autocomplete="tel" id="phone" name="phone" pattern="^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$" placeholder="(00) 00000-0000" required="" type="tel"/>
+    <button type="submit">
+     Continuar
+    </button>
+   </form>
+  </div>
+  <!-- Main Content -->
+  <div class="hidden flex flex-col justify-between min-h-screen px-6 pt-10 pb-24 max-w-[720px] mx-auto" id="main-content">
+   <header>
+    <div class="header-left">
+     <button aria-expanded="false" aria-haspopup="true" aria-label="Abrir menu" class="header-icon-button" id="menu-button" type="button">
+      <i aria-hidden="true" class="fas fa-bars">
+      </i>
+     </button>
+    </div>
+    <div class="header-center">
+     <div aria-hidden="true" class="w-6 h-6 grid grid-cols-2 grid-rows-2 gap-0.5">
+      <div class="bg-blue-600 rounded-sm">
+      </div>
+      <div class="bg-yellow-400 rounded-sm">
+      </div>
+      <div class="bg-green-500 rounded-sm">
+      </div>
+      <div class="bg-red-500 rounded-sm">
+      </div>
+     </div>
+     <h1 class="font-extrabold text-[#0A1F44] text-3xl leading-[1.1]">
+      SuperHubz
+     </h1>
+    </div>
+    <div class="header-right">
+     <button aria-expanded="false" aria-haspopup="true" aria-label="Notificações" class="header-icon-button" id="notification-button" type="button">
+      <i aria-hidden="true" class="fas fa-bell">
+      </i>
+      <span aria-atomic="true" aria-live="polite" class="notification-badge" id="notification-count">
+       3
+      </span>
+     </button>
+    </div>
+   </header>
+   <form class="mb-10">
+    <label class="sr-only" for="search">
+     Buscar
+    </label>
+    <div class="relative">
+     <input autocomplete="off" class="w-full rounded-xl bg-white text-gray-400 placeholder-gray-400 pl-14 pr-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-600" id="search" name="search" placeholder="Buscar" spellcheck="false" type="search"/>
+     <i aria-hidden="true" class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xl pointer-events-none">
+     </i>
+    </div>
+   </form>
+   <section class="mb-10">
+    <div class="greeting-container">
+     <h2 class="greeting-text" id="greeting">
+      Olá
+     </h2>
+     <button aria-label="Editar posição dos ícones" class="edit-button" id="edit-button" title="Editar posição dos ícones" type="button">
+      <i aria-hidden="true" class="fas fa-edit">
+      </i>
+     </button>
+    </div>
+    <div aria-label="Barra de atalhos" class="scrollable-bar" id="hello-bar" role="list">
+     <a aria-label="Pedir Refeição" class="hello-item" data-key="pedirrefeicao" draggable="false" href="pedirrefeicao.html" role="listitem" tabindex="0">
+      <div class="icon-wrapper" style="background-color:#2563eb;">
+       <i class="fas fa-utensils">
+       </i>
+      </div>
+      <span class="label">
+       Pedir
+       <br/>
+       Refeição
+      </span>
+     </a>
+     <a aria-label="Chamar Carro" class="hello-item" data-key="chamarcarro" draggable="false" href="chamarcarro.html" role="listitem" tabindex="0">
+      <div class="icon-wrapper" style="background-color:#fbbf24;">
+       <i class="fas fa-car">
+       </i>
+      </div>
+      <span class="label">
+       Chamar
+       <br/>
+       Carro
+      </span>
+     </a>
+     <a aria-label="Fazer Compras" class="hello-item" data-key="compras" draggable="false" href="compras.html" role="listitem" tabindex="0">
+      <div class="icon-wrapper" style="background-color:#16a34a;">
+       <i class="fas fa-shopping-bag">
+       </i>
+      </div>
+      <span class="label">
+       Fazer
+       <br/>
+       Compras
+      </span>
+     </a>
+     <a aria-label="Enviar Itens" class="hello-item" data-key="enviaritens" draggable="false" href="enviaritens.html" role="listitem" tabindex="0">
+      <div class="icon-wrapper" style="background-color:#dc2626;">
+       <i class="fas fa-box">
+       </i>
+      </div>
+      <span class="label">
+       Enviar
+       <br/>
+       Itens
+      </span>
+     </a>
+     <a aria-label="Ver Eventos" class="hello-item" data-key="eventos" draggable="false" href="eventos.html" role="listitem" tabindex="0">
+      <div class="icon-wrapper" style="background-color:#2563eb;">
+       <i class="fas fa-calendar-alt">
+       </i>
+      </div>
+      <span class="label">
+       Ver
+       <br/>
+       Eventos
+      </span>
+     </a>
+     <a aria-label="Lazer" class="hello-item" data-key="lazer" draggable="false" href="lazer.html" role="listitem" tabindex="0">
+      <div class="icon-wrapper" style="background-color:#fbbf24;">
+       <i class="fas fa-theater-masks">
+       </i>
+      </div>
+      <span class="label">
+       Lazer
+      </span>
+     </a>
+     <a aria-label="Mercados" class="hello-item" data-key="mercados" draggable="false" href="mercados.html" role="listitem" tabindex="0">
+      <div class="icon-wrapper" style="background-color:#2563eb;">
+       <i class="fas fa-shopping-cart">
+       </i>
+      </div>
+      <span class="label">
+       Mercados
+      </span>
+     </a>
+     <a aria-label="Anunciar" class="hello-item" data-key="anunciar" draggable="false" href="anunciar.html" role="listitem" tabindex="0">
+      <div class="icon-wrapper" style="background-color:#f97316;">
+       <i class="fas fa-bullhorn">
+       </i>
+      </div>
+      <span class="label">
+       Anunciar
+      </span>
+     </a>
+     <a aria-label="Empregos e Renda Extra" class="hello-item" data-key="empregoserendaextra" draggable="false" href="empregoserendaextra.html" role="listitem" tabindex="0">
+      <div class="icon-wrapper" style="background-color:#fbbf24;">
+       <i class="fas fa-briefcase-medical">
+       </i>
+      </div>
+      <span class="label">
+       Empregos
+       <br/>
+       e Renda Extra
+      </span>
+     </a>
+    </div>
+   </section>
+   <section class="mb-10">
+    <h2 class="font-extrabold text-[#0A1F44] text-2xl mb-6 max-w-full px-1">
+     Descubra
+    </h2>
+    <div class="scrollable-bar" id="descubra-bar">
+     <a class="descubra-button bg-[#d97706]" href="Entregador.html" role="link">
+      Sou Entregador
+      <i aria-hidden="true" class="fas fa-motorcycle">
+      </i>
+     </a>
+     <button class="descubra-button bg-[#2D6CE0]" type="button">
+      Oferta em
+      <br/>
+      restaurantes
+      <i aria-hidden="true" class="fas fa-utensils">
+      </i>
+     </button>
+     <button class="descubra-button bg-[#0A1F44]" type="button">
+      Ofertas de
+      <br/>
+      viagem
+      <i aria-hidden="true" class="fas fa-plane">
+      </i>
+     </button>
+     <button class="descubra-button bg-[#22c55e]" type="button">
+      Serviços de
+      <br/>
+      limpeza
+      <i aria-hidden="true" class="fas fa-broom">
+      </i>
+     </button>
+     <button class="descubra-button bg-[#f97316]" type="button">
+      Cuidados com
+      <br/>
+      animais
+      <i aria-hidden="true" class="fas fa-dog">
+      </i>
+     </button>
+     <button class="descubra-button bg-[#8b5cf6]" type="button">
+      Cursos e
+      <br/>
+      workshops
+      <i aria-hidden="true" class="fas fa-chalkboard-teacher">
+      </i>
+     </button>
+     <button class="descubra-button bg-[#db2777]" type="button">
+      Saúde e
+      <br/>
+      bem-estar
+      <i aria-hidden="true" class="fas fa-heartbeat">
+      </i>
+     </button>
+     <button class="descubra-button bg-[#14b8a6]" type="button">
+      Tecnologia e
+      <br/>
+      eletrônicos
+      <i aria-hidden="true" class="fas fa-laptop">
+      </i>
+     </button>
+    </div>
+   </section>
+   <!-- Restaurantes Section -->
+   <section class="mb-10">
+    <h2 class="font-extrabold text-[#0A1F44] text-2xl mb-6 max-w-full px-1">
+     Restaurantes
+    </h2>
+    <div aria-label="Melhores itens dos restaurantes cadastrados" class="card-list" role="list">
+     <article aria-label="Prato Especial, arroz, legumes e carne suculenta, preço R$ 29,90" class="card focus:outline-none focus:ring-2 focus:ring-blue-600" role="listitem" tabindex="0">
+      <img alt="Prato 1: prato de comida com arroz, legumes e carne suculenta em um prato branco sobre uma mesa de madeira clara" class="card-image" height="160" loading="lazy" src="https://storage.googleapis.com/a1aa/image/193ca91c-1345-4948-4335-f7812501521e.jpg" width="280"/>
+      <div class="card-content">
+       <h3 class="card-title" title="Prato Especial">
+        Prato Especial
+       </h3>
+       <p class="card-desc" title="Arroz, legumes e carne suculenta">
+        Arroz, legumes e carne suculenta
+       </p>
+       <div aria-label="Informações do prato" class="card-info">
+        <div class="card-info-item" title="Tempo de preparo: 30 minutos">
+         <i aria-hidden="true" class="fas fa-clock">
+         </i>
+         <span>
+          30 min
+         </span>
+        </div>
+        <div class="card-info-item" title="Avaliação: 4.5 estrelas">
+         <i aria-hidden="true" class="fas fa-star">
+         </i>
+         <span>
+          4.5
+         </span>
+        </div>
+        <div class="card-info-item" title="Entrega em até 45 minutos">
+         <i aria-hidden="true" class="fas fa-motorcycle">
+         </i>
+         <span>
+          45 min
+         </span>
+        </div>
+       </div>
+       <span class="card-price">
+        R$ 29,90
+       </span>
+      </div>
+     </article>
+     <article aria-label="Pizza Margherita, queijo, tomate e manjericão fresco, preço R$ 39,90" class="card focus:outline-none focus:ring-2 focus:ring-blue-600" role="listitem" tabindex="0">
+      <img alt="Prato 2: pizza Margherita com queijo derretido, fatias de tomate e folhas frescas de manjericão sobre uma mesa rústica" class="card-image" height="160" loading="lazy" src="https://storage.googleapis.com/a1aa/image/1e5822a2-18a1-4fe7-802c-6254b3f60f03.jpg" width="280"/>
+      <div class="card-content">
+       <h3 class="card-title" title="Pizza Margherita">
+        Pizza Margherita
+       </h3>
+       <p class="card-desc" title="Queijo, tomate e manjericão fresco">
+        Queijo, tomate e manjericão fresco
+       </p>
+       <div aria-label="Informações do prato" class="card-info">
+        <div class="card-info-item" title="Tempo de preparo: 25 minutos">
+         <i aria-hidden="true" class="fas fa-clock">
+         </i>
+         <span>
+          25 min
+         </span>
+        </div>
+        <div class="card-info-item" title="Avaliação: 4.7 estrelas">
+         <i aria-hidden="true" class="fas fa-star">
+         </i>
+         <span>
+          4.7
+         </span>
+        </div>
+        <div class="card-info-item" title="Entrega em até 40 minutos">
+         <i aria-hidden="true" class="fas fa-motorcycle">
+         </i>
+         <span>
+          40 min
+         </span>
+        </div>
+       </div>
+       <span class="card-price">
+        R$ 39,90
+       </span>
+      </div>
+     </article>
+     <article aria-label="Sobremesa Tropical, frutas frescas com chantilly, preço R$ 19,90" class="card focus:outline-none focus:ring-2 focus:ring-blue-600" role="listitem" tabindex="0">
+      <img alt="Prato 3: sobremesa tropical com frutas frescas coloridas e chantilly em uma taça transparente" class="card-image" height="160" loading="lazy" src="https://storage.googleapis.com/a1aa/image/b2f67ecc-09be-4804-ab1b-d47e2fe93b59.jpg" width="280"/>
+      <div class="card-content">
+       <h3 class="card-title" title="Sobremesa Tropical">
+        Sobremesa Tropical
+       </h3>
+       <p class="card-desc" title="Frutas frescas com chantilly">
+        Frutas frescas com chantilly
+       </p>
+       <div aria-label="Informações do prato" class="card-info">
+        <div class="card-info-item" title="Tempo de preparo: 15 minutos">
+         <i aria-hidden="true" class="fas fa-clock">
+         </i>
+         <span>
+          15 min
+         </span>
+        </div>
+        <div class="card-info-item" title="Avaliação: 4.8 estrelas">
+         <i aria-hidden="true" class="fas fa-star">
+         </i>
+         <span>
+          4.8
+         </span>
+        </div>
+        <div class="card-info-item" title="Entrega em até 30 minutos">
+         <i aria-hidden="true" class="fas fa-motorcycle">
+         </i>
+         <span>
+          30 min
+         </span>
+        </div>
+       </div>
+       <span class="card-price">
+        R$ 19,90
+       </span>
+      </div>
+     </article>
+    </div>
+   </section>
+   <!-- Comércios Section -->
+   <section class="mb-10">
+    <h2 class="font-extrabold text-[#0A1F44] text-2xl mb-6 max-w-full px-1">
+     Comércios
+    </h2>
+    <div aria-label="Comércios cadastrados" class="card-list" role="list">
+     <article aria-label="Loja de Roupas, moda feminina e masculina, roupas e acessórios, preço acessível" class="card focus:outline-none focus:ring-2 focus:ring-blue-600" role="listitem" tabindex="0">
+      <img alt="Loja de roupas com manequins exibindo moda feminina e masculina em vitrine iluminada" class="card-image" height="160" loading="lazy" src="https://storage.googleapis.com/a1aa/image/d093133c-ba57-422b-e13e-057692e49e91.jpg" width="280"/>
+      <div class="card-content">
+       <h3 class="card-title" title="Loja de Roupas">
+        Loja de Roupas
+       </h3>
+       <p class="card-desc" title="Moda feminina e masculina, roupas e acessórios, preço acessível">
+        Moda feminina e masculina, roupas e acessórios, preço acessível
+       </p>
+       <div aria-label="Informações do comércio" class="card-info">
+        <div class="card-info-item" title="Aberto das 9h às 20h">
+         <i aria-hidden="true" class="fas fa-clock">
+         </i>
+         <span>
+          9h - 20h
+         </span>
+        </div>
+        <div class="card-info-item" title="Avaliação: 4.6 estrelas">
+         <i aria-hidden="true" class="fas fa-star">
+         </i>
+         <span>
+          4.6
+         </span>
+        </div>
+        <div class="card-info-item" title="Distância: 1.2 km">
+         <i aria-hidden="true" class="fas fa-map-marker-alt">
+         </i>
+         <span>
+          1.2 km
+         </span>
+        </div>
+       </div>
+      </div>
+     </article>
+     <article aria-label="Eletrônicos, smartphones, computadores e acessórios, loja moderna" class="card focus:outline-none focus:ring-2 focus:ring-blue-600" role="listitem" tabindex="0">
+      <img alt="Loja de eletrônicos com smartphones e computadores expostos em prateleiras modernas" class="card-image" height="160" loading="lazy" src="https://storage.googleapis.com/a1aa/image/385597ec-65bf-4802-eabf-7247ca266eb8.jpg" width="280"/>
+      <div class="card-content">
+       <h3 class="card-title" title="Eletrônicos">
+        Eletrônicos
+       </h3>
+       <p class="card-desc" title="Smartphones, computadores e acessórios, loja moderna">
+        Smartphones, computadores e acessórios, loja moderna
+       </p>
+       <div aria-label="Informações do comércio" class="card-info">
+        <div class="card-info-item" title="Aberto das 10h às 21h">
+         <i aria-hidden="true" class="fas fa-clock">
+         </i>
+         <span>
+          10h - 21h
+         </span>
+        </div>
+        <div class="card-info-item" title="Avaliação: 4.7 estrelas">
+         <i aria-hidden="true" class="fas fa-star">
+         </i>
+         <span>
+          4.7
+         </span>
+        </div>
+        <div class="card-info-item" title="Distância: 2.5 km">
+         <i aria-hidden="true" class="fas fa-map-marker-alt">
+         </i>
+         <span>
+          2.5 km
+         </span>
+        </div>
+       </div>
+      </div>
+     </article>
+     <article aria-label="Padaria e Confeitaria, pães frescos e doces artesanais" class="card focus:outline-none focus:ring-2 focus:ring-blue-600" role="listitem" tabindex="0">
+      <img alt="Padaria com pães frescos e doces artesanais expostos em balcão de madeira" class="card-image" height="160" loading="lazy" src="https://storage.googleapis.com/a1aa/image/1cd5199a-6439-405c-df40-8e2eb868c751.jpg" width="280"/>
+      <div class="card-content">
+       <h3 class="card-title" title="Padaria e Confeitaria">
+        Padaria e Confeitaria
+       </h3>
+       <p class="card-desc" title="Pães frescos e doces artesanais">
+        Pães frescos e doces artesanais
+       </p>
+       <div aria-label="Informações do comércio" class="card-info">
+        <div class="card-info-item" title="Aberto das 6h às 18h">
+         <i aria-hidden="true" class="fas fa-clock">
+         </i>
+         <span>
+          6h - 18h
+         </span>
+        </div>
+        <div class="card-info-item" title="Avaliação: 4.9 estrelas">
+         <i aria-hidden="true" class="fas fa-star">
+         </i>
+         <span>
+          4.9
+         </span>
+        </div>
+        <div class="card-info-item" title="Distância: 0.8 km">
+         <i aria-hidden="true" class="fas fa-map-marker-alt">
+         </i>
+         <span>
+          0.8 km
+         </span>
+        </div>
+       </div>
+      </div>
+     </article>
+    </div>
+   </section>
+   <!-- Soluções Section -->
+   <section class="info-section" aria-label="Soluções para Estabelecimentos e Empreendedores">
+    <h3>Soluções para Estabelecimentos e Empreendedores</h3>
+    <ul class="info-list">
+     <li><i class="fas fa-user-chef" aria-hidden="true"></i>🧑‍🍳 Sistema completo para restaurantes (cardápios digitais, delivery próprio, controle de pedidos e estoques)</li>
+     <li><i class="fas fa-store" aria-hidden="true"></i>🏪 Sistema para comércios e lojas (PDV, controle de vendas, agendamento e entregas)</li>
+     <li><i class="fas fa-box-open" aria-hidden="true"></i>📦 Marketplace para venda online</li>
+     <li><i class="fas fa-bullhorn" aria-hidden="true"></i>🎯 Ferramentas de marketing e fidelização (cupons, programas de pontos)</li>
+     <li><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>🧾 Controle financeiro e emissão de notas fiscais</li>
+     <li><i class="fas fa-chart-line" aria-hidden="true"></i>📊 Dashboards e relatórios para acompanhar performance</li>
+    </ul>
+   </section>
+   <section class="info-section" aria-label="Soluções de Logística e Entregas">
+    <h3>🚚 Soluções de Logística e Entregas</h3>
+    <ul class="info-list">
+     <li><i class="fas fa-motorcycle" aria-hidden="true"></i>🏍️ Entrega própria e integrada com motoboys, carros e outros modais</li>
+     <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i>🛵 Rastreamento e monitoramento da entrega em tempo real</li>
+     <li><i class="fas fa-route" aria-hidden="true"></i>📍 Área para o entregador controlar suas rotas, pedidos e saldo</li>
+     <li><i class="fas fa-wallet" aria-hidden="true"></i>💰 Sistema de pagamento automático para entregadores e carteira digital</li>
+    </ul>
+   </section>
+   <section class="info-section" aria-label="Soluções para Profissionais e Consumidores">
+    <h3>🧑‍💻 Soluções para Profissionais e Consumidores</h3>
+    <ul class="info-list">
+     <li><i class="fas fa-toolbox" aria-hidden="true"></i>🧰 Catálogo de serviços (encanador, eletricista, diarista, babá, etc.)</li>
+     <li><i class="fas fa-search-location" aria-hidden="true"></i>🧭 Busca e agendamento de serviços por localização</li>
+     <li><i class="fas fa-wallet" aria-hidden="true"></i>🧡 Carteira digital integrada para pagar e receber serviços</li>
+     <li><i class="fas fa-user-tie" aria-hidden="true"></i>🧑‍💼 Área para profissionais divulgarem o trabalho e gerirem a agenda</li>
+     <li><i class="fas fa-comments" aria-hidden="true"></i>💬 Chat direto entre clientes e prestadores para tirar dúvidas e combinar detalhes</li>
+    </ul>
+   </section>
+   <section class="info-section" aria-label="Outras Funcionalidades e Serviços Gerais">
+    <h3>🧠 Outras Funcionalidades e Serviços Gerais</h3>
+    <ul class="info-list">
+     <li><i class="fas fa-wifi" aria-hidden="true"></i>📡 Integração com redes sociais e WhatsApp</li>
+     <li><i class="fas fa-ticket-alt" aria-hidden="true"></i>🎫 Venda e emissão de ingressos para eventos</li>
+     <li><i class="fas fa-plane" aria-hidden="true"></i>✈️ Compra de passagens (ônibus, avião, van)</li>
+     <li><i class="fas fa-home" aria-hidden="true"></i>🏠 Reserva de hospedagem e transporte para viagens</li>
+     <li><i class="fas fa-headset" aria-hidden="true"></i>🆘 Área para ajuda e suporte 24/7</li>
+    </ul>
+   </section>
+  </div>
+  <nav aria-label="Navegação principal" role="navigation">
+   <a aria-current="page" aria-label="Início - Tela inicial com saudação, saldo, atalhos e promoções" class="active" href="#" tabindex="0">
+    <i aria-hidden="true" class="fas fa-home">
+    </i>
+    <span>
+     Início
+    </span>
+   </a>
+   <a aria-label="Pedidos - Histórico e status dos pedidos do usuário" href="#" tabindex="0">
+    <i aria-hidden="true" class="fas fa-receipt">
+    </i>
+    <span>
+     Pedidos
+    </span>
+   </a>
+   <a aria-label="Entregas - Área para entregadores (aceitar entregas, relatórios)" href="#" tabindex="0">
+    <i aria-hidden="true" class="fas fa-motorcycle">
+    </i>
+    <span>
+     Entregas
+    </span>
+   </a>
+   <a aria-label="Anunciar - Área para comerciantes e prestadores publicarem promoções, editar cardápio etc." href="#" tabindex="0">
+    <i aria-hidden="true" class="fas fa-bullhorn">
+    </i>
+    <span>
+     Anunciar
+    </span>
+   </a>
+   <a aria-label="Perfil - Dados da conta, formas de pagamento, configurações" href="#" tabindex="0">
+    <i aria-hidden="true" class="fas fa-user">
+    </i>
+    <span>
+     Perfil
+    </span>
+   </a>
+  </nav>
+  <script>
+   const splashScreen = document.getElementById('splash-screen');
+    const userFormContainer = document.getElementById('user-form-container');
+    const mainContent = document.getElementById('main-content');
+    const userForm = document.getElementById('user-form');
+    const greeting = document.getElementById('greeting');
+    const editButton = document.getElementById('edit-button');
+    const helloBar = document.getElementById('hello-bar');
+
+    // After 3 seconds, hide splash and show form
+    setTimeout(() => {
+      splashScreen.style.display = 'none';
+      userFormContainer.style.display = 'flex';
+      document.getElementById('name').focus();
+    }, 3000);
+
+    // Handle form submission
+    userForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = userForm.name.value.trim();
+      const phone = userForm.phone.value.trim();
+      const phonePattern = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/;
+
+      if (!name) {
+        alert('Por favor, digite seu nome.');
+        userForm.name.focus();
+        return;
+      }
+      if (!phone || !phonePattern.test(phone)) {
+        alert('Por favor, digite um número de telefone válido.');
+        userForm.phone.focus();
+        return;
+      }
+
+      // Extract first name
+      const firstName = name.split(' ')[0];
+      greeting.textContent = `Olá, ${firstName}.`;
+
+      // Hide form and show main content
+      userFormContainer.style.display = 'none';
+      mainContent.classList.remove('hidden');
+    });
+
+    // Optional: Toggle aria-expanded for menu and notification buttons
+    const menuButton = document.getElementById('menu-button');
+    const notificationButton = document.getElementById('notification-button');
+
+    menuButton.addEventListener('click', () => {
+      const expanded = menuButton.getAttribute('aria-expanded') === 'true';
+      menuButton.setAttribute('aria-expanded', String(!expanded));
+      alert('Menu sanduíche clicado (implemente o menu lateral)');
+    });
+
+    notificationButton.addEventListener('click', () => {
+      const expanded = notificationButton.getAttribute('aria-expanded') === 'true';
+      notificationButton.setAttribute('aria-expanded', String(!expanded));
+      alert('Notificações clicadas (implemente o painel de notificações)');
+    });
+
+    // Drag and drop reorder for hello-bar items
+    let dragSrcEl = null;
+    let isEditing = false;
+
+    function handleDragStart(e) {
+      if (!isEditing) {
+        e.preventDefault();
+        return;
+      }
+      dragSrcEl = this;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/html', this.outerHTML);
+      this.classList.add('dragging');
+    }
+
+    function handleDragOver(e) {
+      if (!isEditing) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      return false;
+    }
+
+    function handleDragEnter(e) {
+      if (!isEditing) return;
+      this.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+      if (!isEditing) return;
+      this.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+      if (!isEditing) return;
+      e.stopPropagation();
+      if (dragSrcEl !== this) {
+        // Swap elements
+        const dragHTML = e.dataTransfer.getData('text/html');
+        this.insertAdjacentHTML('beforebegin', dragHTML);
+        const droppedElem = this.previousSibling;
+        addDnDHandlers(droppedElem);
+        dragSrcEl.parentNode.removeChild(dragSrcEl);
+      }
+      this.classList.remove('drag-over');
+      return false;
+    }
+
+    function handleDragEnd(e) {
+      if (!isEditing) return;
+      this.classList.remove('dragging');
+      const items = helloBar.querySelectorAll('.hello-item');
+      items.forEach(item => item.classList.remove('drag-over'));
+    }
+
+    function addDnDHandlers(elem) {
+      elem.addEventListener('dragstart', handleDragStart, false);
+      elem.addEventListener('dragenter', handleDragEnter, false);
+      elem.addEventListener('dragover', handleDragOver, false);
+      elem.addEventListener('dragleave', handleDragLeave, false);
+      elem.addEventListener('drop', handleDrop, false);
+      elem.addEventListener('dragend', handleDragEnd, false);
+    }
+
+    function enableDragAndDrop(enable) {
+      const items = helloBar.querySelectorAll('.hello-item');
+      items.forEach(item => {
+        if (enable) {
+          item.setAttribute('draggable', 'true');
+          addDnDHandlers(item);
+          item.style.cursor = 'grab';
+          item.setAttribute('tabindex', '0');
+        } else {
+          item.removeAttribute('draggable');
+          item.style.cursor = 'default';
+          item.removeEventListener('dragstart', handleDragStart);
+          item.removeEventListener('dragenter', handleDragEnter);
+          item.removeEventListener('dragover', handleDragOver);
+          item.removeEventListener('dragleave', handleDragLeave);
+          item.removeEventListener('drop', handleDrop);
+          item.removeEventListener('dragend', handleDragEnd);
+        }
+      });
+    }
+
+    editButton.addEventListener('click', () => {
+      isEditing = !isEditing;
+      if (isEditing) {
+        editButton.title = 'Finalizar edição';
+        editButton.setAttribute('aria-pressed', 'true');
+        enableDragAndDrop(true);
+        editButton.querySelector('i').classList.remove('fa-edit');
+        editButton.querySelector('i').classList.add('fa-check');
+      } else {
+        editButton.title = 'Editar posição dos ícones';
+        editButton.setAttribute('aria-pressed', 'false');
+        enableDragAndDrop(false);
+        editButton.querySelector('i').classList.remove('fa-check');
+        editButton.querySelector('i').classList.add('fa-edit');
+        // Optionally save order to localStorage or backend here
+      }
+    });
+  </script>
+ </body>
+</html>
