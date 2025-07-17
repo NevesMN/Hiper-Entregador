@@ -1,0 +1,75 @@
+<html class="scroll-smooth" lang="pt-BR">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Cadastro
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+ </head>
+ <body class="bg-white min-h-screen flex flex-col">
+  <header class="flex items-center justify-between px-5 py-4 border-b border-transparent">
+   <button aria-label="Voltar" class="bg-black w-10 h-10 rounded-full flex items-center justify-center">
+    <i class="fas fa-arrow-left text-white text-lg">
+    </i>
+   </button>
+   <h1 class="font-extrabold text-xl text-black absolute left-1/2 -translate-x-1/2">
+    Cadastro
+   </h1>
+   <div class="w-10 h-10">
+   </div>
+  </header>
+  <main class="flex-grow px-6 pt-12 pb-10 flex flex-col items-center gap-10 max-w-md mx-auto w-full">
+   <h2 class="text-black text-xl font-normal">
+    Escolha Seu Perfil
+   </h2>
+   <button class="w-full bg-[#FB6600] rounded-3xl flex items-start gap-6 px-6 py-6" type="button">
+    <div class="bg-white rounded-3xl flex items-center justify-center w-24 h-24 shrink-0">
+     <i class="fas fa-building text-black text-6xl" aria-hidden="true" title="Ícone de prédio representando empresa"></i>
+    </div>
+    <div class="flex flex-col text-white">
+     <span class="font-extrabold text-lg mb-2">
+      Empresa
+     </span>
+     <p class="text-sm font-normal max-w-xs leading-tight">
+      Organizações que oferecem produtos/serviços e contratam entregadores ou profissionais.
+     </p>
+    </div>
+   </button>
+   <button class="w-full bg-[#2E56FF] rounded-3xl flex items-start gap-6 px-6 py-6" type="button">
+    <div class="bg-white rounded-3xl flex items-center justify-center w-24 h-24 shrink-0">
+     <i class="fas fa-user text-black text-6xl" aria-hidden="true" title="Ícone de pessoa representando cliente"></i>
+    </div>
+    <div class="flex flex-col text-white">
+     <span class="font-extrabold text-lg mb-2">
+      Cliente
+     </span>
+     <p class="text-sm font-normal max-w-xs leading-tight">
+      Pessoas físicas que solicitam entregas, serviços domésticos ou ajuda rápida.
+     </p>
+    </div>
+   </button>
+   <button class="w-full bg-black rounded-3xl flex items-start gap-6 px-6 py-6" type="button">
+    <div class="bg-white rounded-3xl flex items-center justify-center w-24 h-24 shrink-0">
+     <i class="fas fa-briefcase text-black text-6xl" aria-hidden="true" title="Ícone de maleta representando profissionais"></i>
+    </div>
+    <div class="flex flex-col text-white">
+     <span class="font-extrabold text-lg mb-2">
+      Profissionais
+     </span>
+     <p class="text-sm font-normal max-w-xs leading-tight">
+      Pessoas que prestam serviços como entregadores e profissionais diversos.
+     </p>
+    </div>
+   </button>
+  </main>
+ </body>
+</html>
