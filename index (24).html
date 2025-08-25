@@ -1,0 +1,100 @@
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pedidos Moto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+  <main class="w-full max-w-md">
+    <h1 class="text-2xl font-semibold mb-4 text-center text-gray-800">Pedidos de Moto</h1>
+    <div id="cards-container" class="space-y-3"></div>
+  </main>
+
+  <script>
+    const jsonUrl = 'pedidos.json'; // URL do arquivo JSON local ou remoto
+
+    const cardsContainer = document.getElementById('cards-container');
+
+    function formatPhone(phone) {
+      if (!phone) return '';
+      const cleaned = phone.replace(/\D/g, '');
+      if (cleaned.length === 11) {
+        return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
+      }
+      if (cleaned.length === 10) {
+        return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
+      }
+      return phone;
+    }
+
+    function createCard(pedido) {
+      const card = document.createElement('article');
+      card.className = 'bg-white rounded-lg shadow p-4 flex flex-col space-y-2 text-sm';
+
+      let statusColor = 'text-gray-500';
+      if (pedido.status === 'disponivel') statusColor = 'text-green-600 font-semibold';
+      else if (pedido.status === 'em andamento') statusColor = 'text-yellow-600 font-semibold';
+      else if (pedido.status === 'finalizado') statusColor = 'text-gray-400 font-semibold line-through';
+
+      card.innerHTML = `
+        <header class="flex justify-between items-center">
+          <h2 class="text-lg font-semibold text-gray-800">${pedido.tipo}</h2>
+          <span class="${statusColor} capitalize">${pedido.status.replace('_', ' ')}</span>
+        </header>
+        <div class="space-y-1">
+          <p><i class="fas fa-map-marker-alt text-red-500 mr-1"></i><strong>Origem:</strong> ${pedido.origem}</p>
+          <p><i class="fas fa-map-marker-alt text-green-500 mr-1"></i><strong>Destino:</strong> ${pedido.destino}</p>
+          <p><i class="fas fa-user text-blue-500 mr-1"></i><strong>Passageiro:</strong> ${pedido.passageiro}</p>
+          <p><i class="fas fa-phone-alt text-indigo-500 mr-1"></i><strong>Telefone:</strong> <a href="tel:${pedido.telefone}" class="text-indigo-600 hover:underline">${formatPhone(pedido.telefone)}</a></p>
+        </div>
+        <a href="${pedido.rota}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center mt-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200 text-xs">
+          <i class="fas fa-route mr-1"></i> Ver Rota no Google Maps
+        </a>
+      `;
+
+      return card;
+    }
+
+    function renderPedidos(pedidos) {
+      cardsContainer.innerHTML = '';
+      if (!pedidos || pedidos.length === 0) {
+        cardsContainer.innerHTML = '<p class="text-center text-gray-500 text-sm">Nenhum pedido disponível no momento.</p>';
+        return;
+      }
+      pedidos.forEach(pedido => {
+        const card = createCard(pedido);
+        cardsContainer.appendChild(card);
+      });
+    }
+
+    async function fetchPedidos() {
+      try {
+        const response = await fetch(jsonUrl, {cache: "no-store"});
+        if (!response.ok) throw new Error('Erro ao buscar dados');
+        const data = await response.json();
+        renderPedidos(data.pedidos);
+      } catch (error) {
+        cardsContainer.innerHTML = `<p class="text-center text-red-600 text-sm">Erro ao carregar os pedidos.</p>`;
+        console.error(error);
+      }
+    }
+
+    fetchPedidos();
+    setInterval(fetchPedidos, 10000);
+  </script>
+</body>
+</html>
