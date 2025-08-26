@@ -4,19 +4,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pedidos Moto</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
   <style>
     body {
       font-family: 'Inter', sans-serif;
     }
   </style>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
 </head>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
   <main class="w-full max-w-md">
@@ -25,20 +19,56 @@
   </main>
 
   <script>
-    const jsonUrl = 'pedidos.json'; // URL do arquivo JSON local ou remoto
+    const jsonUrl = 'https://api.github.com/repos/NevesMN/Hiper-entregador/contents/pedidos.json';
+    const repoOwner = "NevesMN";
+    const repoName = "Hiper-entregador";
+    const filePath = "pedidos.json";
+    const token = "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";
 
     const cardsContainer = document.getElementById('cards-container');
 
     function formatPhone(phone) {
       if (!phone) return '';
       const cleaned = phone.replace(/\D/g, '');
-      if (cleaned.length === 11) {
-        return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
-      }
-      if (cleaned.length === 10) {
-        return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
-      }
+      if (cleaned.length === 11) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
+      if (cleaned.length === 10) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
       return phone;
+    }
+
+    async function updatePedidoStatus(pedidoId, novoStatus) {
+      try {
+        // 1. Buscar o JSON atual
+        const resGet = await fetch(jsonUrl, { headers: { Authorization: `token ${token}` } });
+        if (!resGet.ok) throw new Error("Erro ao buscar JSON");
+        const dataGet = await resGet.json();
+        const sha = dataGet.sha;
+        let pedidos = JSON.parse(atob(dataGet.content)).pedidos;
+
+        // 2. Atualizar o pedido
+        pedidos = pedidos.map(p => p.id === pedidoId ? { ...p, status: novoStatus } : p);
+
+        // 3. Enviar de volta pro GitHub
+        const resPut = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
+          method: "PUT",
+          headers: {
+            Authorization: `token ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: `Atualizando status do pedido ${pedidoId} para ${novoStatus}`,
+            content: btoa(JSON.stringify({ pedidos }, null, 2)),
+            sha: sha
+          })
+        });
+
+        if (!resPut.ok) throw new Error("Erro ao salvar no GitHub");
+        alert(`✅ Pedido ${pedidoId} atualizado para ${novoStatus}`);
+        fetchPedidos(); // recarregar pedidos
+
+      } catch (error) {
+        console.error(error);
+        alert("❌ Erro ao atualizar pedido: " + error.message);
+      }
     }
 
     function createCard(pedido) {
@@ -50,6 +80,13 @@
       else if (pedido.status === 'em andamento') statusColor = 'text-yellow-600 font-semibold';
       else if (pedido.status === 'finalizado') statusColor = 'text-gray-400 font-semibold line-through';
 
+      let actionButton = '';
+      if (pedido.status === 'disponivel') {
+        actionButton = `<button onclick="updatePedidoStatus('${pedido.id}', 'em andamento')" class="mt-2 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-md text-xs">✅ Aceitar</button>`;
+      } else if (pedido.status === 'em andamento') {
+        actionButton = `<button onclick="updatePedidoStatus('${pedido.id}', 'finalizado')" class="mt-2 px-3 py-1.5 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md text-xs">🏁 Finalizar</button>`;
+      }
+
       card.innerHTML = `
         <header class="flex justify-between items-center">
           <h2 class="text-lg font-semibold text-gray-800">${pedido.tipo}</h2>
@@ -59,13 +96,15 @@
           <p><i class="fas fa-map-marker-alt text-red-500 mr-1"></i><strong>Origem:</strong> ${pedido.origem}</p>
           <p><i class="fas fa-map-marker-alt text-green-500 mr-1"></i><strong>Destino:</strong> ${pedido.destino}</p>
           <p><i class="fas fa-user text-blue-500 mr-1"></i><strong>Passageiro:</strong> ${pedido.passageiro}</p>
-          <p><i class="fas fa-phone-alt text-indigo-500 mr-1"></i><strong>Telefone:</strong> <a href="tel:${pedido.telefone}" class="text-indigo-600 hover:underline">${formatPhone(pedido.telefone)}</a></p>
+          <p><i class="fas fa-phone-alt text-indigo-500 mr-1"></i><strong>Telefone:</strong> 
+            <a href="tel:${pedido.telefone}" class="text-indigo-600 hover:underline">${formatPhone(pedido.telefone)}</a>
+          </p>
         </div>
         <a href="${pedido.rota}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center mt-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200 text-xs">
           <i class="fas fa-route mr-1"></i> Ver Rota no Google Maps
         </a>
+        ${actionButton}
       `;
-
       return card;
     }
 
@@ -83,10 +122,10 @@
 
     async function fetchPedidos() {
       try {
-        const response = await fetch(jsonUrl, {cache: "no-store"});
+        const response = await fetch(jsonUrl, { headers: { Authorization: `token ${token}` }, cache: "no-store" });
         if (!response.ok) throw new Error('Erro ao buscar dados');
         const data = await response.json();
-        renderPedidos(data.pedidos);
+        renderPedidos(JSON.parse(atob(data.content)).pedidos);
       } catch (error) {
         cardsContainer.innerHTML = `<p class="text-center text-red-600 text-sm">Erro ao carregar os pedidos.</p>`;
         console.error(error);
@@ -97,5 +136,4 @@
     setInterval(fetchPedidos, 10000);
   </script>
 </body>
-</html>
 </html>
