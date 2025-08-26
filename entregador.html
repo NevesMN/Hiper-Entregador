@@ -19,11 +19,42 @@
   </main>
 
   <script>
-    const jsonUrl = 'https://api.github.com/repos/NevesMN/Hiper-entregador/contents/pedidos.json';
-    const repoOwner = "NevesMN";
-    const repoName = "Hiper-entregador";
-    const filePath = "pedidos.json";
-    const token = "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";
+    // Simulando o conteúdo do pedidos.json localmente para teste
+    // Em produção, substituir fetchPedidos para buscar do servidor/GitHub
+    let pedidosData = {
+      "pedidos": [
+        {
+          "id": "202508260005",
+          "tipo": "Moto Entrega",
+          "origem": "Rua Alegrete 678",
+          "destino": "Aero rancho",
+          "rota": "https://www.google.com/maps/dir/?api=1&origin=Rua%20Alegrete%20678&destination=Aero%20rancho&travelmode=motorcycle",
+          "passageiro": "Matheus Neves",
+          "telefone": "67992321321",
+          "status": "Buscando Entregador"
+        },
+        {
+          "id": "202508260015",
+          "tipo": "Moto Passageiro",
+          "origem": "Rua Alegrete 678",
+          "destino": "Rua Amazonas 670",
+          "rota": "https://www.google.com/maps/dir/?api=1&origin=Rua%20Alegrete%20678&destination=Rua%20Amazonas%20670&travelmode=motorcycle",
+          "passageiro": "Matheus Neves",
+          "telefone": "67992321321",
+          "status": "Buscando Motorista"
+        },
+        {
+          "id": "202508260018",
+          "tipo": "Moto Entrega",
+          "origem": "Rua Alegrete 678",
+          "destino": "Rua Bahia 78",
+          "rota": "https://www.google.com/maps/dir/?api=1&origin=Rua%20Alegrete%20678&destination=Rua%20Bahia%2078&travelmode=motorcycle",
+          "passageiro": "Jorgehhhh",
+          "telefone": "67992321321",
+          "status": "Buscando Entregador"
+        }
+      ]
+    };
 
     const cardsContainer = document.getElementById('cards-container');
 
@@ -35,62 +66,95 @@
       return phone;
     }
 
-    async function updatePedidoStatus(pedidoId, novoStatus) {
-      try {
-        // 1. Buscar o JSON atual
-        const resGet = await fetch(jsonUrl, { headers: { Authorization: `token ${token}` } });
-        if (!resGet.ok) throw new Error("Erro ao buscar JSON");
-        const dataGet = await resGet.json();
-        const sha = dataGet.sha;
-        let pedidos = JSON.parse(atob(dataGet.content)).pedidos;
+    // Identificador único do usuário (simulado)
+    // Em produção, usar autenticação real para identificar usuário
+    const currentUserId = localStorage.getItem('userId') || generateUserId();
+    localStorage.setItem('userId', currentUserId);
 
-        // 2. Atualizar o pedido
-        pedidos = pedidos.map(p => p.id === pedidoId ? { ...p, status: novoStatus } : p);
+    function generateUserId() {
+      return 'user-' + Math.random().toString(36).substr(2, 9);
+    }
 
-        // 3. Enviar de volta pro GitHub
-        const resPut = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
-          method: "PUT",
-          headers: {
-            Authorization: `token ${token}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            message: `Atualizando status do pedido ${pedidoId} para ${novoStatus}`,
-            content: btoa(JSON.stringify({ pedidos }, null, 2)),
-            sha: sha
-          })
-        });
+    // Guardar localmente os pedidos aceitos pelo usuário: { pedidoId: userId }
+    // Para simular multiusuário, armazenamos no localStorage um objeto JSON
+    // que mapeia pedidoId para userId que aceitou
+    const acceptedKey = 'pedidosAceitosPorUsuario';
 
-        if (!resPut.ok) throw new Error("Erro ao salvar no GitHub");
-        alert(`✅ Pedido ${pedidoId} atualizado para ${novoStatus}`);
-        fetchPedidos(); // recarregar pedidos
+    function getAcceptedPedidos() {
+      const data = localStorage.getItem(acceptedKey);
+      return data ? JSON.parse(data) : {};
+    }
 
-      } catch (error) {
-        console.error(error);
-        alert("❌ Erro ao atualizar pedido: " + error.message);
+    function setAcceptedPedido(pedidoId, userId) {
+      const accepted = getAcceptedPedidos();
+      accepted[pedidoId] = userId;
+      localStorage.setItem(acceptedKey, JSON.stringify(accepted));
+    }
+
+    function removeAcceptedPedido(pedidoId) {
+      const accepted = getAcceptedPedidos();
+      if (accepted[pedidoId]) {
+        delete accepted[pedidoId];
+        localStorage.setItem(acceptedKey, JSON.stringify(accepted));
       }
     }
 
+    // Atualiza status localmente e controla visibilidade conforme usuário
+    function updatePedidoStatus(pedidoId, novoStatus) {
+      const pedidoIndex = pedidosData.pedidos.findIndex(p => p.id === pedidoId);
+      if (pedidoIndex === -1) {
+        alert("Pedido não encontrado");
+        return;
+      }
+
+      // Se aceitou, registra o usuário que aceitou
+      if (novoStatus.toLowerCase() === 'aceito') {
+        setAcceptedPedido(pedidoId, currentUserId);
+      } else if (novoStatus.toLowerCase() === 'buscando entregador' || novoStatus.toLowerCase() === 'buscando motorista') {
+        // Se voltou para buscando, remove aceitação
+        removeAcceptedPedido(pedidoId);
+      }
+
+      pedidosData.pedidos[pedidoIndex].status = novoStatus;
+      alert(`✅ Pedido ${pedidoId} atualizado para ${novoStatus}`);
+      renderPedidos(pedidosData.pedidos);
+    }
+
     function createCard(pedido) {
+      const acceptedPedidos = getAcceptedPedidos();
+      const acceptedByUser = acceptedPedidos[pedido.id] === currentUserId;
+      const acceptedByOther = acceptedPedidos[pedido.id] && acceptedPedidos[pedido.id] !== currentUserId;
+
+      // Se pedido está aceito por outro usuário, não mostrar o card
+      if (acceptedByOther) return null;
+
       const card = document.createElement('article');
       card.className = 'bg-white rounded-lg shadow p-4 flex flex-col space-y-2 text-sm';
 
       let statusColor = 'text-gray-500';
-      if (pedido.status === 'disponivel') statusColor = 'text-green-600 font-semibold';
-      else if (pedido.status === 'em andamento') statusColor = 'text-yellow-600 font-semibold';
-      else if (pedido.status === 'finalizado') statusColor = 'text-gray-400 font-semibold line-through';
+      const statusLower = pedido.status.toLowerCase();
+      if (statusLower === 'buscando entregador' || statusLower === 'buscando motorista') statusColor = 'text-red-600 font-semibold';
+      else if (statusLower === 'disponivel') statusColor = 'text-green-600 font-semibold';
+      else if (statusLower === 'em andamento') statusColor = 'text-yellow-600 font-semibold';
+      else if (statusLower === 'finalizado') statusColor = 'text-gray-400 font-semibold line-through';
+      else if (statusLower === 'aceito') statusColor = 'text-green-700 font-semibold';
 
       let actionButton = '';
-      if (pedido.status === 'disponivel') {
-        actionButton = `<button onclick="updatePedidoStatus('${pedido.id}', 'em andamento')" class="mt-2 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-md text-xs">✅ Aceitar</button>`;
-      } else if (pedido.status === 'em andamento') {
-        actionButton = `<button onclick="updatePedidoStatus('${pedido.id}', 'finalizado')" class="mt-2 px-3 py-1.5 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md text-xs">🏁 Finalizar</button>`;
+      if (statusLower === 'buscando entregador' || statusLower === 'buscando motorista') {
+        actionButton = `<button onclick="updatePedidoStatus('${pedido.id}', 'Aceito')" class="mt-2 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-md text-xs w-full">✅ Aceitar</button>`;
+      } else if (statusLower === 'aceito' && acceptedByUser) {
+        actionButton = `<button onclick="updatePedidoStatus('${pedido.id}', 'Em andamento')" class="mt-2 px-3 py-1.5 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md text-xs w-full">🏁 Iniciar</button>`;
+      } else if (statusLower === 'em andamento' && acceptedByUser) {
+        actionButton = `<button onclick="updatePedidoStatus('${pedido.id}', 'Finalizado')" class="mt-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs w-full">✔️ Finalizar</button>`;
       }
+
+      // Se status é "Aceito" but user is not the accepter, card is hidden above (return null)
+      // If status is "Aceito" and user is accepter, show card with buttons
 
       card.innerHTML = `
         <header class="flex justify-between items-center">
           <h2 class="text-lg font-semibold text-gray-800">${pedido.tipo}</h2>
-          <span class="${statusColor} capitalize">${pedido.status.replace('_', ' ')}</span>
+          <span class="${statusColor} capitalize">${pedido.status}</span>
         </header>
         <div class="space-y-1">
           <p><i class="fas fa-map-marker-alt text-red-500 mr-1"></i><strong>Origem:</strong> ${pedido.origem}</p>
@@ -100,7 +164,7 @@
             <a href="tel:${pedido.telefone}" class="text-indigo-600 hover:underline">${formatPhone(pedido.telefone)}</a>
           </p>
         </div>
-        <a href="${pedido.rota}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center mt-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200 text-xs">
+        <a href="${pedido.rota}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center mt-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200 text-xs w-full">
           <i class="fas fa-route mr-1"></i> Ver Rota no Google Maps
         </a>
         ${actionButton}
@@ -114,26 +178,25 @@
         cardsContainer.innerHTML = '<p class="text-center text-gray-500 text-sm">Nenhum pedido disponível no momento.</p>';
         return;
       }
+      let anyVisible = false;
       pedidos.forEach(pedido => {
         const card = createCard(pedido);
-        cardsContainer.appendChild(card);
+        if (card) {
+          cardsContainer.appendChild(card);
+          anyVisible = true;
+        }
       });
-    }
-
-    async function fetchPedidos() {
-      try {
-        const response = await fetch(jsonUrl, { headers: { Authorization: `token ${token}` }, cache: "no-store" });
-        if (!response.ok) throw new Error('Erro ao buscar dados');
-        const data = await response.json();
-        renderPedidos(JSON.parse(atob(data.content)).pedidos);
-      } catch (error) {
-        cardsContainer.innerHTML = `<p class="text-center text-red-600 text-sm">Erro ao carregar os pedidos.</p>`;
-        console.error(error);
+      if (!anyVisible) {
+        cardsContainer.innerHTML = '<p class="text-center text-gray-500 text-sm">Nenhum pedido disponível no momento.</p>';
       }
     }
 
+    function fetchPedidos() {
+      // Como estamos usando dados locais, só renderiza
+      renderPedidos(pedidosData.pedidos);
+    }
+
     fetchPedidos();
-    setInterval(fetchPedidos, 10000);
   </script>
 </body>
 </html>
