@@ -1,0 +1,587 @@
+<html class="scroll-smooth" lang="pt-BR">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Transporte Urbano
+  </title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+   .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+   .clickable-meus {
+     cursor: pointer;
+     user-select: none;
+     text-decoration: underline;
+   }
+  </style>
+ </head>
+ <body class="bg-[#e8e8e8] font-sans p-2">
+  <main class="max-w-md mx-auto">
+   <p class="text-black font-semibold mb-1 text-[14px] leading-[18px]">
+    Escolha o tipo de transporte urbano:
+   </p>
+   <section aria-label="Tipos de transporte urbano" class="bg-[#ff6f0f] rounded-tl-[20px] rounded-tr-[20px] overflow-x-auto scrollbar-hide py-1">
+    <div class="flex gap-3 px-1 min-w-[520px]" id="cards-container">
+     <article aria-selected="false" class="flex items-center gap-3 bg-white rounded-[12px] border-2 border-transparent cursor-pointer min-w-[140px] p-1" data-id="3" tabindex="0">
+      <img alt="Ícone de moto preta com bordas arredondadas, vista lateral, em fundo branco" class="w-10 h-10 rounded-[12px] flex-shrink-0" height="80" src="https://storage.googleapis.com/a1aa/image/92fc1e17-40e4-4aac-6909-af4c8a19b334.jpg" width="80"/>
+      <div class="flex flex-col justify-between text-[7px] leading-[9px] text-black">
+       <p class="font-bold text-[9px] leading-[11px] mb-0.5">
+        Moto Passageiro
+       </p>
+       <p class="mb-0.5">
+        1 lugar: R$2/km
+       </p>
+       <p class="mb-0.5">
+        Taxa mínima:
+        <span class="font-bold">
+         R$8
+        </span>
+       </p>
+       <p class="mb-1">
+        CNH EAR +3 Anos
+       </p>
+       <button aria-label="Escolher" class="mt-0.5 bg-[#00b86b] text-white text-[7px] font-bold rounded px-1 py-[1px] w-full" type="button">
+        ESCOLHER
+       </button>
+      </div>
+     </article>
+     <article aria-selected="false" class="flex items-center gap-3 bg-white rounded-[12px] border-2 border-transparent cursor-pointer min-w-[140px] p-1" data-id="1" tabindex="0">
+      <img alt="Ícone de carro passeio preto com bordas arredondadas, vista lateral, em fundo branco" class="w-10 h-10 rounded-[12px] flex-shrink-0" height="80" src="https://storage.googleapis.com/a1aa/image/1b3ed41f-613c-4eb3-bdf2-c7bcab456b74.jpg" width="80"/>
+      <div class="flex flex-col justify-between text-[7px] leading-[9px] text-black">
+       <p class="font-bold text-[9px] leading-[11px] mb-0.5">
+        Carro Passageiro
+       </p>
+       <p class="mb-0.5">
+        3 bancos: R$3/km
+       </p>
+       <p class="mb-0.5">
+        Taxa mínima:
+        <span class="font-bold">
+         R$10
+        </span>
+       </p>
+       <p class="mb-1">
+        Motoristas Verificados
+       </p>
+       <button aria-label="Escolher" class="mt-0.5 bg-[#00b86b] text-white text-[7px] font-bold rounded px-1 py-[1px] w-full" type="button">
+        ESCOLHER
+       </button>
+      </div>
+     </article>
+     <article aria-selected="false" class="flex items-center gap-3 bg-white rounded-[12px] border-2 border-transparent cursor-pointer min-w-[140px] p-1" data-id="2" tabindex="0">
+      <img alt="Ícone de moto preta para entrega com bordas arredondadas, vista lateral, em fundo branco" class="w-10 h-10 rounded-[12px] flex-shrink-0" height="80" src="https://storage.googleapis.com/a1aa/image/1a9bd844-f019-4bc1-d358-0c5802bb9020.jpg" width="80"/>
+      <div class="flex flex-col justify-between text-[7px] leading-[9px] text-black">
+       <p class="font-bold text-[9px] leading-[11px] mb-0.5">
+        Moto Entrega
+       </p>
+       <p class="mb-0.5">
+        1 banco: R$4/km
+       </p>
+       <p class="mb-0.5">
+        Taxa mínima:
+        <span class="font-bold">
+         R$12
+        </span>
+       </p>
+       <p class="mb-1">
+        Motoristas Verificados
+       </p>
+       <button aria-label="Escolher" class="mt-0.5 bg-[#00b86b] text-white text-[7px] font-bold rounded px-1 py-[1px] w-full" type="button">
+        ESCOLHER
+       </button>
+      </div>
+     </article>
+    </div>
+   </section>
+   <form aria-label="Formulário de localização" class="bg-white rounded-b-[20px] p-3 mt-1" id="main-form">
+    <label class="block text-black font-semibold text-[14px] leading-[18px] mb-1" for="local-partida">
+     Escolha o Local de Partida:
+    </label>
+    <input aria-describedby="desc-partida" class="w-full border border-black rounded-md bg-[#e0e0e0] text-[10px] leading-[12px] font-semibold text-[#7a7a7a] px-2 py-1 mb-3 focus:outline-none focus:ring-2 focus:ring-[#00b86b]" id="local-partida" name="localPartida" placeholder="Digite o endereço completo, onde o motorista te encontra?" required="" type="text"/>
+    <label class="block text-black font-semibold text-[14px] leading-[18px] mb-1" for="local-destino">
+     Escolha o Local do Destino:
+    </label>
+    <input aria-describedby="desc-destino" class="w-full border border-black rounded-md bg-[#e0e0e0] text-[10px] leading-[12px] font-semibold text-[#7a7a7a] px-2 py-1 mb-4 focus:outline-none focus:ring-2 focus:ring-[#00b86b]" id="local-destino" name="localDestino" placeholder="Digite o endereço completo, para onde o motorista te leva?" required="" type="text"/>
+    <button class="w-full bg-[#00b86b] text-white font-bold text-[16px] leading-[20px] rounded-full py-2 hover:bg-[#009f5a] transition-colors" id="call-driver-btn" type="button">
+     CHAMAR MOTORISTA
+    </button>
+   </form>
+
+   <!-- Meus Transportes Section -->
+   <section aria-label="Meus Transportes" class="mt-6">
+    <h2 class="text-black font-semibold text-[16px] leading-[20px] mb-2">
+     <span id="meus-text" class="clickable-meus">Meus</span> Transportes
+    </h2>
+    <div class="flex overflow-x-auto scrollbar-hide gap-3 px-1" id="meus-transportes-container">
+     <!-- Cards will be dynamically inserted here -->
+    </div>
+   </section>
+  </main>
+
+  <!-- Dialog for Meus Transportes -->
+  <dialog class="rounded-lg p-4 w-11/12 max-w-md" id="meus-transportes-dialog">
+   <h3 class="text-lg font-bold text-center mb-4">Meus Transportes</h3>
+   <div id="pedidos-list" class="flex flex-col gap-3 max-h-72 overflow-y-auto">
+    <!-- Pedido items will be inserted here -->
+   </div>
+   <div class="flex justify-end mt-4">
+    <button class="bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded hover:bg-gray-400" id="close-meus-transportes" type="button">
+     Fechar
+    </button>
+   </div>
+  </dialog>
+
+  <dialog class="rounded-lg p-4 w-11/12 max-w-sm" id="user-info-dialog">
+   <form class="flex flex-col gap-3" id="user-info-form">
+    <h3 class="text-lg font-bold text-center">
+     Informe seus dados
+    </h3>
+    <label class="flex flex-col text-sm font-semibold">
+     Nome:
+     <input class="border border-gray-400 rounded px-2 py-1 mt-1" id="user-name" name="userName" required="" type="text"/>
+    </label>
+    <label class="flex flex-col text-sm font-semibold">
+     Telefone:
+     <input class="border border-gray-400 rounded px-2 py-1 mt-1" id="user-phone" name="userPhone" pattern="[\d\s()+-]+" placeholder="(99) 99999-9999" required="" type="tel"/>
+    </label>
+    <div class="flex justify-end gap-2 mt-2">
+     <button class="bg-[#00b86b] text-white font-bold px-4 py-2 rounded hover:bg-[#009f5a]" type="submit">
+      Enviar
+     </button>
+     <button class="bg-gray-300 text-gray-700 font-bold px-4 py-2 rounded hover:bg-gray-400" id="cancel-dialog" type="button">
+      Cancelar
+     </button>
+    </div>
+   </form>
+  </dialog>
+
+  <script>
+   const cardsContainer = document.getElementById("cards-container");
+   let selectedCardId = null;
+
+   function updateCards() {
+     const cards = cardsContainer.querySelectorAll("article");
+     cards.forEach((card) => {
+       const id = card.getAttribute("data-id");
+       const button = card.querySelector("button");
+       if (id === selectedCardId) {
+         card.setAttribute("aria-selected", "true");
+         card.classList.add("border-4", "border-[#00b86b]");
+         card.classList.remove("border-2", "border-transparent");
+         button.textContent = "SELECIONADO";
+         button.disabled = true;
+         button.classList.remove("cursor-pointer");
+       } else {
+         card.setAttribute("aria-selected", "false");
+         card.classList.remove("border-4", "border-[#00b86b]");
+         card.classList.add("border-2", "border-transparent");
+         button.textContent = "ESCOLHER";
+         button.disabled = false;
+         button.classList.add("cursor-pointer");
+       }
+     });
+   }
+
+   cardsContainer.addEventListener("click", (e) => {
+     const card = e.target.closest("article");
+     if (!card) return;
+     const id = card.getAttribute("data-id");
+     if (selectedCardId !== id) {
+       selectedCardId = id;
+       updateCards();
+     }
+   });
+
+   updateCards();
+
+   const callDriverBtn = document.getElementById("call-driver-btn");
+   const dialog = document.getElementById("user-info-dialog");
+   const userInfoForm = document.getElementById("user-info-form");
+   const userNameInput = document.getElementById("user-name");
+   const userPhoneInput = document.getElementById("user-phone");
+   const cancelDialogBtn = document.getElementById("cancel-dialog");
+   const mainForm = document.getElementById("main-form");
+
+   function loadUserInfo() {
+     const savedName = localStorage.getItem("userName");
+     const savedPhone = localStorage.getItem("userPhone");
+     if (savedName) userNameInput.value = savedName;
+     if (savedPhone) userPhoneInput.value = savedPhone;
+   }
+
+   function saveUserInfo(name, phone) {
+     localStorage.setItem("userName", name);
+     localStorage.setItem("userPhone", phone);
+   }
+
+   // Encode address for Google Maps URL
+   function encodeAddress(address) {
+     return encodeURIComponent(address.trim());
+   }
+
+   // Create Google Maps route link with travelmode based on transport type
+   function createRouteLink(origin, destination, transportType) {
+     if (!origin || !destination) return "";
+     let travelMode = "driving"; // default for cars
+     if (transportType.toLowerCase().includes("moto")) {
+       travelMode = "motorcycle";
+     }
+     // Google Maps URL with travelmode param
+     return `https://www.google.com/maps/dir/?api=1&origin=${encodeAddress(origin)}&destination=${encodeAddress(destination)}&travelmode=${travelMode}`;
+   }
+
+   function createWhatsAppMessage(data) {
+     const routeLink = createRouteLink(data.localPartida, data.localDestino, data.tipoTransporte);
+     return encodeURIComponent(
+       `🚗 *Pedido de Transporte*\n\n` +
+       `*Tipo de Transporte:* ${data.tipoTransporte}\n` +
+       `*Local de Partida:* ${data.localPartida}\n` +
+       `*Local de Destino:* ${data.localDestino}\n` +
+       (routeLink ? `*Rota:* ${routeLink}\n` : "") +
+       `*Nome do Passageiro:* ${data.nome}\n` +
+       `*Telefone do Passageiro:* ${data.telefone}`
+     );
+   }
+
+   function getSelectedTransportText() {
+     if (!selectedCardId) return null;
+     const card = cardsContainer.querySelector(`article[data-id="${selectedCardId}"]`);
+     if (!card) return null;
+     return card.querySelector("p.font-bold")?.textContent.trim() || "";
+   }
+
+   // Function to generate pedido JSON object with updated status
+   function generatePedidoObject(data) {
+     const routeLink = createRouteLink(data.localPartida, data.localDestino, data.tipoTransporte);
+     const id = new Date().toISOString().replace(/[-:T.]/g,"").slice(0,12);
+     let status = "Buscando Motorista";
+     if (data.tipoTransporte.toLowerCase().includes("entrega")) {
+       status = "Buscando Entregador";
+     }
+     return {
+       id,
+       tipo: data.tipoTransporte,
+       origem: data.localPartida,
+       destino: data.localDestino,
+       rota: routeLink,
+       passageiro: data.nome,
+       telefone: data.telefone,
+       status
+     };
+   }
+
+   // Function to save pedido JSON to GitHub pedidos.json file
+   async function savePedidoToGitHub(pedido) {
+     // CONFIGURAÇÕES DO REPO
+     const repoOwner = "NevesMN";
+     const repoName = "Hiper-entregador";
+     const filePath = "pedidos.json";
+     const token = "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";
+
+     const urlGet = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+
+     try {
+       // 1. Baixa o JSON atual do GitHub
+       const resGet = await fetch(urlGet, {
+         headers: { Authorization: `token ${token}` }
+       });
+       if (!resGet.ok) throw new Error("Erro ao buscar arquivo no GitHub");
+       const dataGet = await resGet.json();
+
+       let pedidosAtuais = [];
+       let sha = null;
+
+       if (dataGet.content) {
+         const conteudo = atob(dataGet.content);
+         pedidosAtuais = JSON.parse(conteudo).pedidos || [];
+         sha = dataGet.sha;
+       }
+
+       // 2. Adiciona o novo pedido
+       pedidosAtuais.push(pedido);
+
+       const novoJSON = { pedidos: pedidosAtuais };
+
+       // 3. Atualiza o arquivo no GitHub
+       const urlPut = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+       const resPut = await fetch(urlPut, {
+         method: "PUT",
+         headers: {
+           Authorization: `token ${token}`,
+           "Content-Type": "application/json"
+         },
+         body: JSON.stringify({
+           message: "Adicionando novo pedido",
+           content: btoa(JSON.stringify(novoJSON, null, 2)),
+           sha: sha
+         })
+       });
+
+       if (!resPut.ok) {
+         const errorData = await resPut.json();
+         throw new Error(errorData.message || "Erro ao salvar no GitHub");
+       }
+
+       return true;
+     } catch (error) {
+       console.error(error);
+       alert("❌ Erro ao salvar o pedido no GitHub: " + error.message);
+       return false;
+     }
+   }
+
+   callDriverBtn.addEventListener("click", () => {
+     if (!selectedCardId) {
+       alert("Por favor, selecione um tipo de transporte.");
+       return;
+     }
+     if (!mainForm.checkValidity()) {
+       mainForm.reportValidity();
+       return;
+     }
+     loadUserInfo();
+     dialog.showModal();
+   });
+
+   userInfoForm.addEventListener("submit", async (e) => {
+     e.preventDefault();
+     const nome = userNameInput.value.trim();
+     const telefone = userPhoneInput.value.trim();
+     if (!nome || !telefone) {
+       alert("Por favor, preencha nome e telefone.");
+       return;
+     }
+     saveUserInfo(nome, telefone);
+
+     const data = {
+       tipoTransporte: getSelectedTransportText(),
+       localPartida: mainForm.localPartida.value.trim(),
+       localDestino: mainForm.localDestino.value.trim(),
+       nome,
+       telefone,
+     };
+
+     // Save pedido to GitHub
+     const pedido = generatePedidoObject(data);
+     const saved = await savePedidoToGitHub(pedido);
+     if (!saved) return;
+
+     const message = createWhatsAppMessage(data);
+     const whatsappUrl = `https://wa.me/67998330535?text=${message}`;
+     window.open(whatsappUrl, "_blank");
+     dialog.close();
+     // Refresh Meus Transportes cards after new pedido
+     loadMeusTransportes();
+   });
+
+   cancelDialogBtn.addEventListener("click", () => {
+     dialog.close();
+   });
+
+   window.addEventListener("DOMContentLoaded", () => {
+     loadUserInfo();
+     loadMeusTransportes();
+     attachMeusClickHandler();
+   });
+
+   // Meus Transportes Section
+   const meusTransportesContainer = document.getElementById("meus-transportes-container");
+   const meusTransportesDialog = document.getElementById("meus-transportes-dialog");
+   const pedidosList = document.getElementById("pedidos-list");
+   const closeMeusTransportesBtn = document.getElementById("close-meus-transportes");
+   const meusText = document.getElementById("meus-text");
+
+   // Return icon HTML based on tipoTransporte
+   function getIconByTipoTransporte(tipo) {
+     const lowerTipo = tipo.toLowerCase();
+     if (lowerTipo.includes("moto entrega")) {
+       return '<i class="fas fa-motorcycle text-[#00b86b] text-2xl mb-1"></i>';
+     }
+     if (lowerTipo.includes("moto passageiro")) {
+       return '<i class="fas fa-motorcycle text-[#00b86b] text-2xl mb-1"></i>';
+     }
+     if (lowerTipo.includes("carro passageiro")) {
+       return '<i class="fas fa-car text-[#00b86b] text-2xl mb-1"></i>';
+     }
+     // Default icon
+     return '<i class="fas fa-truck text-[#00b86b] text-2xl mb-1"></i>';
+   }
+
+   // Load pedidos from GitHub and create cards
+   async function loadMeusTransportes() {
+     meusTransportesContainer.innerHTML = "";
+     try {
+       const repoOwner = "NevesMN";
+       const repoName = "Hiper-entregador";
+       const filePath = "pedidos.json";
+       const token = "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";
+       const urlGet = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+
+       const resGet = await fetch(urlGet, {
+         headers: { Authorization: `token ${token}` }
+       });
+       if (!resGet.ok) throw new Error("Erro ao buscar pedidos no GitHub");
+       const dataGet = await resGet.json();
+
+       let pedidosAtuais = [];
+       if (dataGet.content) {
+         const conteudo = atob(dataGet.content);
+         pedidosAtuais = JSON.parse(conteudo).pedidos || [];
+       }
+
+       if (pedidosAtuais.length === 0) {
+         meusTransportesContainer.innerHTML = `<p class="text-gray-600 text-sm px-2">Nenhum pedido encontrado.</p>`;
+         return;
+       }
+
+       // Create a card for each pedido
+       pedidosAtuais.forEach(pedido => {
+         const card = document.createElement("button");
+         card.type = "button";
+         card.className = "flex-shrink-0 w-20 h-20 bg-white rounded-lg shadow-md flex flex-col justify-center items-center text-center cursor-pointer hover:shadow-lg transition-shadow";
+         card.setAttribute("aria-label", `Pedido ID ${pedido.id}, status ${pedido.status}`);
+         card.innerHTML = `
+           ${getIconByTipoTransporte(pedido.tipo)}
+           <span class="text-xs font-semibold truncate w-full px-1">ID: ${pedido.id}</span>
+           <span class="text-[10px] text-gray-600 truncate w-full px-1 capitalize">${pedido.status}</span>
+         `;
+         card.addEventListener("click", () => {
+           openMeusTransportesDialog(pedido.id);
+         });
+         meusTransportesContainer.appendChild(card);
+       });
+     } catch (error) {
+       console.error(error);
+       meusTransportesContainer.innerHTML = `<p class="text-red-600 text-sm px-2">Erro ao carregar pedidos.</p>`;
+     }
+   }
+
+   // Open dialog and show pedidos details filtered by id
+   async function openMeusTransportesDialog(pedidoId) {
+     pedidosList.innerHTML = "";
+     try {
+       const repoOwner = "NevesMN";
+       const repoName = "Hiper-entregador";
+       const filePath = "pedidos.json";
+       const token = "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";
+       const urlGet = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+
+       const resGet = await fetch(urlGet, {
+         headers: { Authorization: `token ${token}` }
+       });
+       if (!resGet.ok) throw new Error("Erro ao buscar pedidos no GitHub");
+       const dataGet = await resGet.json();
+
+       let pedidosAtuais = [];
+       if (dataGet.content) {
+         const conteudo = atob(dataGet.content);
+         pedidosAtuais = JSON.parse(conteudo).pedidos || [];
+       }
+
+       // Filter pedidos by id (exact match)
+       const filteredPedidos = pedidosAtuais.filter(p => p.id === pedidoId);
+
+       if (filteredPedidos.length === 0) {
+         pedidosList.innerHTML = `<p class="text-gray-600 text-sm text-center">Nenhum pedido encontrado para o ID ${pedidoId}.</p>`;
+       } else {
+         filteredPedidos.forEach(pedido => {
+           const item = document.createElement("div");
+           item.className = "bg-gray-100 rounded p-3 shadow-sm";
+           item.innerHTML = `
+             <p><strong>ID:</strong> ${pedido.id}</p>
+             <p><strong>Tipo:</strong> ${pedido.tipo}</p>
+             <p><strong>Origem:</strong> ${pedido.origem}</p>
+             <p><strong>Destino:</strong> ${pedido.destino}</p>
+             <p><strong>Passageiro:</strong> ${pedido.passageiro}</p>
+             <p><strong>Telefone:</strong> ${pedido.telefone}</p>
+             <p><strong>Status:</strong> <span class="capitalize">${pedido.status}</span></p>
+           `;
+           pedidosList.appendChild(item);
+         });
+       }
+       meusTransportesDialog.showModal();
+     } catch (error) {
+       console.error(error);
+       pedidosList.innerHTML = `<p class="text-red-600 text-sm text-center">Erro ao carregar detalhes do pedido.</p>`;
+       meusTransportesDialog.showModal();
+     }
+   }
+
+   closeMeusTransportesBtn.addEventListener("click", () => {
+     meusTransportesDialog.close();
+   });
+
+   // Attach click handler to "Meus" text
+   function attachMeusClickHandler() {
+     meusText.removeEventListener("click", onMeusClick);
+     meusText.addEventListener("click", onMeusClick);
+   }
+
+   async function onMeusClick(e) {
+     e.stopPropagation();
+     const password = prompt("Digite a senha para limpar pedidos:");
+     if (password === "159753") {
+       if (!confirm("Tem certeza que deseja limpar todos os pedidos? Esta ação não pode ser desfeita.")) return;
+       try {
+         await clearPedidosJson();
+         alert("Pedidos limpos com sucesso.");
+         loadMeusTransportes();
+         pedidosList.innerHTML = "";
+         meusTransportesDialog.close();
+       } catch (error) {
+         alert("Erro ao limpar pedidos: " + error.message);
+       }
+     } else if (password !== null) {
+       alert("Senha incorreta.");
+     }
+   }
+
+   // Clear pedidos.json content on GitHub (set pedidos to empty array)
+   async function clearPedidosJson() {
+     const repoOwner = "NevesMN";
+     const repoName = "Hiper-entregador";
+     const filePath = "pedidos.json";
+     const token = "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";
+
+     const urlGet = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+
+     // Get current file sha
+     const resGet = await fetch(urlGet, {
+       headers: { Authorization: `token ${token}` }
+     });
+     if (!resGet.ok) throw new Error("Erro ao buscar arquivo no GitHub");
+     const dataGet = await resGet.json();
+
+     const sha = dataGet.sha;
+
+     const emptyJSON = { pedidos: [] };
+
+     const urlPut = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+     const resPut = await fetch(urlPut, {
+       method: "PUT",
+       headers: {
+         Authorization: `token ${token}`,
+         "Content-Type": "application/json"
+       },
+       body: JSON.stringify({
+         message: "Limpando todos os pedidos",
+         content: btoa(JSON.stringify(emptyJSON, null, 2)),
+         sha: sha
+       })
+     });
+
+     if (!resPut.ok) {
+       const errorData = await resPut.json();
+       throw new Error(errorData.message || "Erro ao limpar pedidos no GitHub");
+     }
+   }
+  </script>
+ </body>
+</html>
